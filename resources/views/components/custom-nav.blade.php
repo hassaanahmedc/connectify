@@ -1,25 +1,25 @@
-<nav class="flex justify-between items-center px-20 py-2 bg-white">
-    <div id="navSearch_logo"
-        class="flex gap-20">
+<nav class="flex justify-between items-center px-20 py-2 bg-white sticky top-0 w-full">
+    <section id="searchSection"
+        class="flex items-center justify-between gap-16 w-2/5">
         <div>
             @include('components.application-logo')
         </div>
-        <div class="relative">
-            {{-- {{Search bar}} --}}
+        <div class="relative min-w-[250px] flex items-center justify-end w-full">
             <input type="search"
-                class=" bg-lightMode-background rounded-xl border-zinc-200 w-80 min-w-full text-sm focus:border-none"
+                class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
                 name="search"
                 id="search"
                 placeholder="search"
                 required>
-            {{-- {{Search icon}} --}}
-            <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}"
-                class="absolute left-72 top-2"
-                alt="">
+            <a href=""
+                class="ml-2 px-2 absolute"><img
+                    src="{{ Vite::asset('/public/svg-icons/search.svg') }}"
+                    alt=""></a>
         </div>
 
-    </div>
-    <div id="nav_svgs"
+
+    </section>
+    <section id="iconSection"
         class="flex gap-2">
         <div>
             <a href=""><img class="min-w-8 h-fit"
@@ -43,7 +43,6 @@
             <a href=""><img class="w-5 h-auto"
                     src="{{ Vite::asset('/public/svg-icons/expand.svg') }}"
                     alt=""></a>
-
         </div>
-    </div>
+    </section>
 </nav>

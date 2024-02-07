@@ -19,10 +19,10 @@
             
 
             <!-- Page Heading -->
-            @include('components.custom-nav');
+            @include('components.custom-nav')
 
             <!-- Page Content -->
-            <main>
+            <main class="flex justify-between">
                 {{ $slot }}
             </main>
         </div>
