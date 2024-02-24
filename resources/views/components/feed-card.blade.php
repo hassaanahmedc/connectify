@@ -1,4 +1,4 @@
-<div class="flex flex-col bg-white p-6 rounded-xl mt-8">
+<div class="flex flex-col bg-white p-6 rounded-xl mt-8 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
     <div class="flex justify-between items-center">
         <div class="flex items-center gap-4">
             <a href="{{ route("userProfile") }}"><img src="{{ Vite::asset('/public/images/user/profile/profile.jpg') }}"

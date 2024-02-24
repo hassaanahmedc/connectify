@@ -15,14 +15,14 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="bg-lightMode-background">
+    <body class="bg-lightMode-background light">
             
 
             <!-- Page Heading -->
             @include('components.custom-nav')
 
             <!-- Page Content -->
-            <main class="flex justify-between">
+            <main>
                 {{ $slot }}
             </main>
         </div>
