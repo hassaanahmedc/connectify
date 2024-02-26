@@ -1,12 +1,12 @@
 <div class="flex flex-col bg-white p-6 rounded-xl mt-8 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
     <div class="flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <a href="{{ route("userProfile") }}"><img src="{{ Vite::asset('/public/images/user/profile/profile.jpg') }}"
+            <a href="{{ route("profile.view") }}"><img src="{{ Vite::asset('/public/images/user/profile/profile.jpg') }}"
                 class="bg-gray-200 w-10 rounded-full"
                 alt=""></a>
             <div>
                 <span
-                    class="font-bold/[1px] text-base/[1rem] font-montserrat block"><a href="{{ route("userProfile") }}">Hassaan
+                    class="font-bold/[1px] text-base/[1rem] font-montserrat block"><a href="{{ route("profile.view") }}">Hassaan
                     Ahmed</a></span>
                 <span class="text-gray-400 text-sm inline">12 minutes ago</span>
             </div>

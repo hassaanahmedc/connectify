@@ -24,20 +24,20 @@
                         </div>
                     </div>
                     <div class="my-2 flex gap-2 text-sm sm:text-base">
-                        <button
+                        <a 
                             class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-lightMode-primary text-white">
                             <img src="{{ Vite::asset('/public/svg-icons/camera.svg') }}"
                                 class="text-black"
                                 alt="Edit Icon">
                             Profile Picture
-                        </button>
-                        <button
+                        </a>
+                        <a href="{{ route('profile.edit') }}"
                             class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 text-black">
                             <img src="{{ Vite::asset('/public/svg-icons/edit.svg') }}"
                                 class="text-black"
                                 alt="Edit Icon">
                             Edit Profile
-                        </button>
+                        </a>
                     </div>
                 </div>
             </section>

@@ -1,1 +1,1 @@
-<h1 class="text-lightMode-primary text-2xl font-montserrat">Connectify</h1>
+<h1 {{$attributes->merge(['class' => 'text-lightMode-primary text-2xl font-montserrat font-semibold'])}} class="">Connectify</h1>

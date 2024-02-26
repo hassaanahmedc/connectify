@@ -42,7 +42,8 @@
                     src="{{ Vite::asset('/public/svg-icons/guest-icon.svg') }}"
                     alt=""></a>
             <x-dropdown align="right"
-                width="48" contentClasses="bg-white">
+                width="48"
+                contentClasses="bg-white">
                 <x-slot name="trigger">
 
                     <div class="ms-1">
@@ -53,21 +54,39 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    <x-dropdown-link :href="route('profile.edit')" class="dark:text-black dark:hover:bg-lightMode-background">
+                    <x-dropdown-link :href="route('profile.edit')"
+                        class="dark:text-black dark:hover:bg-lightMode-background">
                         {{ __('Profile') }}
                     </x-dropdown-link>
+                    @auth
+                        <x-dropdown-link :href="route('profile.edit')"
+                            class="dark:text-black dark:hover:bg-lightMode-background">
+                            {{ __(optional(Auth::user())->fname) }}
+                        </x-dropdown-link>
+                    @endauth
+
 
                     <!-- Authentication -->
-                    <form method="POST"
-                        action="{{ route('logout') }}">
-                        @csrf
+                    @auth
+                        <form method="POST"
+                            action="{{ route('logout') }}">
+                            @csrf
 
-                        <x-dropdown-link :href="route('logout')" class="dark:text-black dark:hover:bg-lightMode-background"
-                            onclick="event.preventDefault();
+                            <x-dropdown-link :href="route('logout')"
+                                class="dark:text-black dark:hover:bg-lightMode-background"
+                                onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                                {{ __('Log Out') }}
+                            </x-dropdown-link>
+                        </form>
+                    @endauth
+                    @guest
+                        <x-dropdown-link :href="route('login')"
+                            class="dark:text-black dark:hover:bg-lightMode-background">
+                            {{ __('Log in') }}
                         </x-dropdown-link>
-                    </form>
+
+                    @endguest
                 </x-slot>
             </x-dropdown>
         </div>
