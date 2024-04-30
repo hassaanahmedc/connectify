@@ -19,12 +19,12 @@
                                 alt="">
                         </figure>
                         <div class="my-2 text-center md:text-start">
-                            <h1 class="font-bold text-3xl">Hassaan Ahmed</h1>
+                            <h1 class="font-bold text-3xl">{{ Auth::user()->fname }} {{ Auth::user()->lname }}</h1>
                             <span class="text-lightMode-text">420 Friends</span>
                         </div>
                     </div>
                     <div class="my-2 flex gap-2 text-sm sm:text-base">
-                        <a 
+                        <a
                             class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-lightMode-primary text-white">
                             <img src="{{ Vite::asset('/public/svg-icons/camera.svg') }}"
                                 class="text-black"
@@ -32,7 +32,7 @@
                             Profile Picture
                         </a>
                         <a href="{{ route('profile.edit') }}"
-                            class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 text-black">
+                            class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 hover:bg-gray-300 transition-all text-black">
                             <img src="{{ Vite::asset('/public/svg-icons/edit.svg') }}"
                                 class="text-black"
                                 alt="Edit Icon">
@@ -43,7 +43,17 @@
             </section>
         </div>
         {{-- Main content --}}
-        <div
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div x-data="{ edit_bio: false, create_post: false }"
             class=" min-w-[360px] max-w-5xl flex flex-col mx-auto my-0 px-6 gap-6 md:flex-row md:px-0">
 
             <section
@@ -51,22 +61,20 @@
                 <div
                     class="shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)] bg-white p-4 px-6">
                     <h1 class="font-bold text-xl mb-2 font-montserrat">Bio</h1>
-                    <span class="font-roboto">Lorem, ipsum dolor sit amet
-                        consectetur adipisicing elit. Delectus eaque
-                        eligendi
-                        deleniti quisquam, blanditiis sunt ratione maxime
-                        magni
-                        repudiandae sit nesciunt porro quaerat quod et
-                        culpa,
-                        amet ad vero quo? Voluptatibus beatae assumenda id
-                        temporibus nostrum excepturi quo esse
-                        molestias?</span>
+                    <span class="font-roboto">{{ $user->bio }}</span>
                     <div class="flex gap-1 mt-2">
                         <img src="{{ Vite::asset('/public/svg-icons/location.svg') }}"
                             alt="">
                         <span>From <span
-                                class="font-semibold">Sukkur</span></span>
+                                class="font-semibold">{{$user->location}}</span></span>
                     </div>
+
+                    <div x-on:click="edit_bio = true"
+                        class="w-full py-2 mt-2 bg-gray-200 hover:bg-gray-300 transition-all rounded text-center cursor-pointer">
+                        <span class="font-semibold">Edit Bio</span>
+                    </div>
+                    
+                    <x-profile.edit-bio :user=$user />
                 </div>
                 <div
                     class="shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)] mt-8 bg-white p-4 px-6">
@@ -112,7 +120,8 @@
 
                 <div
                     class="shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)] mt-8 bg-white p-4 px-6">
-                    <h1 class="font-bold text-xl mb-2 font-montserrat">Physiscs</h1>
+                    <h1 class="font-bold text-xl mb-2 font-montserrat">Physiscs
+                    </h1>
                     <span class="font-roboto">Lorem, ipsum dolor sit amet
                         consectetur adipisicing elit. Delectus eaque
                         eligendi
@@ -146,14 +155,16 @@
                         <div class="w-full md:h-[10vh]">
                             <div class="relative flex items-center justify-end">
                                 <input type="search"
+                                x-on:click = "create_post = true"
                                     name=""
                                     class="bg-lightMode-background rounded-full border-zinc-200 w-full text-sm focus:border-none"
                                     placeholder="Share Something..."
                                     id="">
                                 <img src="{{ Vite::asset('/public/svg-icons/smiley.svg') }}"
-                                    class="ml-2 px-2 absolute"
+                                    class="ml-2 px-2 "
                                     alt="">
                             </div>
+                            <x-profile.create-post :user=$user />
                             <div
                                 class="flex items-center justify-around gap-8 mt-4 sm:justify-around">
                                 <div
