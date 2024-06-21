@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Post;
 use PhpParser\Node\Stmt\Break_;
 
 class ProfileController extends Controller
@@ -19,13 +20,14 @@ class ProfileController extends Controller
     public function view(Request $request) :View
     {
         $user = $request->user();
-        return view('components\profile\index')->with(compact('user'));
+        $posts = Post::where('user_id', $user->id)->get();
+        return view('profile.index', compact('user', 'posts'));
 
     }
 
     public function edit(Request $request): View
     {
-        return view('components\profile\edit', [
+        return view('profile\edit', [
             'user' => $request->user(),
         ]);
     }

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-use App\Http\Requests\Post;
+use App\Http\Requests\Post\CreatePostRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,7 +10,7 @@ class PostImage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'post_id',
+        'posts_id',
         'path',
     ];
 

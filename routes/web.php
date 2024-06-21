@@ -32,7 +32,7 @@ Route::get('/reguster', function() {
     return view('auth/register');
 })->name('register');
 
-Route::resource('post', App\Http\Controllers\Post\PostController::class);
+Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']);
 
 Route::middleware('auth')->group(function () {
 

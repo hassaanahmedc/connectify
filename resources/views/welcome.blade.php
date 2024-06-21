@@ -98,10 +98,21 @@
             </div>
 
             <div class="flex flex-col">
-                <x-feed-card />
-                <x-feed-card />
-                <x-feed-card />
-                <x-feed-card />
+
+                @for ($card = 0; $card < 5; $card++)
+                    @include('components.feed-card', [
+                        'profileUrl' => route('profile.view'),
+                        'profileImageUrl' => Vite::asset(
+                            '/public/images/user/profile/profile.jpg'),
+                        'userName' => 'Hassaan Ahmed',
+                        'postTime' => '12 minutes ago',
+                        'postContent' =>
+                            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui rem molestiae illo dolorem quaerat quisquam error itaque maiores cum nemo esse sit, similique autem perspiciatis consequuntur. Quas perferendis facere dolor molestias itaque minus facilis. Ipsa ut soluta veniam atque culpa?',
+                        'postImageUrl' => Vite::asset(
+                            '/public/images/user/post/post.jpg'),
+                    ])
+                @endfor
+
             </div>
         </section>
         {{-- Right Side --}}

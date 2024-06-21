@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class Post extends FormRequest
+class CreatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class Post extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'content' =>  ['required', 'string', 'max:2000'],
+            'images' => ['nullable', 'image', 'mimes:jpeg,png,jpg,', 'max:2048'],
         ];
     }
 }

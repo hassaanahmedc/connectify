@@ -19,7 +19,9 @@
                                 alt="">
                         </figure>
                         <div class="my-2 text-center md:text-start">
-                            <h1 class="font-bold text-3xl">{{ Auth::user()->fname }} {{ Auth::user()->lname }}</h1>
+                            <h1 class="font-bold text-3xl">
+                                {{ Auth::user()->fname }}
+                                {{ Auth::user()->lname }}</h1>
                             <span class="text-lightMode-text">420 Friends</span>
                         </div>
                     </div>
@@ -66,15 +68,15 @@
                         <img src="{{ Vite::asset('/public/svg-icons/location.svg') }}"
                             alt="">
                         <span>From <span
-                                class="font-semibold">{{$user->location}}</span></span>
+                                class="font-semibold">{{ $user->location }}</span></span>
                     </div>
 
                     <div x-on:click="edit_bio = true"
                         class="w-full py-2 mt-2 bg-gray-200 hover:bg-gray-300 transition-all rounded text-center cursor-pointer">
                         <span class="font-semibold">Edit Bio</span>
                     </div>
-                    
-                    <x-profile.edit-bio :user=$user />
+
+                    @include('profile.edit-bio', ['user' => $user])
                 </div>
                 <div
                     class="shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)] mt-8 bg-white p-4 px-6">
@@ -155,16 +157,15 @@
                         <div class="w-full md:h-[10vh]">
                             <div class="relative flex items-center justify-end">
                                 <input type="search"
-                                x-on:click = "create_post = true"
+                                    x-on:click = "create_post = true"
                                     name=""
                                     class="bg-lightMode-background rounded-full border-zinc-200 w-full text-sm focus:border-none"
                                     placeholder="Share Something..."
                                     id="">
-                                <img src="{{ Vite::asset('/public/svg-icons/smiley.svg') }}"
-                                    class="ml-2 px-2 "
-                                    alt="">
                             </div>
-                            <x-profile.create-post :user=$user />
+                            @include('profile.create-post', [
+                                'user' => $user,
+                            ])
                             <div
                                 class="flex items-center justify-around gap-8 mt-4 sm:justify-around">
                                 <div
@@ -191,12 +192,25 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="flex flex-col">
-                    <x-feed-card />
-                    <x-feed-card />
-                    <x-feed-card />
-                    <x-feed-card />
+                    {{-- @forelse ($posts as $post) --}}
+                    @if($posts->count()) 
+                        @foreach($posts as $post)
+                            @include('components.feed-card', [
+                                'profileUrl' => route('profile.view'),
+                                'profileImageUrl' => Vite::asset(
+                                    '/public/images/user/profile/profile.jpg'),
+                                'userName' => $user->fname . ' ' . $user->lname,
+                                'postTime' => $post->created_at->diffForHumans(),
+                                'postContent' => $post->content,
+                                'postImageUrl' => Vite::asset(
+                                    '/public/images/user/post/post.jpg'),
+                            ]);
+                            
+                        @endforeach
+                        
+                    @endif
+
                 </div>
             </section>
         </div>

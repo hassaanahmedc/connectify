@@ -54,12 +54,15 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    <x-dropdown-link :href="route('profile.edit')"
-                        class="dark:text-black dark:hover:bg-lightMode-background">
-                        {{ __('Profile') }}
-                    </x-dropdown-link>
                     @auth
                         <x-dropdown-link :href="route('profile.edit')"
+                            class="dark:text-black dark:hover:bg-lightMode-background">
+                            {{ __('Edit Profile') }}
+                        </x-dropdown-link>
+                    @endauth
+                    
+                    @auth
+                        <x-dropdown-link :href="route('profile.view')"
                             class="dark:text-black dark:hover:bg-lightMode-background">
                             {{ __(optional(Auth::user())->fname) }}
                         </x-dropdown-link>
