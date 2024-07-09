@@ -20,7 +20,7 @@ class ProfileController extends Controller
     public function view(Request $request) :View
     {
         $user = $request->user();
-        $posts = Post::where('user_id', $user->id)->get();
+        $posts = Post::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
         return view('profile.index', compact('user', 'posts'));
 
     }

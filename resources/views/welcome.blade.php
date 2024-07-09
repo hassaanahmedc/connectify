@@ -56,7 +56,7 @@
             <div class="bg-white p-4 rounded-xl">
                 <div class="flex gap-6">
                     <div class=" w-10">
-                        <img src="{{ Vite::asset('/public/images/user/profile/profile.jpg') }}"
+                        <img src="https://placewaifu.com/image/200"
                             class="bg-gray-200 w-10 rounded-full"
                             alt="">
                     </div>
@@ -98,20 +98,25 @@
             </div>
 
             <div class="flex flex-col">
+                @if ($posts->count())
+                    @foreach ($posts as $post)
+                        @php
+                            $profileImageUrl = !empty($post->user->avatar)
+                                ? $post->user->avatar
+                                : 'https://placewaifu.com/image/200';
+                        @endphp
+                        @include('components.feed-card', [
+                            'profileUrl' => route('profile.view'),
+                            'postId' => $post->id,
+                            'userName' =>
+                                $post->user->fname . ' ' . $post->user->lname,
+                            'postTime' => $post->created_at->diffForHumans(),
+                            'postContent' => $post->content,
+                           'postImages' => $post->postImages,
+                        ])
+                    @endforeach
 
-                @for ($card = 0; $card < 5; $card++)
-                    @include('components.feed-card', [
-                        'profileUrl' => route('profile.view'),
-                        'profileImageUrl' => Vite::asset(
-                            '/public/images/user/profile/profile.jpg'),
-                        'userName' => 'Hassaan Ahmed',
-                        'postTime' => '12 minutes ago',
-                        'postContent' =>
-                            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui rem molestiae illo dolorem quaerat quisquam error itaque maiores cum nemo esse sit, similique autem perspiciatis consequuntur. Quas perferendis facere dolor molestias itaque minus facilis. Ipsa ut soluta veniam atque culpa?',
-                        'postImageUrl' => Vite::asset(
-                            '/public/images/user/post/post.jpg'),
-                    ])
-                @endfor
+                @endif
 
             </div>
         </section>

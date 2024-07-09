@@ -19,27 +19,59 @@
                                 alt="">
                         </figure>
                         <div class="my-2 text-center md:text-start">
-                            <h1 class="font-bold text-3xl">
-                                {{ Auth::user()->fname }}
-                                {{ Auth::user()->lname }}</h1>
-                            <span class="text-lightMode-text">420 Friends</span>
+                            @auth
+                                @if ($user->id === Auth::id())
+                                    <h1 class="font-bold text-3xl">
+                                        {{ Auth::user()->fname }}
+                                        {{ Auth::user()->lname }}</h1>
+                                    <span class="text-lightMode-text">420
+                                        Friends</span>
+                                @else
+                                    <h1 class="font-bold text-3xl">
+                                        {{ $user->fname }}
+                                        {{ $user->lname }}</h1>
+                                    <span class="text-lightMode-text">420
+                                        Friends</span>
+                                @endif
+
+                            @endauth
                         </div>
                     </div>
                     <div class="my-2 flex gap-2 text-sm sm:text-base">
-                        <a
-                            class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-lightMode-primary text-white">
-                            <img src="{{ Vite::asset('/public/svg-icons/camera.svg') }}"
-                                class="text-black"
-                                alt="Edit Icon">
-                            Profile Picture
-                        </a>
-                        <a href="{{ route('profile.edit') }}"
-                            class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 hover:bg-gray-300 transition-all text-black">
-                            <img src="{{ Vite::asset('/public/svg-icons/edit.svg') }}"
-                                class="text-black"
-                                alt="Edit Icon">
-                            Edit Profile
-                        </a>
+                        @auth
+                            @if ($user->id === Auth::id())
+                                <a
+                                    class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-lightMode-primary text-white">
+                                    <img src="{{ Vite::asset('/public/svg-icons/camera.svg') }}"
+                                        class="text-black"
+                                        alt="Edit Icon">
+                                    Profile Picture
+                                </a>
+                                <a href="{{ route('profile.edit') }}"
+                                    class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 hover:bg-gray-300 transition-all text-black">
+                                    <img src="{{ Vite::asset('/public/svg-icons/edit.svg') }}"
+                                        class="text-black"
+                                        alt="Edit Icon">
+                                    Edit Profile
+                                </a>
+                            @else
+                                <a
+                                    class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-lightMode-primary text-white">
+                                    <img src="{{ Vite::asset('/public/svg-icons/camera.svg') }}"
+                                        class="text-black"
+                                        alt="Edit Icon">
+                                    Follow
+                                </a>
+                                <a href="{{ route('profile.edit') }}"
+                                    class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 hover:bg-gray-300 transition-all text-black">
+                                    <img src="{{ Vite::asset('/public/svg-icons/edit.svg') }}"
+                                        class="text-black"
+                                        alt="Edit Icon">
+                                    Message
+                                </a>
+                            @endif
+
+                        @endauth
                     </div>
                 </div>
             </section>
@@ -127,7 +159,7 @@
                     <span class="font-roboto">Lorem, ipsum dolor sit amet
                         consectetur adipisicing elit. Delectus eaque
                         eligendi
-                        deleniti quisquam, blanditiis sunt ratione maxime
+                        deleniti quisquam, blanditiis usnt ratione maxime
                         magni
                         repudiandae sit nesciunt porro quaerat quod et
                         culpa,
@@ -150,7 +182,7 @@
                     class="bg-white p-4 rounded-xl shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
                     <div class="flex gap-4 ">
                         <div class=" w-10">
-                            <img src="{{ Vite::asset('/public/images/user/profile/profile.jpg') }}"
+                            <img src="https://placewaifu.com/image/200"
                                 class="bg-gray-200 w-10 rounded-full"
                                 alt="">
                         </div>
@@ -194,21 +226,24 @@
                 </div>
                 <div class="flex flex-col">
                     {{-- @forelse ($posts as $post) --}}
-                    @if($posts->count()) 
-                        @foreach($posts as $post)
+                    @if ($posts->count())
+                        @foreach ($posts as $post)
+                            @php
+                                $profileImageUrl = !empty($user->avatar)
+                                    ? $user->avatar
+                                    : 'https://placewaifu.com/image/200';
+                            @endphp
                             @include('components.feed-card', [
                                 'profileUrl' => route('profile.view'),
-                                'profileImageUrl' => Vite::asset(
-                                    '/public/images/user/profile/profile.jpg'),
-                                'userName' => $user->fname . ' ' . $user->lname,
+                                'postId' => $post->id,
+                                'userName' =>
+                                    $user->fname . ' ' . $user->lname,
                                 'postTime' => $post->created_at->diffForHumans(),
                                 'postContent' => $post->content,
-                                'postImageUrl' => Vite::asset(
-                                    '/public/images/user/post/post.jpg'),
-                            ]);
-                            
+                                'postImages' => $post->postImages,
+                            ])
                         @endforeach
-                        
+
                     @endif
 
                 </div>

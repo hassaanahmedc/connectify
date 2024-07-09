@@ -17,10 +17,44 @@
                         class="text-gray-400 text-sm inline">{{ $postTime }}</span>
                 </div>
             </div>
-            <div>
+            <div x-data="{ edit_post: false, confirm_delete: false }"
+                class="relative cursor-pointer">
                 <img src="{{ Vite::asset('/public/svg-icons/3dots.svg') }}"
+                    x-on:click="edit_post = true"
                     alt="">
+                <ul x-cloak
+                    x-show="edit_post"
+                    @click.away="edit_post = false"
+                    class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md">
+
+                    @can('delete', $post)
+                        <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
+                            <button
+                                x-on:click.prevent="edit_post = false; confirm_delete = true">Delete
+                                Post</button>
+                        </li>
+
+                        <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
+                            <a href="#"
+                                x-on:click="edit_post = false">Edit Post</a>
+                        </li>
+                    @endcan
+
+                    <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
+                        <a href="#"
+                            x-on:click="edit_post = false">Pin to your
+                            profile</a>
+                    </li>
+                </ul>
+
+                @include('components.confirm-alert', [
+                    'showVariable' => 'confirm_delete',
+                    'message' =>
+                        'Are you sure you want to delete this post?',
+                    'action' => route('post.destroy', ['post' => $postId]),
+                ])
             </div>
+
 
         </div>
         {{-- Post Content --}}
@@ -29,11 +63,13 @@
         </div>
     </div>
     {{-- Image Container --}}
-    @if ($postImageUrl)
+    @if ($postImages->count())
         <div>
-            <img src="{{ $postImageUrl }}"
-                class="w-full h-full object-cover"
-                alt="Post Image">
+            @foreach ($postImages as $image)
+                <img src="{{ asset('storage/' . $image->path) }}"
+                    class="w-full h-full object-cover"
+                    alt="Post Image">
+            @endforeach
         </div>
     @endif
 </div>

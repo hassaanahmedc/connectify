@@ -1,8 +1,8 @@
-<div class="w-screen fixed h-screen bg-black/80 top-0 left-0  flex justify-center items-center z-[100]"
+<div class="w-screen fixed h-screen bg-black/80 top-0 left-0  flex justify-center items-center z-[100] overflow-y-auto"
     x-cloak
     x-show="create_post">
     <section id="appointmentForm"
-        class="relative bg-white max-w-screen-sm bg-base-200 min-w-[350px] py-10 px-10  flex justify-center overflow-y-scroll md:w-3/4">
+        class="relative bg-white max-w-screen-sm bg-base-200 min-w-[350px] py-10 px-10 flex justify-center overflow-y-scroll md:w-3/4">
         {{-- close Modal Button --}}
         <svg class="swap-on fill-current absolute right-4 top-8 cursor-pointer"
             x-on:click="create_post=false"
@@ -17,7 +17,8 @@
             <h2 class="text-3xl font-bold mb-8 text-center">Create Post
             </h2>
             <form action="{{ route('post.store') }}"
-                method="POST">
+                method="POST"
+                enctype="multipart/form-data">
                 @csrf
 
                 <div class="">
@@ -30,17 +31,24 @@
                     </div>
 
                     <textarea
-                        class="block mt-2 w-full border-none focus:border-none focus:ring-0 shadow-sm"
+                        class="block mt-2 w-full border-none focus:border-none focus:ring-0 shadow-sm resize-none"
                         name="content"
                         id="content"
                         placeholder="What's happening?..."></textarea>
                     <x-input-error :messages="$errors->get('content')"
                         class="mt-2" />
                 </div>
-
-                <div class="mt-8 ">
+                <div>
+                    <x-image-upload />
+                </div>
+                <div class="flex justify-between mt-8">
                     <button type="submit"
                         class="px-8 py-2 text-lg rounded bg-lightMode-primary text-white">Post</button>
+                    <div>
+                        <div id="imageSelectorSvg">
+                            <x-svg-icons.images />
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

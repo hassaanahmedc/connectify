@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\CreatePostRequest;
 use Illuminate\Http\Request;
@@ -30,9 +31,19 @@ class PostController extends Controller
         $validated = $request->validated();
         $validated['user_id'] = Auth::id();
 
-        Post::create($validated);
+        $post = Post::create($validated);
 
-        return redirect()->back();  
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image){
+                $path = $image->store('images', 'public');
+                $post->postImages()->create(['path' => $path]);
+            }
+
+                
+        }
+
+
+        return redirect()->back()->with('success', 'Post created successfully!');
     }
 
     /**
@@ -64,6 +75,13 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+
+        if (Gate::denies('delete', $post)){
+            return redirect()->back()->with('error', 'You are not authorized to delete this post');
+        }
+
+        $post->delete();
+        return redirect()->back()->with('Success', 'Post deleted successfully!');
     }
 }
