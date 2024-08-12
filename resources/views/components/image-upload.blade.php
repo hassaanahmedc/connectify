@@ -1,14 +1,13 @@
-@vite(['resources/js/imageUpload.js'])
 
 <div id="imgUploadContainer"
-    class="w-full">
+    class="w-full h-fit">
     <input type="file"
         name="images[]"
+        class="fileInput"
         id="fileInput"
         hidden
         multiple accept="image/jpeg,image/png">
     <div id="imgPreview"
-        class="flex gap-5 max-w-full overflow-x-auto">
+        class="imgPreview flex gap-5 max-w-full overflow-x-scroll max-h-80">
     </div>
 </div>
-{{-- <script src="{{ asset('js/image-upload.js') }}"></script> --}}

@@ -1,4 +1,5 @@
 <x-app-layout>
+@vite(['resources/js/imageUpload.js'])
     <div class="max-w-[1280px] mx-auto my-0">
         {{-- header --}}
         <div class="">
@@ -195,8 +196,11 @@
                                     placeholder="Share Something..."
                                     id="">
                             </div>
+                            {{-- Post Modal --}}
                             @include('profile.create-post', [
-                                'user' => $user,
+                                'isEdit' => false,
+                                'showVariable' => 'create_post',    
+                                'postUrl' => route('post.store'),
                             ])
                             <div
                                 class="flex items-center justify-around gap-8 mt-4 sm:justify-around">
@@ -226,15 +230,15 @@
                 </div>
                 <div class="flex flex-col">
                     {{-- @forelse ($posts as $post) --}}
-                    @if ($posts->count())
-                        @foreach ($posts as $post)
+                    @if ($user->post->count())
+                        @foreach ($user->post as $post)
                             @php
                                 $profileImageUrl = !empty($user->avatar)
                                     ? $user->avatar
                                     : 'https://placewaifu.com/image/200';
                             @endphp
                             @include('components.feed-card', [
-                                'profileUrl' => route('profile.view'),
+                                'profileUrl' => route('profile.view', $post->user->id),
                                 'postId' => $post->id,
                                 'userName' =>
                                     $user->fname . ' ' . $user->lname,

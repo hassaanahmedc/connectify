@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Post;
+use App\Models\User;
 use PhpParser\Node\Stmt\Break_;
 
 class ProfileController extends Controller
@@ -17,11 +18,15 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
 
-    public function view(Request $request) :View
+    public function view(Request $request, User $user) :View
     {
-        $user = $request->user();
-        $posts = Post::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-        return view('profile.index', compact('user', 'posts'));
+        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
+
+        $user->load(['post' => function ($query) {
+            $query->orderBy('created_at', 'desc')->with('postImages'); 
+        }]);
+
+        return view('profile.index', compact('user', 'isOwnProfile'));
 
     }
 

@@ -62,7 +62,7 @@
                     @endauth
                     
                     @auth
-                        <x-dropdown-link :href="route('profile.view')"
+                        <x-dropdown-link :href="route('profile.view', Auth::id())"
                             class="dark:text-black dark:hover:bg-lightMode-background">
                             {{ __(optional(Auth::user())->fname) }}
                         </x-dropdown-link>

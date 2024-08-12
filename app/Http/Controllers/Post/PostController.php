@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\CreatePostRequest;
+use App\Http\Requests\Post\UpdatePostRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\PostImage;
@@ -55,19 +56,20 @@ class PostController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePostRequest $request, string $post)
     {
-        //
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
+
+        $get_post = Post::findOrFail($post);
+
+        $get_post->content = $validated['content'];
+
+        $get_post->save();
+
+        return redirect()->back()->with('success', 'Post updated successfully!');
     }
 
     /**

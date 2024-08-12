@@ -29,7 +29,8 @@
                         class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                         name="bio"
                         id="bio"
-                        placeholder="Type your Bio..."></textarea>
+                        value=""
+                        placeholder="Type your Bio...">{{ old('bio', $user->bio) }}</textarea>
                     <x-input-error :messages="$errors->get('bio')"
                         class="mt-2" />
                 </div>
@@ -42,7 +43,7 @@
                         class="block mt-1 w-full"
                         type="text"
                         name="location"
-                        :value="old('location')"
+                        :value="old('location', $user->location)"
                         required
                         autofocus
                         autocomplete="location" />

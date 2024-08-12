@@ -60,13 +60,20 @@
                             class="bg-gray-200 w-10 rounded-full"
                             alt="">
                     </div>
-                    <div class="w-full">
+                    <div x-data="{ create_post: false, }"
+                        class="w-full">
                         <div class="relative flex items-center justify-end">
                             <input type="search"
+                                x-on:click = "create_post = true"
                                 name=""
                                 class="bg-lightMode-background rounded-full border-zinc-200 w-full text-sm focus:border-none"
                                 placeholder="Share Something..."
                                 id="">
+                            @include('profile.create-post', [
+                                'isEdit' => false,
+                                'showVariable' => 'create_post',
+                                'postUrl' => route('post.store'),
+                            ])
                             <img src="{{ Vite::asset('/public/svg-icons/smiley.svg') }}"
                                 class="ml-2 px-2 absolute"
                                 alt="">
@@ -106,13 +113,17 @@
                                 : 'https://placewaifu.com/image/200';
                         @endphp
                         @include('components.feed-card', [
-                            'profileUrl' => route('profile.view'),
+                            'profileUrl' => route(
+                                'profile.view',
+                                $post->user->id),
                             'postId' => $post->id,
                             'userName' =>
-                                $post->user->fname . ' ' . $post->user->lname,
+                                $post->user->fname .
+                                ' ' .
+                                $post->user->lname,
                             'postTime' => $post->created_at->diffForHumans(),
                             'postContent' => $post->content,
-                           'postImages' => $post->postImages,
+                            'postImages' => $post->postImages,
                         ])
                     @endforeach
 

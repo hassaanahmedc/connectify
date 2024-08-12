@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [WelcomeController::class, 'index'])->name('home');
+
 
 
 Route::get('/dashboard', function () {
@@ -34,11 +34,11 @@ Route::get('/reguster', function() {
 Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']);
 
 Route::middleware('auth')->group(function () {
-
-    Route::get('/profile/view', [ProfileController::class, 'view'])->name('profile.view');
+    Route::get('/profile/view/{user}', [ProfileController::class, 'view'])->name('profile.view');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/{id}', [ProfileController::class, 'update'])->name('profile.update');     
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/', [WelcomeController::class, 'index'])->name('home');
 });
 
 require __DIR__.'/auth.php';
