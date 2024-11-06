@@ -2,9 +2,9 @@
     <main class="flex gap-10">
         {{-- Login Form --}}
         <section class="w-1/2  p-8">
-            <!-- Session Status -->
+            {{-- <!-- Session Status -->
             <x-auth-session-status class="mb-4"
-                :status="session('status')" />
+                :status="session('status')" /> --}}
 
             <h1
                 class="mb-4 font-montserrat text-2xl text-lightMode-primary font-bold">

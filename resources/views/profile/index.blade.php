@@ -1,15 +1,15 @@
 <x-app-layout>
-@vite(['resources/js/imageUpload.js'])
+    @vite(['resources/js/imageUpload.js'])
     <div class="max-w-[1280px] mx-auto my-0">
         {{-- header --}}
-        <div class="">
+        <div class="" >
             <header class=" relative w-full max-h-[480px] h-[50vh]">
                 <img src="{{ Vite::asset('/public/images/user/post/post.jpg') }}"
                     class="w-full h-full object-cover"
                     alt="">
             </header>
-            <section class="bg-white">
-                <div
+            <section x-data="{ edit_profile: false }" class="bg-white">
+                <div 
                     class="flex flex-col items-center justify-center mb-[-50px] px-8 transform translate-y-[-25%] md:transform md:translate-y-[-50%] md:flex-row md:justify-between md:items-end">
                     {{-- Profile Picture --}}
                     <div
@@ -25,20 +25,20 @@
                                     <h1 class="font-bold text-3xl">
                                         {{ Auth::user()->fname }}
                                         {{ Auth::user()->lname }}</h1>
-                                    <span class="text-lightMode-text">420
-                                        Friends</span>
+                                    <span
+                                        class="text-lightMode-text">{{ Auth::user()->email }}</span>
                                 @else
                                     <h1 class="font-bold text-3xl">
                                         {{ $user->fname }}
                                         {{ $user->lname }}</h1>
-                                    <span class="text-lightMode-text">420
-                                        Friends</span>
+                                    <span
+                                        class="text-lightMode-text">{{ $user->email }}</span>
                                 @endif
 
                             @endauth
                         </div>
                     </div>
-                    <div class="my-2 flex gap-2 text-sm sm:text-base">
+                    <div class="relative my-2 flex gap-2 text-sm sm:text-base">
                         @auth
                             @if ($user->id === Auth::id())
                                 <a
@@ -46,15 +46,16 @@
                                     <img src="{{ Vite::asset('/public/svg-icons/camera.svg') }}"
                                         class="text-black"
                                         alt="Edit Icon">
-                                    Profile Picture
+                                    420 Friends
                                 </a>
-                                <a href="{{ route('profile.edit') }}"
+                                <button x-on:click="edit_profile=true" 
                                     class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-gray-200 hover:bg-gray-300 transition-all text-black">
                                     <img src="{{ Vite::asset('/public/svg-icons/edit.svg') }}"
                                         class="text-black"
                                         alt="Edit Icon">
                                     Edit Profile
-                                </a>
+                                </button>
+                                    
                             @else
                                 <a
                                     class="flex items-center gap-2 px-4 py-2 font-semibold rounded bg-lightMode-primary text-white">
@@ -75,6 +76,10 @@
                         @endauth
                     </div>
                 </div>
+                @include('profile.edit-profile-modal')
+                <script>
+                
+                </script>
             </section>
         </div>
         {{-- Main content --}}
@@ -197,9 +202,9 @@
                                     id="">
                             </div>
                             {{-- Post Modal --}}
-                            @include('profile.create-post', [
+                            @include('posts.create', [
                                 'isEdit' => false,
-                                'showVariable' => 'create_post',    
+                                'showVariable' => 'create_post',
                                 'postUrl' => route('post.store'),
                             ])
                             <div
@@ -238,7 +243,9 @@
                                     : 'https://placewaifu.com/image/200';
                             @endphp
                             @include('components.feed-card', [
-                                'profileUrl' => route('profile.view', $post->user->id),
+                                'profileUrl' => route(
+                                    'profile.view',
+                                    $post->user->id),
                                 'postId' => $post->id,
                                 'userName' =>
                                     $user->fname . ' ' . $user->lname,

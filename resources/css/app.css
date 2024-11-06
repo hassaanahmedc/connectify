@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+.default-svg-color {
+    color : white;
+    stroke: black;
+
+}
+
+.liked-icon {
+    color: red;    /* Color when the post is liked */
+    transition: color 0.3s ease-in-out;
+    stroke: red;   /* Outline color when liked */
+}

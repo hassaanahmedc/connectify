@@ -21,10 +21,15 @@ class ProfileController extends Controller
     public function view(Request $request, User $user) :View
     {
         $isOwnProfile = Auth::check() && Auth::id() === $user->id;
-
+        $currentUserId = $user->id;
+        
         $user->load(['post' => function ($query) {
-            $query->orderBy('created_at', 'desc')->with('postImages'); 
+            $query->orderBy('created_at', 'desc')->with('postImages')->withCount('likes'); 
         }]);
+
+        $user->post->each(function ($post) use ($currentUserId) {
+            $post->liked_by_user = $post->likes()->where('user_id', $currentUserId)->exists();
+        });
 
         return view('profile.index', compact('user', 'isOwnProfile'));
 
@@ -32,7 +37,7 @@ class ProfileController extends Controller
 
     public function edit(Request $request): View
     {
-        return view('profile\edit', [
+        return view('profile\settings   ', [
             'user' => $request->user(),
         ]);
     }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Post;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Post\CreatePostRequest;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Post\CreatePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
@@ -15,14 +15,14 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $userId = Auth::id();
+    // public function index()
+    // {
+    //     $userId = Auth::id();
     
-        $posts = Post::where('user_id', $userId)->get();
+    //     $posts = Post::where('user_id', $userId)->get();
         
-        return view('profile.index', ['user' => Auth::user(), 'posts' => $posts]);
-    }
+    //     return view('profile.index', ['user' => Auth::user(), 'posts' => $posts]);
+    // }
 
     /**
      * Store a newly created resource in storage.

@@ -1,12 +1,13 @@
+
 <div class="w-screen fixed h-screen bg-black/80 top-0 left-0  flex justify-center items-center z-[100] overflow-y-auto"
     x-cloak
-    x-show="{{ $showVariable }}">
-    <section id="appointmentForm"
+    x-show="{{ $showVariable }}" >
+    <section id="post-form"
         class="relative bg-white max-w-screen-sm bg-base-200 min-w-[350px] py-10 px-10 flex overflow-y-auto justify-center md:w-3/4">
         {{-- close Modal Button --}}
         <svg class="swap-on fill-current absolute right-4 top-8 cursor-pointer"
             id="closeModal"
-            x-on:click="{{ $showVariable }} = false"
+            x-on:click="{{ $showVariable}} = false;"
             xmlns="http://www.w3.org/2000/svg"
             width="32"
             height="32"
@@ -31,6 +32,7 @@
                 @endif
 
                 <div class="">
+                
                     <div
                         class="flex gap-4 items-center w-10 font-bold/[1px] text-base/[1rem] font-montserrat">
                         <img src="{{ Vite::asset('/public/images/user/profile/profile.jpg') }}"
@@ -47,17 +49,29 @@
                     <x-input-error :messages="$errors->get('content')"
                         class="mt-2" />
                 </div>
-                <div class="max-h-fit">
-                    {{-- @if ($isEdit && $postImages)
-                        @foreach ($postImages as $image)
-                            <img src="{{ asset('storage/' . $image->path) }}"
-                                class="w-full h-full object-cover"
-                                alt="Post Image">
-                        @endforeach
-                    @else --}}
-                    <x-image-upload />
-                    {{-- @endif --}}
+
+                <div class="w-full h-fit">
+                    <div id="imgUploadContainer"
+                        class="flex gap-5 max-w-full overflow-x-scroll max-h-80">
+                        @if ($isEdit && $postImages)
+                            <input type="hidden"
+                                id="postedImages"
+                                value="{{ json_encode($postImages) }}">
+                        @endif
+                        <div id="imgPreview"
+                            class="imgPreview flex gap-5 max-w-full overflow-x-scroll max-h-80">
+                        </div>
+                        <input type="file"
+                            name="images[]"
+                            class="fileInput"
+                            id="fileInput"
+                            hidden
+                            multiple
+                            accept="image/jpeg,image/png">
+                    </div>
+
                 </div>
+
                 <div class="flex justify-between mt-8">
                     <button type="submit"
                         class="px-8 py-2 text-lg rounded bg-lightMode-primary text-white">

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\PersonalAccessToken;
 
 class RegisteredUserController extends Controller
 {
@@ -44,10 +45,10 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Trigger event after token creation
         event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+      
+        // Log in the user and then redirec
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 }

@@ -1,4 +1,5 @@
 <x-app-layout>
+@vite(['resources/js/imageUpload.js', 'resources/js/apis/likePost.js'])
     <div class="flex justify-between">
         {{-- Left Side --}}
         <aside class="w-1/5 px-8 py-12 bg-white">
@@ -69,7 +70,7 @@
                                 class="bg-lightMode-background rounded-full border-zinc-200 w-full text-sm focus:border-none"
                                 placeholder="Share Something..."
                                 id="">
-                            @include('profile.create-post', [
+                            @include('posts.create', [
                                 'isEdit' => false,
                                 'showVariable' => 'create_post',
                                 'postUrl' => route('post.store'),
@@ -104,33 +105,10 @@
                 </div>
             </div>
 
-            <div class="flex flex-col">
-                @if ($posts->count())
-                    @foreach ($posts as $post)
-                        @php
-                            $profileImageUrl = !empty($post->user->avatar)
-                                ? $post->user->avatar
-                                : 'https://placewaifu.com/image/200';
-                        @endphp
-                        @include('components.feed-card', [
-                            'profileUrl' => route(
-                                'profile.view',
-                                $post->user->id),
-                            'postId' => $post->id,
-                            'userName' =>
-                                $post->user->fname .
-                                ' ' .
-                                $post->user->lname,
-                            'postTime' => $post->created_at->diffForHumans(),
-                            'postContent' => $post->content,
-                            'postImages' => $post->postImages,
-                        ])
-                    @endforeach
-
-                @endif
-
-            </div>
+        @include('posts.index')
+        
         </section>
+        
         {{-- Right Side --}}
         <aside class="w-1/4 px-8 py-12 bg-white relative">
             <div class="mb-4 fixed">

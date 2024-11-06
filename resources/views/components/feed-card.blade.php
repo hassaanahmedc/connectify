@@ -17,10 +17,14 @@
                         class="text-gray-400 text-sm inline">{{ $postTime }}</span>
                 </div>
             </div>
-            <div x-data="{ post_menu: false, edit_post: false, confirm_delete: false }"
+            <div x-data="{
+                post_menu: false,
+                edit_post: false,
+                confirm_delete: false,
+            }"
                 class="relative ">
                 <img src="{{ Vite::asset('/public/svg-icons/3dots.svg') }}"
-                class="cursor-pointer"
+                    class="cursor-pointer"
                     x-on:click="post_menu = true"
                     alt="">
                 <ul x-cloak
@@ -42,10 +46,12 @@
                             ])
                         </li>
 
-                        <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                            <a href="#" id="editBtn"
+                        <li
+                            class="editBtn py-2 px-6 hover:bg-gray-100 hover:rounded-md">
+                            <a href="#"
+                                id="editBtn"
                                 x-on:click.prevent="edit_post = true">Edit Post</a>
-                            @include('profile.create-post', [
+                            @include('posts.create', [
                                 'showVariable' => 'edit_post',
                                 'isEdit' => true,
                                 'postUrl' => route('post.update', [
@@ -84,5 +90,18 @@
             @endforeach
         </div>
     @endif
+    {{-- Like and comment section --}}
+    <div class="m-2 p-1">
+        <div class="flex items-center gap-8">
+            <button data-post-id="{{ $post->id }}"
+                data-user-id="{{ auth()->id() }}"
+                class="like-btn flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
+                <x-svg-icons.heart :isLiked="$post->liked_by_user" /> <span class="like-count">{{ $post->likes_count }}</span>
+            </button>
+            <button
+                class="flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
+                <x-svg-icons.comment /> <span class="comment">101</span>
+            </button>
+        </div>
+    </div>
 </div>
-
