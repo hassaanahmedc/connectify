@@ -22,10 +22,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route::get('/login', function() {
-//     return view('auth/login');
-// })->name('login');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile/view/{user}', [ProfileController::class, 'view'])->name('profile.view');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,18 +31,9 @@ Route::middleware('auth')->group(function () {
 });
 
 //Laravel Sanctum Protected routes
-
-Route::middleware('guest')->group(function () {
-    Route::view('/register', 'auth/register')->name('register');
-    Route::view('/login', 'auth/login')->name('login');
-    Route::post('/register', [AuthController::class, 'RegisterUser']);
-    Route::post('/login', [AuthController::class, 'Login']);
-});
-
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
     Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']);
-    Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
     Route::post('/post/{posts}/like', [LikeController::class, 'store'])->name('post.like');
 });
 

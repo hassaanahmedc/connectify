@@ -14,7 +14,7 @@ class WelcomeController extends Controller
         
         $posts = Post::with(['user', 'postImages'])
         ->withCount('likes')
-        ->orderBy('created_at', 'desc')
+        ->orderBy('created_at', 'desc') 
         ->get()
         ->map(function ($post) use ($user_id) {
             $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
