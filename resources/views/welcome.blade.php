@@ -1,5 +1,5 @@
 <x-app-layout>
-@vite(['resources/js/imageUpload.js', 'resources/js/apis/likePost.js'])
+
     <div class="flex justify-between">
         {{-- Left Side --}}
         <aside class="w-1/5 px-8 py-12 bg-white">
@@ -53,7 +53,7 @@
             </div>
         </aside>
         {{-- Center (News Feed) --}}
-        <section class="w-6/12 mt-12">
+        <section class="w-5/12 mt-12">
             <div class="bg-white p-4 rounded-xl">
                 <div class="flex gap-6">
                     <div class=" w-10">

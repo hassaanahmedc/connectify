@@ -1,6 +1,6 @@
 {{-- Container --}}
 <div
-    class="flex flex-col bg-white rounded-xl mt-2 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
+    class="flex flex-col bg-white rounded-xl mt-2 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)] border">
     {{-- Card Content --}}
     <div class=" px-5 pt-5 pb-2">
         {{-- Header: User Info and Edit Button --}}
@@ -90,18 +90,29 @@
             @endforeach
         </div>
     @endif
+
     {{-- Like and comment section --}}
-    <div class="m-2 p-1">
+    <div x-data="{ commentSection: true }"
+        class="m-2 p-1">
         <div class="flex items-center gap-8">
             <button data-post-id="{{ $post->id }}"
                 data-user-id="{{ auth()->id() }}"
                 class="like-btn flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
-                <x-svg-icons.heart :isLiked="$post->liked_by_user" /> <span class="like-count">{{ $post->likes_count }}</span>
+                <x-svg-icons.heart :isLiked="$post->liked_by_user" /> <span
+                    class="like-count">{{ $post->likes_count }}</span>
             </button>
-            <button
+            <button x-on:click="commentSection = true"
                 class="flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
                 <x-svg-icons.comment /> <span class="comment">101</span>
             </button>
+        </div>
+        {{-- Comment dropdown --}}
+        <div x-cloak
+            x-show="commentSection"
+            @click.away="commentSection = false"
+            class="border-y-2">
+            <div> @include('comments.index') </div>
+            <div class="border-t-2"> @include('comments.create') </div>
         </div>
     </div>
 </div>

@@ -6,7 +6,7 @@
                     ? $post->user->avatar
                     : 'https://placewaifu.com/image/200';
             @endphp
-            @include('components.feed-card', [
+            @include('posts.feed-card', [
                 'profileUrl' => route('profile.view', $post->user->id),
                 'postId' => $post->id,
                 'userName' =>
