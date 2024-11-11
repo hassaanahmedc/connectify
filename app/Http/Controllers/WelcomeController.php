@@ -13,11 +13,13 @@ class WelcomeController extends Controller
         $user_id = Auth::id();
         
         $posts = Post::with(['user', 'postImages'])
-        ->withCount('likes')
+        ->withCount('likes', 'comment')
         ->orderBy('created_at', 'desc') 
         ->get()
         ->map(function ($post) use ($user_id) {
             $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
+            $post->limited_comments = $post->comment()->latest()->take(5)->with('user')->get();
+            
             return $post; 
         });
        return view('welcome', compact('posts'));

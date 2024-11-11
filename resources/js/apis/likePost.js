@@ -6,7 +6,7 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute
 const likePost = async function () {
     const postId = this.dataset.postId;
     const userId = this.dataset.userId;
-    const likeCount = this.querySelector('.like-count'); // No need to use closest() here
+    const likeCount = this.querySelector('.like-count');
     const likeIcon = this.querySelector('.like-icon');
     
     try {

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Post\LikeController;
+use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\PostController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -34,7 +35,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
     Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']);
-    Route::post('/post/{posts}/like', [LikeController::class, 'store'])->name('post.like');
+    Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
+    Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
 });
+Route::get('/post/{posts}/viewcomments', [CommentController::class, 'view']);
 
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';    

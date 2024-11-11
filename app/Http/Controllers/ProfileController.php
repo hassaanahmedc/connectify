@@ -24,7 +24,7 @@ class ProfileController extends Controller
         $currentUserId = $user->id;
         
         $user->load(['post' => function ($query) {
-            $query->orderBy('created_at', 'desc')->with('postImages')->withCount('likes'); 
+            $query->orderBy('created_at', 'desc')->with('postImages', 'comment')->withCount('likes', 'comment'); 
         }]);
 
         $user->post->each(function ($post) use ($currentUserId) {

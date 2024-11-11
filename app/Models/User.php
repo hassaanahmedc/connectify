@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function comment()
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function tokens(): MorphMany
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');

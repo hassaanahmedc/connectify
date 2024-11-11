@@ -14,6 +14,7 @@
                 'postTime' => $post->created_at->diffForHumans(),
                 'postContent' => $post->content,
                 'postImages' => $post->postImages,
+                'comments' => $post->limited_comments,
             ])
         @endforeach
     @endif
