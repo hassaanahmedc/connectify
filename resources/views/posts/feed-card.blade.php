@@ -113,12 +113,18 @@
             x-show="commentSection"
             @click.away="commentSection = false"
             class="border-y-2">
-            <div>
+            <div class="comments-container"
+                data-post-id="{{ $postId }}">
                 @if ($comments->count())
                     @include('comments.index', [
                         'comments' => $comments,
                     ])
                 @endif
+            </div>
+            <div class="my-1 py-1 text-center text-gray-500 ">
+                <button class="load-more-comments"
+                    data-post-id="{{ $postId }}"
+                    data-offset="5">View more comments</button>
             </div>
             <div class="border-t-2"> @include('comments.create', ['post_id' => $postId]) </div>
         </div>

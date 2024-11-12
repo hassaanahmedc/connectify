@@ -38,6 +38,6 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
 });
-Route::get('/post/{posts}/viewcomments', [CommentController::class, 'view']);
+Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
 
 require __DIR__.'/auth.php';    

@@ -31,24 +31,26 @@ class CommentController extends Controller
         return response()->json(['success' => 'Comment added successfully!', 'comment' => $comment], 200);    
     }
 
-    // public function view(Request $request)
-    // {
-    //     $comments = Comment::where($request->posts_id)->with('user')->orderBy('created_at')->get();
-    //     if ($comments->isEmpty()) {
-    //         return view('welcome', ['message' => 'No comments found']);
-    //     }
-    //     return view('welcome', compact('comments'));
-    // } 
+    public function view(Request $request)
+    {
+        $comments = Comment::where($request->posts_id)->with('user')->orderBy('created_at')->get();
+        if ($comments->isEmpty()) {
+            return view('welcome', ['message' => 'No comments found']);
+        }
+        return view('welcome', compact('comments'));
+    } 
 
-    // public function loadMore(Request $request, POST $post)
-    // {
-    //     $offset = $request->query('offset', 0);
-    //     $limit = 5;
+    public function loadMore(Request $request, POST $post)
+    {
+        $offset = $request->query('offset', 0);
+        $limit = 5;
 
-    //     $comments = $post->comment()->with('user')->orderBy('created_at', 'desc')->skip($offset)->take($limit)->get();
+        $comments = $post->comment()->with('user')->orderBy('created_at', 'desc')->skip($offset)->take($limit)->get();
 
-    //     return response()->json(['comments' => $comments], 200);
-    // }
+        $hasMoreComments = $post->comment()->count() > ($offset + $comments->count());
+
+        return response()->json($comments);
+    }
 
 
 }

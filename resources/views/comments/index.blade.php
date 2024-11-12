@@ -1,5 +1,5 @@
 @forelse($comments as $comment)
-    <div class=" my-2 py-2">
+    <div class="mt-2 pt-2">
         <div class="flex gap-2">
             <div class="w-8 h-8 flex-shrink-0">
                 <img src="https://placewaifu.com/image/200"
