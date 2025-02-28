@@ -27,4 +27,7 @@
             </main>
         </div>
     </body>
+    <script>
+    window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";
+</script>
 </html>

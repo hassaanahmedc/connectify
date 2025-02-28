@@ -69,11 +69,7 @@
                             profile</a>
                     </li>
                 </ul>
-
-
             </div>
-
-
         </div>
         {{-- Post Content --}}
         <div class="my-2">
@@ -92,9 +88,9 @@
     @endif
 
     {{-- Like and comment section --}}
-    <div x-data="{ commentSection: true }"
-        class="m-2 p-1">
-        <div class="flex items-center gap-8">
+    <div x-data="{ commentSection: false }"
+        class="mx-2 px-2">
+        <div class="flex items-center gap-8 p-2">
             <button data-post-id="{{ $postId }}"
                 data-user-id="{{ auth()->id() }}"
                 class="like-btn flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
@@ -113,7 +109,7 @@
             x-show="commentSection"
             @click.away="commentSection = false"
             class="border-y-2">
-            <div class="comments-container"
+            <div class="comments-container my-2"
                 data-post-id="{{ $postId }}">
                 @if ($comments->count())
                     @include('comments.index', [
@@ -121,11 +117,13 @@
                     ])
                 @endif
             </div>
-            <div class="my-1 py-1 text-center text-gray-500 ">
-                <button class="load-more-comments"
-                    data-post-id="{{ $postId }}"
-                    data-offset="5">View more comments</button>
-            </div>
+            @if ($post->comment_count > 5)
+                <div class="text-center text-gray-500">
+                    <button class="load-more-comments mb-2 pb-2"
+                        data-post-id="{{ $postId }}"
+                        data-offset="5">View more comments</button>
+                </div>
+            @endif
             <div class="border-t-2"> @include('comments.create', ['post_id' => $postId]) </div>
         </div>
     </div>

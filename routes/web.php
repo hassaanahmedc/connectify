@@ -34,9 +34,11 @@ Route::middleware('auth')->group(function () {
 //Laravel Sanctum Protected routes
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
+    // Post Routes
     Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']);
     Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
+    Route::delete('/post/{comment}/delete', [CommentController::class, 'destroy'])->name('comment.delete');
 });
 Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
 
