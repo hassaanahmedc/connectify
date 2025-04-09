@@ -29,11 +29,12 @@ class CommentController extends Controller
         
         return response()->json(['success' => 'Comment added successfully!', 'comment' => $commentData], 200);
     }
+
     public function loadMore(Request $request, POST $post)
     {
         $offset = $request->query('offset', 0);
-        $limit = 5;
-        $comments = $post->comment()->with('user')->orderBy('created_at', 'asc')->skip($offset)->take($limit)->get()
+        $limit = $request->query('limit', 5);
+        $comments = $post->comment()->with('user')->orderBy('created_at', 'desc')->skip($offset)->take($limit)->get()
             ->map(function ($comment) {
                     return [
                         'id' => $comment->id,
@@ -51,18 +52,37 @@ class CommentController extends Controller
         $hasMoreComments = $post->comment()->count() > $offset + $comments->count();
         return response()->json(['success' => $comments, 'hasMoreComments' => $hasMoreComments], 200);
     }
+    
     public function destroy(Comment $comment)
     {
-        // $isValidated = $request->validate([
-        //     'comment_id' => ['required', 'integer', 'exists:comments,id'],
-        // ]);
-
-        // $comment = Comment::findOrFail($isValidated['comments_id']);
-
         if (Gate::denies('delete', $comment)) {
             return response()->json(['error' => 'You are not allowed to delete this comment'], 403);
         }
         $comment->delete();
         return response()->json(['success' => 'Comment deleted successfully'], 200);
     }
+
+    public function update(Request $request, Comment $comment)
+    {
+        $this->authorize('update', $comment);
+
+        $validatedData = $request->validate([
+            'content' => 'required|string|max:255',
+        ]);
+
+        $comment->update([
+            'content' => $validatedData['content'],
+        ]);
+
+        $comment->load('user');
+        $commentData = $comment->toArray();
+        $commentData['can_delete'] = auth()->user()->can('delete', $comment);
+        $commentData['can_update'] = auth()->user()->can('update', $comment);
+
+        return response()->json([
+            'success' => 'Comment updated successfully!',
+            'comment' => $commentData,
+        ], 200);
+    }
+    
 }

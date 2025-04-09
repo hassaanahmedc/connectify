@@ -18,7 +18,7 @@ class WelcomeController extends Controller
         ->get()
         ->map(function ($post) use ($user_id) {
             $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
-            $post->limited_comments = $post->comment()->latest()->take(5)->with('user')->get()->reverse()->values();
+            $post->limited_comments = $post->comment()->latest()->take(5)->with('user')->get()->values();
             
             return $post; 
         });

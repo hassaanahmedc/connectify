@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
     Route::delete('/post/{comment}/delete', [CommentController::class, 'destroy'])->name('comment.delete');
+    Route::patch('/post/{comment}/update', [CommentController::class, 'update'])->name('comment.update');
 });
 Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
 
