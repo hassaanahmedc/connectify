@@ -29,22 +29,34 @@ class PostController extends Controller
      */
     public function store(CreatePostRequest $request)
     {
-        $validated = $request->validated();
-        $validated['user_id'] = Auth::id();
+        try {
+            // Log request information
+            \Log::info('PostController@store called with data: ' . json_encode($request->except(['images'])));
+            
+            $validated = $request->validated();
+            $validated['user_id'] = Auth::id();
 
-        $post = Post::create($validated);
+            $post = Post::create($validated);
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image){
-                $path = $image->store('images', 'public');
-                $post->postImages()->create(['path' => $path]);
+            // Handle image uploads
+            if ($request->hasFile('images')) {
+                \Log::info('Processing ' . count($request->file('images')) . ' images for post #' . $post->id);
+                
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('images', 'public');
+                    $post->postImages()->create(['path' => $path]);
+                }
             }
 
-                
+            \Log::info('Post created successfully, ID: ' . $post->id);
+            return redirect()->back()->with('success', 'Post created successfully!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to create post: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to create post: ' . $e->getMessage())
+                ->withInput();
         }
-
-
-        return redirect()->back()->with('success', 'Post created successfully!');
     }
 
     /**
@@ -60,16 +72,75 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, string $post)
     {
-        $validated = $request->validated();
-        $validated['user_id'] = Auth::id();
+        try {
+            \Log::info('PostController@update called for post #' . $post);
+            \Log::info('Request data:', $request->except(['images']));
+            
+            $validated = $request->validated();
+            
+            $get_post = Post::findOrFail($post);
+            
+            // Check authorization
+            if (Gate::denies('update', $get_post)) {
+                \Log::warning('Update denied due to authorization for post #' . $post);
+                return redirect()->back()->with('error', 'You are not authorized to update this post');
+            }
 
-        $get_post = Post::findOrFail($post);
+            $get_post->content = $validated['content'];
+            
+            // Handle image removals if specified
+            if ($request->has('removed_images')) {
+                try {
+                    $removedImageIds = json_decode($request->input('removed_images'), true);
+                    \Log::info('Processing image removals for post #' . $post . ': ' . implode(', ', $removedImageIds));
+                    
+                    foreach ($removedImageIds as $imageId) {
+                        $image = PostImage::find($imageId);
+                        if ($image && $image->posts_id == $get_post->id) {
+                            // Delete the file from storage if it exists
+                            if (\Storage::disk('public')->exists($image->path)) {
+                                \Storage::disk('public')->delete($image->path);
+                                \Log::info('Deleted file: ' . $image->path);
+                            } else {
+                                \Log::warning('File not found for deletion: ' . $image->path);
+                            }
+                            $image->delete();
+                            \Log::info('Deleted image #' . $imageId . ' from post #' . $post);
+                        } else {
+                            \Log::warning('Image #' . $imageId . ' not found or does not belong to post #' . $post);
+                        }
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error processing removed images: ' . $e->getMessage());
+                }
+            } else {
+                \Log::info('No images marked for removal');
+            }
+            
+            // Handle image uploads if present
+            if ($request->hasFile('images')) {
+                \Log::info('Processing new images for post update #' . $post);
+                
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('images', 'public');
+                    $get_post->postImages()->create(['path' => $path]);
+                    \Log::info('Added new image: ' . $path);
+                }
+            } else {
+                \Log::info('No new images uploaded');
+            }
 
-        $get_post->content = $validated['content'];
-
-        $get_post->save();
-
-        return redirect()->back()->with('success', 'Post updated successfully!');
+            $get_post->save();
+            
+            \Log::info('Post #' . $post . ' updated successfully');
+            return redirect()->back()->with('success', 'Post updated successfully!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to update post #' . $post . ': ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to update post: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -77,13 +148,23 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
+        // Add debug logging
+        \Log::info('PostController@destroy called with ID: ' . $id);
+        
         $post = Post::findOrFail($id);
 
         if (Gate::denies('delete', $post)){
+            \Log::warning('Deletion denied due to authorization');
             return redirect()->back()->with('error', 'You are not authorized to delete this post');
         }
 
-        $post->delete();
-        return redirect()->back()->with('Success', 'Post deleted successfully!');
+        try {
+            $post->delete();
+            \Log::info('Post deleted successfully: ' . $id);
+            return redirect()->back()->with('success', 'Post deleted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete post: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete post: ' . $e->getMessage());
+        }
     }
 }

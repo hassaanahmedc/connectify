@@ -281,6 +281,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    document.addEventListener('comment-delete-confirmed', async (event) => {
+        const commentId = event.detail.commentId;
+        if (commentId) {
+            console.log("Comment delete confirmed for ID:", commentId);
+            
+            // Create a mock event with a dataset property to reuse your existing deleteComment function
+            const mockEvent = { 
+                target: { 
+                    dataset: { 
+                        commentId: commentId 
+                    } 
+                } 
+            };
+            
+            await deleteComment(mockEvent);
+        }
+    });
+    
     // Event delegation for dynamic elements
     document.body.addEventListener("click", async (event) => {
         const target = event.target;
@@ -297,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
+
         // Edit Comment
         else if (target.matches(".edit-comment-btn") && commentId) {
             toggleEditMode(commentId, true);
@@ -317,13 +336,13 @@ document.addEventListener("DOMContentLoaded", () => {
             closeAllMenus();
         }
         // Confirm Delete
-        else if (target.matches(".confirm-delete-comment-btn") && commentId) {
+        else if (target.matches(".confirm-delete-btn") && commentId) {
             event.stopPropagation();
             closeAllModals();
             await deleteComment(event);
         }
         // Cancel Delete
-        else if (target.matches(".cancel-delete-comment-btn") && commentId) {
+        else if (target.matches(".cancel-delete-comment-btn, .cancel-delete-btn") && commentId) {
             event.stopPropagation();
             closeAllModals();
         }

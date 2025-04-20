@@ -7,7 +7,7 @@
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <a href="{{ $profileUrl }}"><img src="{{ $profileImageUrl }}"
-                        class="bg-gray-200 w-10 rounded-full"
+                        class="bg-gray-200 w-10 h-10 rounded-full object-cover"
                         alt=""></a>
                 <div>
                     <span
@@ -22,7 +22,7 @@
                 edit_post: false,
                 confirm_delete: false,
             }"
-                class="relative ">
+                class="relative">
                 <img src="{{ Vite::asset('/public/svg-icons/3dots.svg') }}"
                     class="cursor-pointer"
                     x-on:click="post_menu = true"
@@ -30,43 +30,40 @@
                 <ul x-cloak
                     x-show="post_menu"
                     @click.away="post_menu = false"
-                    class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md">
+                    class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md z-10">
 
                     @can('delete', $post)
                         <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                            <button x-on:click.prevent="confirm_delete = true">
-                                Delete Post</button>
-                            @include('components.confirm-alert', [
-                                'showVariable' => 'confirm_delete',
-                                'message' =>
-                                    'Are you sure you want to delete this post?',
-                                'action' => route('post.destroy', [
-                                    'post' => $postId,
-                                ]),
-                            ])
+                            <button 
+                                class="w-full text-left"
+                                x-on:click.prevent="confirm_delete = true">
+                                Delete Post
+                            </button>
+                            <x-confirm-alert 
+                                :show-variable="'confirm_delete'"
+                                :message="'Are you sure you want to delete this post?'"
+                                :action="route('post.destroy', ['post' => $postId])" />
                         </li>
-
+                        @endcan
+                    @can('update', $post)
                         <li
                             class="editBtn py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                            <a href="#"
-                                id="editBtn"
-                                x-on:click.prevent="edit_post = true">Edit Post</a>
-                            @include('posts.create', [
+                            <button 
+                                class="w-full text-left"
+                                x-on:click.prevent="edit_post = true;">
+                                Edit Post
+                            </button>
+                            <!-- Debug post images data with safer approach -->
+                            @include('posts.edit', [
                                 'showVariable' => 'edit_post',
-                                'isEdit' => true,
-                                'postUrl' => route('post.update', [
-                                    'post' => $postId,
-                                ]),
-                                'submitBtnName' => 'Edit Post',
+                                'post' => $post,
                                 'postImages' => $postImages,
                             ])
                         </li>
                     @endcan
 
                     <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                        <a href="#"
-                            x-on:click="edit_post = false">Pin to your
-                            profile</a>
+                        <a href="#" class="block w-full">Pin to your profile</a>
                     </li>
                 </ul>
             </div>
@@ -86,7 +83,7 @@
             @endforeach
         </div>
     @endif
-
+    
     {{-- Like and comment section --}}
     <div x-data="{ commentSection: false }"
         class="mx-2 px-2">

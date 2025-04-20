@@ -1,6 +1,7 @@
 @forelse($comments as $comment)
-    <div class="py-2"
-        data-comment-id="{{ $comment->id }}">
+    <div class="py-2" 
+        data-comment-id="{{ $comment->id }}"
+        x-data="{ showDeleteModal: false }">
         <div class="flex gap-2">
             <div class="w-8 h-8 flex-shrink-0">
                 <img src="https://placewaifu.com/image/200"
@@ -45,7 +46,10 @@
                         <ul class="comment-menu hidden w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md z-10">
                             @can('delete', $comment)
                                 <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                                    <button class="delete-comment-btn" data-comment-id="{{ $comment->id }}">
+                                    <button 
+                                        class="delete-comment-btn" 
+                                        data-comment-id="{{ $comment->id }}"
+                                        @click="showDeleteModal = true">
                                         Delete Comment
                                     </button>
                                 </li>
@@ -65,21 +69,14 @@
                 </div>
             </div>
         </div>
-        <!-- Delete confirmation modal -->
-        <div class="delete-comment-modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
-            <div class="bg-white p-4 rounded-lg shadow-lg max-w-md mx-auto">
-                <h3 class="text-lg font-bold mb-2">Delete Comment</h3>
-                <p>Are you sure you want to delete this comment?</p>
-                <div class="flex justify-end mt-4 space-x-2">
-                    <button type="button" class="cancel-delete-comment-btn px-4 py-2 bg-gray-200 rounded hover:bg-gray-300" data-comment-id="{{ $comment->id }}">
-                        Cancel
-                    </button>
-                    <button type="button" class="confirm-delete-comment-btn px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" data-comment-id="{{ $comment->id }}">
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
+        
+        <!-- Using the reusable confirm-alert component instead of inline modal -->
+        @if(Auth::check() && Auth::user()->can('delete', $comment))
+            <x-confirm-alert 
+                :show-variable="'showDeleteModal'" 
+                :message="'Are you sure you want to delete this comment?'" 
+                :comment-id="$comment->id" />
+        @endif
     </div>
 @empty
     <div>No Comments</div>
@@ -98,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const dropdown = this.closest('[x-data]');
             if (dropdown && dropdown.__x) {
                 dropdown.__x.$data.comment_menu = false;
-            }
+            }   
         });
     });
     

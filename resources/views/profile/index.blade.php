@@ -189,17 +189,18 @@
                     <div class="flex gap-4 ">
                         <div class=" w-10">
                             <img src="https://placewaifu.com/image/200"
-                                class="bg-gray-200 w-10 rounded-full"
+                                class="bg-gray-200 w-10 h-10 rounded-full"
                                 alt="">
                         </div>
-                        <div class="w-full md:h-[10vh]">
-                            <div class="relative flex items-center justify-end">
-                                <input type="search"
-                                    x-on:click = "create_post = true"
-                                    name=""
-                                    class="bg-lightMode-background rounded-full border-zinc-200 w-full text-sm focus:border-none"
-                                    placeholder="Share Something..."
-                                    id="">
+                        <div x-data="{ create_post: false }"
+                            class="w-full">
+                            <div 
+                                class="relative flex items-center justify-end cursor-pointer"
+                                @click="create_post = true">
+                                <div
+                                    class="bg-lightMode-background rounded-full border border-zinc-200 w-full text-sm py-2 px-4 text-gray-500">
+                                    Share something...
+                                </div>
                             </div>
                             {{-- Post Modal --}}
                             @include('posts.create', [
@@ -210,21 +211,24 @@
                             <div
                                 class="flex items-center justify-around gap-8 mt-4 sm:justify-around">
                                 <div
-                                    class="flex items-center gap-2 text-base font-semibold">
+                                    @click="create_post = true"
+                                    class="flex items-center gap-2 text-base font-semibold cursor-pointer hover:text-lightMode-primary transition-colors">
                                     <img src="{{ Vite::asset('/public/svg-icons/photos.svg') }}"
                                         class="w-7 h-auto"
                                         alt=""> <span>Image</span>
                                 </div>
 
                                 <div
-                                    class="flex items-center gap-2 text-base font-semibold">
+                                    @click="create_post = true"
+                                    class="flex items-center gap-2 text-base font-semibold cursor-pointer hover:text-lightMode-primary transition-colors">
                                     <img src="{{ Vite::asset('/public/svg-icons/videocam.svg') }}"
                                         class="w-7 h-auto"
                                         alt=""> <span>Video</span>
                                 </div>
 
                                 <div
-                                    class="text-base font-semibold hidden sm:flex">
+                                    @click="create_post = true"
+                                    class="text-base font-semibold hidden sm:flex cursor-pointer hover:text-lightMode-primary transition-colors">
                                     <img src="{{ Vite::asset('/public/svg-icons/poll.svg') }}"
                                         class="w-7 h-auto"
                                         alt=""> <span>Poll</span>
