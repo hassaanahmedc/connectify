@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<div class="flex flex-col" id="newsfeed">
     @if ($posts->count())
         @foreach ($posts as $post)
             @php

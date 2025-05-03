@@ -32,15 +32,20 @@ Route::middleware('auth')->group(function () {
 });
 
 //Laravel Sanctum Protected routes
-Route::middleware(['auth:sanctum', 'web'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
     // Post Routes
-    Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']);
+    // Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']); 
+    Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
+    Route::delete('/post/{post}/destroy', [PostController::class, 'destroy'])->name('post.destroy');
+    Route::patch('/post/{post}/update', [PostController::class, 'update'])->name('post.update');
+    
     Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
     Route::delete('/post/{comment}/delete', [CommentController::class, 'destroy'])->name('comment.delete');
     Route::patch('/post/{comment}/update', [CommentController::class, 'update'])->name('comment.update');
 });
 Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
+Route::get('/post/{post}/get',[PostController::class, 'show'])->name('post.get');
 
 require __DIR__.'/auth.php';    

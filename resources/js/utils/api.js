@@ -1,15 +1,39 @@
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
 export async function fetchData(url, options = {}) {
+    const headers = {
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': CSRF_TOKEN,
+        ...options.headers,
+    };
+
+    // Only set content-type for non-FormData bodies
+    if (!(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+    }
 
     const response = await fetch(url, {
-        headers: {
-            "content-type" : "application/json",
-            "X-CSRF-TOKEN" : CSRF_TOKEN,
-        },
-        credentials : "include",
+        headers,
+        credentials: 'include',
         ...options,
     });
-    if(!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    return response.json();
+
+    const text = await response.text();
+    console.log('fetchData raw response:', { status: response.status, text });
+
+    if (!response.ok) {
+        console.error('fetchData error:', {
+            status: response.status,
+            statusText: response.statusText,
+            responseText: text,
+        });
+        throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        console.error('JSON parse error:', error, { responseText: text });
+        throw error;
+    }
 }

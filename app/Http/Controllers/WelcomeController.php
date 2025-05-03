@@ -12,16 +12,19 @@ class WelcomeController extends Controller
     {
         $user_id = Auth::id();
         
-        $posts = Post::with(['user', 'postImages'])
-        ->withCount('likes', 'comment')
-        ->orderBy('created_at', 'desc') 
-        ->get()
-        ->map(function ($post) use ($user_id) {
-            $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
-            $post->limited_comments = $post->comment()->latest()->take(5)->with('user')->get()->values();
-            
-            return $post; 
-        });
-       return view('welcome', compact('posts'));
+        // Force a fresh query to avoid stale data
+        $posts = Post::withoutGlobalScopes()
+            ->with(['user', 'postImages'])
+            ->withCount(['likes', 'comment'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->fresh() // Ensure fresh data from the database
+            ->map(function ($post) use ($user_id) {
+                $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
+                return $post;
+            });
+
+        return response()->view('welcome', compact('posts'))
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 }

@@ -22,9 +22,28 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' =>  ['required', 'string', 'max:2000'],
+            'content' =>  ['nullable', 'string', 'max:2000'],
             'images' => ['nullable', 'array', 'max:5'],
             'images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'removed_images' => ['nullable', 'string'],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        // Log the raw request data for debugging
+        \Log::info('Raw request data: ', [
+            'all' => $this->all(),
+            'allFiles' => $this->allFiles(),
+            'content' => $this->input('content'),
+            'has_images' => $this->hasFile('images'),
+        ]);
+        // Only set default if content is not present at all
+        // This way we don't overwrite empty strings or null values from the request
+        if (!$this->has('content')) {
+            $this->merge([
+                'content' => '',
+            ]);
+        }
     }
 }

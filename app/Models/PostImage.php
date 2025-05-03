@@ -2,6 +2,7 @@
 
 namespace App\Models;
 use App\Http\Requests\Post\CreatePostRequest;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

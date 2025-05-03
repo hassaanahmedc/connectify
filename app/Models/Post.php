@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -27,6 +28,11 @@ class Post extends Model
     public function comment()
     {
         return $this->hasMany(Comment::class, 'posts_id');
+    }
+
+    public function limited_comments()
+    {
+        return $this->hasMany(Comment::class, 'posts_id')->latest()->take(5)->with('user');
     }
 
     public function user()

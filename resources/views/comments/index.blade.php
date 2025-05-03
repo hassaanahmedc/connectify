@@ -4,9 +4,9 @@
         x-data="{ showDeleteModal: false }">
         <div class="flex gap-2">
             <div class="w-8 h-8 flex-shrink-0">
-                <img src="https://placewaifu.com/image/200"
+                <img src="{{ $comment->user->avatar ?? 'https://placewaifu.com/image/200' }}"
                     class="bg-gray-200 rounded-full object-cover w-full h-full"
-                    loading="lazy"
+                    loading="lazy"  
                     alt="">
             </div>
             <div class="group relative bg-gray-100 flex-1 rounded-lg px-3 py-2">

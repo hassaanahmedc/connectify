@@ -1,3 +1,4 @@
+
 <x-app-layout>
 
     <div class="flex justify-between">
@@ -81,7 +82,8 @@
                             class="bg-gray-200 w-10 h-10 rounded-full"
                             alt="">
                     </div>
-                        <div x-data="{ create_post: false }"
+                        <div x-data="{ create_post: false }" 
+                        x-on:close-create-modal="create_post = false"
                         class="w-full">
                         <div 
                             class="relative flex items-center justify-end cursor-pointer"
