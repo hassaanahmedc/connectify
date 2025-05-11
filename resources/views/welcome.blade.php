@@ -83,7 +83,7 @@
                             alt="">
                     </div>
                         <div x-data="{ create_post: false }" 
-                        x-on:close-create-modal="create_post = false"
+                        x-on:close-modal.window="if ($event.detail.modal === 'create_post') create_post = false"
                         class="w-full">
                         <div 
                             class="relative flex items-center justify-end cursor-pointer"
@@ -99,7 +99,7 @@
                         
                         <!-- Post Creation Modal -->
                         @include('posts.create', [
-                            'showVariable' => 'create_post',
+                            'showVariable' => 'create_post',    
                         ])
                         
                         <div class="flex items-center gap-8 mt-4">

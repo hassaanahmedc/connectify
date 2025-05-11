@@ -145,9 +145,9 @@ class PostController extends Controller
             $get_post->content = $validated['content'] ?? null;
             
             // Handle image removals if specified
-            if ($request->has('removed_images') && $request->input('removed_images')) {
+            if ($request->has('removedImageIds') && $request->input('removedImageIds')) {
                 try {
-                    $removedImageIds = json_decode($request->input('removed_images'), true);
+                    $removedImageIds = json_decode($request->input('removedImageIds'), true);
                     \Log::info('Processing image removals for post #' . $post . ': ' . (is_array($removedImageIds) ? implode(', ', $removedImageIds) : 'invalid JSON'));
                     
                     if (is_array($removedImageIds)) {
@@ -167,7 +167,7 @@ class PostController extends Controller
                             }
                         }
                     } else {
-                        \Log::warning('Invalid removed_images JSON: ' . $request->input('removed_images'));
+                        \Log::warning('Invalid removedImageIds JSON: ' . $request->input('removedImageIds'));
                     }
                 } catch (\Exception $e) {
                     \Log::error('Error processing removed images: ' . $e->getMessage());

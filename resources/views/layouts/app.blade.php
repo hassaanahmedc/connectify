@@ -13,7 +13,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/likePost.js', 'resources/js/comment.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/likePost.js', 'resources/js/comment.js', 'resources/js/postModal.js'])
     </head>
     <body class="bg-lightMode-background light">
             

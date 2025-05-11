@@ -1,9 +1,6 @@
-{{-- resources/views/posts/feed-card.blade.php --}}
 <div class="flex flex-col bg-white rounded-xl mt-2 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)] border" 
     data-post-id="{{ $postId }}">
-    {{-- Card Content --}}
     <div class="px-5 pt-5 pb-2">
-        {{-- Header: User Info and Edit Button --}}
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <a href="{{ $profileUrl }}"><img src="{{ $profileImageUrl }}"
@@ -15,7 +12,8 @@
                     <span class="text-gray-400 text-sm inline">{{ $postTime }}</span>
                 </div>
             </div>
-            <div x-data="{ post_menu: false, edit_post: false, confirm_delete: false }" class="relative">
+            <div x-data="{ post_menu: false, edit_post: false, confirm_delete: false }" 
+            x-on:close-modal.window="if ($event.detail.modal === 'edit_post') edit_post = false" class="relative">
                 <img src="{{ Vite::asset('public/svg-icons/3dots.svg') }}"
                     class="cursor-pointer"
                     x-on:click="post_menu = true"
@@ -39,11 +37,17 @@
                             <button class="w-full text-left" x-on:click.prevent="edit_post = true;">
                                 Edit Post
                             </button>
-                            @include('posts.edit', [
-                                'showVariable' => 'edit_post',
-                                'post' => $post,
-                                'postImages' => $postImages ?? collect([]),
-                            ])
+                            <!-- Keep track of the edit modal state but defer initialization with x-teleport -->
+                            <template x-if="edit_post">
+                                <div x-show="edit_post" x-cloak>
+                                    @include('posts.edit', [
+                                        'showVariable' => 'edit_post',
+                                        'post' => $post,
+                                        'images' => $post->postImages ?? collect([]),
+                                        'mode' => 'edit'
+                                    ])
+                                </div>
+                            </template>
                         </li>
                     @endcan
                     <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
@@ -52,14 +56,12 @@
                 </ul>
             </div>
         </div>
-        {{-- Post Content --}}
         <div class="my-2">
             @if ($postContent)
                 <p>{{ $postContent }}</p>
             @endif
         </div>
     </div>
-    {{-- Image Container --}}
     @if (($postImages ?? collect([]))->count())
         <div>
             @foreach ($postImages as $image)
@@ -69,7 +71,6 @@
             @endforeach
         </div>
     @endif
-    {{-- Like and Comment Section --}}
     <div x-data="{ commentSection: false }" class="mx-2 px-2">
         <div class="flex items-center gap-8 p-2">
             <button data-post-id="{{ $postId }}"
@@ -86,7 +87,6 @@
                     data-user-id="{{ auth()->id() }}">{{ $post->comment_count ?? 0 }}</span>
             </button>
         </div>
-        {{-- Comment Dropdown --}}
         <div x-cloak
             x-show="commentSection"
             @click.away="commentSection = false"

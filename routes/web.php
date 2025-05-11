@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']); 
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::delete('/post/{post}/destroy', [PostController::class, 'destroy'])->name('post.destroy');
-    Route::patch('/post/{post}/update', [PostController::class, 'update'])->name('post.update');
+    Route::put('/post/{post}/update', [PostController::class, 'update'])->name('post.update');
     
     Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
