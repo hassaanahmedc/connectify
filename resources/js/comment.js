@@ -242,11 +242,89 @@ async function deleteComment(event) {
   }
 }
 
+async function deleteCommentById(commentId) {
+  const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+  if (!commentElement) return;
+  try {
+    const data = await fetchData(API_ENDPOINTS.deleteComment(commentId), {
+      method: "DELETE",
+    });
+    if (!data.success) {
+      console.log("Failed to delete comment:", data.error || "Unknown error");
+      return;
+    }
+    const postId = commentElement.closest(".comments-container")?.dataset.postId;
+    if (postId) {
+      const count = document.querySelector(
+        `${SELECTORS.count}[data-post-id="${postId}"]`,
+      );
+      if (count)
+        count.textContent = Math.max(0, parseInt(count.textContent) - 1);
+    }
+    commentElement.remove();
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+  }
+}
+
+function initCommentHandlers(container) {
+  container.addEventListener("click", async (event) => {
+    const target = event.target;
+    const commentId = target.dataset.commentId;
+
+    if (target.closest(SELECTORS.commentBtn)) {
+      await createComment(event);
+    } else if (target.closest(SELECTORS.loadMoreBtn)) {
+      await loadMoreComments(event);
+    } else if (target.matches(".three-dots") && commentId) {
+      event.stopPropagation();
+      closeAllMenus();
+      const menu = target.nextElementSibling;
+      if (menu?.classList.contains("comment-menu")) {
+        menu.classList.remove("hidden");
+      }
+    } else if (target.matches(".edit-comment-btn") && commentId) {
+      toggleEditMode(commentId, true);
+      closeAllMenus();
+    } else if (target.matches(".save-comment-btn") && commentId) {
+      await updateComment(event);
+    } else if (target.matches(".cancel-edit-btn") && commentId) {
+      toggleEditMode(commentId, false);
+    } else if (target.matches(".delete-comment-btn") && commentId) {
+      event.stopPropagation();
+      toggleDeleteModal(commentId, true);
+      closeAllMenus();
+    } else if (target.matches(".confirm-delete-btn") && commentId) {
+      event.stopPropagation();
+      closeAllModals();
+      await deleteComment(event);
+    } else if (
+      target.matches(".cancel-delete-comment-btn, .cancel-delete-btn") &&
+      commentId
+    ) {
+      event.stopPropagation();
+      closeAllModals();
+    }
+  });
+
+  container.addEventListener("input", (event) => {
+    if (event.target.matches(SELECTORS.textarea)) {
+      handleTextareaInput(event);
+    }
+  });
+}
+
 // Event Delegation
 document.addEventListener("DOMContentLoaded", () => {
   const newsfeed = document.querySelector("#newsfeed");
-  if (!newsfeed) return;
-
+  if (!newsfeed) {
+    // For pages that don't have a newsfeed container but have comments
+    document.querySelectorAll(".comments-container").forEach(container => {
+      initCommentHandlers(container);
+    });
+    return;
+  }
+  
   newsfeed.addEventListener("click", async (event) => {
     const target = event.target;
     const commentId = target.dataset.commentId;
@@ -305,12 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const commentId = event.detail.commentId;
     if (commentId) {
       console.log("Comment delete confirmed for ID:", commentId);
-      const mockEvent = {
-        target: {
-          dataset: { commentId },
-        },
-      };
-      await deleteComment(mockEvent);
+      await deleteCommentById(commentId);
     }
   });
 });

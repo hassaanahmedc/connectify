@@ -14,11 +14,10 @@ class WelcomeController extends Controller
         
         // Force a fresh query to avoid stale data
         $posts = Post::withoutGlobalScopes()
-            ->with(['user', 'postImages'])
+            ->with(['user', 'postImages', 'comment'])
             ->withCount(['likes', 'comment'])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->fresh() // Ensure fresh data from the database
             ->map(function ($post) use ($user_id) {
                 $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
                 return $post;

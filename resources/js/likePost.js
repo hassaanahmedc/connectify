@@ -2,7 +2,7 @@ import { fetchData } from "./utils/api.js";
 import { toggleButtonState } from "./utils/ui.js";
 
 const SELECTORS = {
-  likeBtn: ".like-btn",
+  likeBtns: ".like-btn",
   likeCount: ".like-count",
   likeIcon: ".like-icon",
 };
@@ -17,8 +17,7 @@ const API_ENDPOINTS = {
 };
 
 async function likePost(event) {
-  const button = event.target.closest(SELECTORS.likeBtn);
-  if (!button) return;
+  const button = event.currentTarget;
   const { postId, userId } = button.dataset;
   const likeCount = button.querySelector(SELECTORS.likeCount);
   const likeIcon = button.querySelector(SELECTORS.likeIcon);
@@ -40,8 +39,8 @@ async function likePost(event) {
       return;
     }
 
-    likeCount.textContent =
-      parseInt(likeCount.textContent, 10) + (data.liked ? 1 : -1);
+    const currentCount = parseInt(likeCount.textContent, 10);
+    likeCount.textContent = (isNaN(currentCount) ? 0 : currentCount) + (data.liked ? 1 : -1);
     likeIcon.classList.toggle(LIKE_STATES.likedClass, data.liked);
     likeIcon.classList.toggle(LIKE_STATES.defaultClass, !data.liked);
     toggleButtonState(button, false);
@@ -51,10 +50,6 @@ async function likePost(event) {
   }
 }
 
-// Event delegation
-document.addEventListener("DOMContentLoaded", () => {
-  const newsfeed = document.querySelector("#newsfeed");
-  if (newsfeed) {
-    newsfeed.addEventListener("click", likePost);
-  }
+document.querySelectorAll(SELECTORS.likeBtns).forEach((button) => {
+  button.addEventListener("click", likePost);
 });

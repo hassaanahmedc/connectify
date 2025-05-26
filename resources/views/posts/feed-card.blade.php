@@ -71,29 +71,33 @@
             @endforeach
         </div>
     @endif
-    <div x-data="{ commentSection: false }" class="mx-2 px-2">
+    <div x-data="{ commentSection: false }"
+        class="mx-2 px-2">
         <div class="flex items-center gap-8 p-2">
             <button data-post-id="{{ $postId }}"
                 data-user-id="{{ auth()->id() }}"
                 class="like-btn flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
-                <x-svg-icons.heart :isLiked="$post->liked_by_user ?? false" />
-                <span class="like-count">{{ $post->likes_count ?? 0 }}</span>
+                <x-svg-icons.heart :isLiked="$post->liked_by_user" /> <span
+                    class="like-count">{{ $post->likes_count ?? 0 }}</span>
             </button>
             <button x-on:click="commentSection = true"
                 class="flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg">
-                <x-svg-icons.comment />
-                <span class="comment-count"
+                <x-svg-icons.comment /> <span class="comment-count"
                     data-post-id="{{ $postId }}"
                     data-user-id="{{ auth()->id() }}">{{ $post->comment_count ?? 0 }}</span>
             </button>
         </div>
+        {{-- Comment dropdown --}}
         <div x-cloak
             x-show="commentSection"
             @click.away="commentSection = false"
             class="border-y-2">
-            <div class="comments-container my-2" data-post-id="{{ $postId }}">
-                @if (($comments ?? collect([]))->count())
-                    @include('comments.index', ['comments' => $comments])
+            <div class="comments-container my-2"
+                data-post-id="{{ $postId }}">
+                @if ($comments->count())
+                    @include('comments.index', [
+                        'comments' => $comments,
+                    ])
                 @endif
             </div>
             @if (($post->comment_count ?? 0) > 5)
@@ -103,9 +107,7 @@
                         data-offset="5">View more comments</button>
                 </div>
             @endif
-            <div class="border-t-2">
-                @include('comments.create', ['post_id' => $postId])
-            </div>
+            <div class="border-t-2"> @include('comments.create', ['post_id' => $postId]) </div>
         </div>
     </div>
 </div>

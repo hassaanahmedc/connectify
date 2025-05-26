@@ -21,10 +21,12 @@ class ProfileController extends Controller
     public function view(Request $request, User $user) :View
     {
         $isOwnProfile = Auth::check() && Auth::id() === $user->id;
-        $currentUserId = $user->id;
-        
+        $currentUserId = Auth::id(); // Use authenticated user's ID
+
         $user->load(['post' => function ($query) {
-            $query->orderBy('created_at', 'desc')->with('postImages', 'comment')->withCount('likes', 'comment'); 
+            $query->orderBy('created_at', 'desc')
+                  ->with('postImages', 'comment')
+                  ->withCount(['likes', 'comment']);
         }]);
 
         $user->post->each(function ($post) use ($currentUserId) {
