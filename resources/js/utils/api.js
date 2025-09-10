@@ -1,4 +1,4 @@
-const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+import { CSRF_TOKEN } from "../config/constants"
 
 export async function fetchData(url, options = {}) {
     const headers = {

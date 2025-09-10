@@ -1,4 +1,5 @@
-import { timeAgo } from "../timeAgo";
+import { timeAgo } from "./formatters";
+import { escapeHtml } from "./formatters";
 
 export function generateCommentHtml(comment) {
     return `
@@ -75,3 +76,19 @@ export function generateCommentHtml(comment) {
     </div>
     `;
 } 
+
+export function generateSearchDropdownHtml(data) {
+      return `
+            <li>
+                <a href="${escapeHtml(data.url ?? "#")}" class="flex gap-4 px-4 py-2 text-gray-500 hover:bg-lightMode-background">
+                    <figure>
+                        <img src="${data.avatar ?? "https://placewaifu.com/image/200"}" 
+                            class="bg-gray-200 w-9 h-auto rounded-full object-cover">
+                    </figure>
+                    <div>
+                        <div class="font-medium text-base">${escapeHtml(data.title ?? data.snipped ?? "")}</div>
+                        <div class="text-xs text-gray-500">${escapeHtml(data.type ?? "")}</div>
+                    </div>
+                </a>
+            </li>`;
+}

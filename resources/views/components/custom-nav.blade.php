@@ -1,3 +1,5 @@
+@vite('resources/js/features/search/index.js')
+
 <div x-data="{ searchOpen: false, leftSidebarOpen: false, rightSidebarOpen: false }" x-init="$watch('leftSidebarOpen', value => console.log('Sidebar state:', value))">
     <nav class="flex justify-between items-center px-4 sm:px-8 md:px-12 lg:px-20 py-2 bg-white sticky top-0 w-full z-50">
         <section id="searchSection"
@@ -24,13 +26,18 @@
                 <input type="search"
                     class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
                     name="search"
-                    id="search-desktop"
+                    id="search-nav-desktop"
                     placeholder="search"
                     required>
                 <a href=""
                     class="ml-2 px-2 absolute right-0"><img
                         src="{{ Vite::asset('/public/svg-icons/search.svg') }}"
                         alt="" class="w-5 h-5"></a>
+                <div id="search-results-desktop" 
+                    class="hidden absolute w-full top-full left-0 mt-2 bg-white border-zinc-200 rounded-xl shadow-xl">
+                    <ul class="divide-y divide-grey-200 text-sm max-h-60 overflow-y-auto"></ul>
+                </div>
+
             </div>
             
             {{-- Search Icon (Mobile) --}}
@@ -57,14 +64,18 @@
                 <div class="relative flex-1 mx-2">
                     <input type="search"
                         class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
-                        name="search-mobile"
-                        id="search-mobile"
+                        name="search-nav-mobile"
+                        id="search-nav-mobile"
                         placeholder="search"
                         required
                         @keydown.escape="searchOpen = false">
                     <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2">
                         <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-8 h-auto">
                     </button>
+                    <div id="search-results-mobile"
+                        class="hidden absolute top-full left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-50">
+                        <ul class="divide-y divide-gray-200 text-sm max-h-60 overflow-y-auto"></ul>
+                    </div>
                 </div>
             </div>
         </section>

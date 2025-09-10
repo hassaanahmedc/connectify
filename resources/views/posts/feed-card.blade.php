@@ -1,3 +1,7 @@
+@push('scripts')
+    @vite('resources/js/features/comments/comment.js')
+    @vite('resources/js/components/likePost.js')
+@endpush
 {{-- Post Component: Renders a social media post with user info, content, images, likes, and comments, using Tailwind for responsive design and Alpine.js for interactivity --}}
 <div class="flex flex-col bg-white rounded-xl mt-2 border post-shadow" 
     data-post-id="{{ $postId }}"
@@ -35,8 +39,8 @@
                     @click.away="post_menu = false"
                     class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md z-10">
                     @can('delete', $post)
-                        <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                            <button class="w-full text-left min-h-[44px] text-xs sm:text-sm" 
+                        <li class="px-6 py-2 hover:bg-gray-200">
+                            <button class="w-full text-left text-xs sm:text-sm" 
                                     x-on:click.prevent="confirm_delete = true">
                                 Delete Post
                             </button>
@@ -47,8 +51,8 @@
                         </li>
                     @endcan
                     @can('update', $post)
-                        <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                            <button class="w-full text-left min-h-[44px] text-xs sm:text-sm" 
+                        <li class="px-6 py-2 hover:bg-gray-200">
+                            <button class="w-full text-left text-xs sm:text-sm" 
                                     x-on:click.prevent="edit_post = true;">
                                 Edit Post
                             </button>
@@ -65,8 +69,8 @@
                             </template>
                         </li>
                     @endcan
-                    <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                        <a href="#" class="block w-full min-h-[44px] flex items-center text-xs sm:text-sm">
+                    <li class="px-6 py-2 hover:bg-gray-200">
+                        <a href="#" class="w-full text-left text-xs sm:text-sm">
                             Pin to your profile
                         </a>
                     </li>
@@ -176,4 +180,3 @@
         </div>
     </div>
 </div>
-

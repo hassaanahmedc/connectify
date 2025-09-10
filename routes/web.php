@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\searchController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Post\LikeController;
 use App\Http\Controllers\Post\CommentController;
@@ -35,17 +36,18 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
     // Post Routes
-    // Route::resource('/post', App\Http\Controllers\Post\PostController::class)->except(['create']); 
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::delete('/post/{post}/destroy', [PostController::class, 'destroy'])->name('post.destroy');
     Route::put('/post/{post}/update', [PostController::class, 'update'])->name('post.update');
-    
     Route::post('/post/{post}/like', [LikeController::class, 'store'])->name('post.like');
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
     Route::delete('/post/{comment}/delete', [CommentController::class, 'destroy'])->name('comment.delete');
     Route::patch('/post/{comment}/update', [CommentController::class, 'update'])->name('comment.update');
+
 });
+// Non Protected Public routes
+Route::get('/post/{post}',[PostController::class, 'show'])->name('post.view');
 Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
-Route::get('/post/{post}/get',[PostController::class, 'show'])->name('post.get');
+Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
 
 require __DIR__.'/auth.php';    

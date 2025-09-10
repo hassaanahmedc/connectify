@@ -1,6 +1,7 @@
-import { fetchData } from "./utils/api.js";
-import { toggleButtonState } from "./utils/ui.js";
-import { generateCommentHtml } from "./utils/templete.js";
+import { fetchData } from "/resources/js/utils/api.js";
+import { toggleButtonState } from "/resources/js/utils/ui.js";
+import { generateCommentHtml } from "/resources/js/utils/templete.js";
+import { API_ENDPOINTS } from "../../config/constants";
 
 const SELECTORS = {
   commentBtn: ".comment-btn",
@@ -11,13 +12,6 @@ const SELECTORS = {
   comment: (commentId) => `[data-comment-id="${commentId}"]`,
 };
 
-const API_ENDPOINTS = {
-  createComment: (postId) => `/post/${postId}/comment`,
-  loadComments: (postId, offset) =>
-    `/post/${postId}/viewcomments?offset=${offset}&limit=10`,
-  deleteComment: (commentId) => `/post/${commentId}/delete`,
-  updateComment: (commentId) => `/post/${commentId}/update`,
-};
 
 // UI Functions
 function toggleEditMode(commentId, enableEdit) {

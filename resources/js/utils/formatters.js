@@ -16,3 +16,10 @@ export function timeAgo(date) {
   const yearsAgo = Math.floor(daysAgo / 365);
   return `${yearsAgo} years ago`;
 }
+
+export function escapeHtml(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}

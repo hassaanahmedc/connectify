@@ -1,5 +1,6 @@
-import { fetchData } from "./utils/api.js";
-import { toggleButtonState } from "./utils/ui.js";
+import { fetchData } from "../utils/api";
+import { toggleButtonState } from "../utils/ui.js";
+import { API_ENDPOINTS } from "../config/constants.js"
 
 const SELECTORS = {
   likeBtns: ".like-btn",
@@ -10,10 +11,6 @@ const SELECTORS = {
 const LIKE_STATES = {
   likedClass: "liked-icon",
   defaultClass: "default-svg-color",
-};
-
-const API_ENDPOINTS = {
-  likePost: (postId) => `/post/${postId}/like`,
 };
 
 async function likePost(event) {
