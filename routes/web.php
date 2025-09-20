@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\searchController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Post\LikeController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\PostController;
@@ -46,7 +45,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 });
 // Non Protected Public routes
-Route::get('/post/{post}',[PostController::class, 'show'])->name('post.view');
+Route::get('/post/{post}', [PostController::class, 'show'])->name('post.view');
 Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
 Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
 

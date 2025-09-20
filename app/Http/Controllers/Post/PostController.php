@@ -1,16 +1,17 @@
 <?php
 
 namespace App\Http\Controllers\Post;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\Post\CreatePostRequest;
-use Illuminate\Support\Facades\Gate;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\UpdatePostRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\Post\PostCardResource;
+use App\Http\Controllers\Controller;
 use App\Models\Post;
-use App\Models\PostImage;
+use App\Services\PostService;
+use Exception;
 
 class PostController extends Controller
 {
@@ -19,8 +20,6 @@ class PostController extends Controller
      */
     public function index()
     {
-        $userId = Auth::id();
-    
         $posts = Post::with(['user', 'postImages', 'limited_comments'])
             ->withCount(['likes', 'comment'])
             ->latest()
@@ -32,180 +31,67 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreatePostRequest $request)
+    public function store(CreatePostRequest $request, PostService $postService)
     {
-        Log::info('PostController::store reached', ['request' => $request->all()]);
-        if ($request->hasFile('images')) {
-            Log::info('Files received:', array_map(fn($file) => [
-                'name' => $file->getClientOriginalName(),
-                'type' => $file->getClientMimeType(),
-                'size' => $file->getSize(),
-                'server_mime' => $file->getMimeType(),
-            ], $request->file('images')));
-        }
-        try {
-            $validated = $request->validated();
-            // $post = auth()->user()->posts()->create($validated);
-            $post = Post::create(array_merge($validated, ['user_id' => auth()->id()]));
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $path = $image->store('posts', 'public');
-                        $post->postImages()->create(['path' => $path]);
-                        Log::info('Stored image: ' . $path);
-                    } else {
-                        Log::warning('Invalid image file: ' . $image->getClientOriginalName());
-                    }
-                }
-            }
-            $post = $post->fresh()->load('user', 'postImages', 'limited_comments');
-            return response()->json([
-                'payload' => $post,
-                'postHtml' => view('posts.feed-card', [
-                    'post' => $post,
-                    'profileUrl' => route('profile.view', $post->user->id),
-                    'postId' => $post->id,
-                    'userName' => $post->user->fname . ' ' . $post->user->lname,
-                    'postTime' => $post->created_at->diffForHumans(),
-                    'postContent' => $post->content,
-                    'postImages' => $post->postImages ?? collect([]),
-                    'comments' => $post->limited_comments ?? collect([]),
-                    'profileImageUrl' => $post->user->avatar ?? 'https://placewaifu.com/image/200',
-                ])->render(),
-            ], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation failed', ['errors' => $e->errors()]);
-            return response()->json([
-                'error' => 'Validation failed',
-                'messages' => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Post creation failed: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json([
-                'error' => 'Server error occurred',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        $data = $request->validated();
+
+        $images = $request->file('images');
+
+        $post = $postService->CreatPostWithImages($data, auth()->user(), $images);
+        
+        return response()->json([
+            'payload' => $post,
+            'postHtml' => view('posts.feed-card', [
+                'post' => $post,
+                'profileUrl' => route('profile.view', $post->user->id),
+                'postId' => $post->id,
+                'userName' => $post->user->fname . ' ' . $post->user->lname,
+                'postTime' => $post->created_at->diffForHumans(),
+                'postContent' => $post->content,
+                'postImages' => $post->postImages ?? collect([]),
+                'comments' => $post->limited_comments ?? collect([]),
+                'profileImageUrl' => $post->user->avatar ?? 'https://placewaifu.com/image/200',
+            ])->render(),
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, Post $post)
     {
-        try {
-            // Fixed syntax errors in the query
-            $post = Post::with(['user', 'postImages'])
-                ->withCount(['likes', 'comment']) // Changed 'comment' to 'comments' assuming that's the relationship name
-                ->findOrFail($id);
-    
-            // Check if user has permission to view/edit this post
-            // Added null check for auth()->user() in case the user is not logged in
-            if (auth()->user() && ($post->user_id === auth()->id())) {
-                $post->liked_by_user = $post->likes()->where('user_id', auth()->id())->exists();
-                
-                return response()->json([
-                    'post' => $post,
-                    'images' => $post->postImages->map(function ($image) {
-                        return [
-                            'id' => $image->id,
-                            'url' => asset('storage/' . $image->path),
-                        ];
-                    })->values(),
-                ]);
-            } else {
-                return response()->json(['error' => 'Unauthorized'], 403);
-            }
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            Log::error('Error in PostController@show: ' . $e->getMessage());
-            Log::error($e->getTraceAsString());
-            
-            return response()->json(['error' => 'An error occurred while fetching the post'], 500);
+        if ($request->query('mode') === 'edit') {
+            $post->load(['postImages']);
+            return new PostCardResource($post);
         }
+
+        $with = [
+            'postImages',
+            'user',
+            'limited_comments',
+        ];
+
+        $post->load($with)->loadCount(['likes', 'comment']);
+
+        return new PostCardResource($post);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, string $post)
+    public function update(UpdatePostRequest $request, PostService $postService, Post $post)
     {
+        $this->authorize('update', $post);
+
+        $validated = $request->validated();
+        $newImages = $request->file('images', []);
+
+        $removedImageIds = $request->input('removedImageIds', []);
+        if(is_string($removedImageIds)) $removedImageIds = json_decode($removedImageIds, true) ?: [];
         try {
-            Log::info('PostController@update called for post #' . $post);
-            Log::info('Request data:', $request->except(['images']));
-            
-            $validated = $request->validated();
-            
-            $get_post = Post::findOrFail($post);
-            
-            // Check authorization
-            if (Gate::denies('update', $get_post)) {
-                Log::warning('Update denied due to authorization for post #' . $post);
-                return response()->json(['success' => false, 'error' => 'You are not authorized to update this post'], 403);
-            }
-    
-            // Log and set content
-            Log::info('Current content: ' . ($get_post->content ?? 'null'));
-            Log::info('Updating content to: ' . ($validated['content'] ?? 'null'));
-            $get_post->content = $validated['content'] ?? null;
-            
-            // Handle image removals if specified
-            if ($request->has('removedImageIds') && $request->input('removedImageIds')) {
-                try {
-                    $removedImageIds = json_decode($request->input('removedImageIds'), true);
-                    Log::info('Processing image removals for post #' . $post . ': ' . (is_array($removedImageIds) ? implode(', ', $removedImageIds) : 'invalid JSON'));
-                    
-                    if (is_array($removedImageIds)) {
-                        foreach ($removedImageIds as $imageId) {
-                            $image = PostImage::find($imageId);
-                            if ($image && $image->posts_id == $get_post->id) {
-                                if (Storage::disk('public')->exists($image->path)) {
-                                    Storage::disk('public')->delete($image->path);
-                                    Log::info('Deleted file: ' . $image->path);
-                                } else {
-                                    Log::warning('File not found for deletion: ' . $image->path);
-                                }
-                                $image->delete();
-                                Log::info('Deleted image #' . $imageId . ' from post #' . $post);
-                            } else {
-                                Log::warning('Image #' . $imageId . ' not found or does not belong to post #' . $post);
-                            }
-                        }
-                    } else {
-                        Log::warning('Invalid removedImageIds JSON: ' . $request->input('removedImageIds'));
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Error processing removed images: ' . $e->getMessage());
-                    return response()->json(['success' => false, 'error' => 'Failed to process image removals'], 500);
-                }
-            } else {
-                Log::info('No images marked for removal');
-            }
-            
-            // Handle image uploads if present
-            if ($request->hasFile('images')) {
-                Log::info('Processing new images for post update #' . $post);
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('posts', 'public');
-                    $get_post->postImages()->create(['path' => $path]);
-                    Log::info('Added new image: ' . $path);
-                }
-            } else {
-                Log::info('No new images uploaded');
-            }
-    
-            $get_post->save();
-            
-            // Log post state after save
-            $updated_post = $get_post->fresh();
-            Log::info('Post #' . $post . ' updated successfully');
-            Log::info('Updated content: ' . ($updated_post->content ?? 'null'));
-            Log::info('Remaining images: ' . $updated_post->postImages->pluck('id')->implode(', '));
-    
-            // FIXED: Added 'success' => true flag to make response format consistent
-            $response = [
-                'success' => true,
-                'postHtml' => view('posts.feed-card', [
+            $updated_post = $postService->UpdatePostWithImages($post, $validated, $removedImageIds, $newImages);
+
+            $postHtml = view('posts.feed-card', [
                     'post' => $updated_post,
                     'profileUrl' => route('profile.view', $updated_post->user->id),
                     'postId' => $updated_post->id,
@@ -215,44 +101,35 @@ class PostController extends Controller
                     'postImages' => $updated_post->postImages ?? collect([]),
                     'comments' => $updated_post->limited_comments ?? collect([]),
                     'profileImageUrl' => $updated_post->user->avatar ?? 'https://placewaifu.com/image/200',
-                ])->render(),
-            ];
-            
-            // FIXED: Return properly formatted JSON with correct Content-Type header
-            return response()->json($response, 200, [
-                'Content-Type' => 'application/json; charset=utf-8'
-            ]);
-            
-        } catch (\Exception $e) {
-            Log::error('Failed to update post #' . $post . ': ' . $e->getMessage());
+                ])->render();
+
             return response()->json([
-                'success' => false, 
-                'error' => 'Failed to update post: ' . $e->getMessage()
-            ], 500);
+                'success' => true,
+                'payload' => new PostCardResource($updated_post),
+                'postHtml' => $postHtml
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Post update faliled', ['post_id' => $post->id, 'error' => $e]);
+
+            return response()->json(['success' => false, 'error' => 'failed to update post'], 500);
         }
     }
+    
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post, PostService $postService)
     {
-        // Add debug logging
-        Log::info('PostController@destroy called with ID: ' . $id);
-        
-        $post = Post::findOrFail($id);
-
-        if (Gate::denies('delete', $post)){
-            Log::warning('Deletion denied due to authorization');
-            return redirect()->back()->with('error', 'You are not authorized to delete this post');
-        }
+        $this->authorize('delete', $post);
 
         try {
-            $post->delete();
-            Log::info('Post deleted successfully: ' . $id);
-            return redirect()->back()->with('success', 'Post deleted successfully!');
-        } catch (\Exception $e) {
-            Log::error('Failed to delete post: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to delete post: ' . $e->getMessage());
+            $postService->deletePost($post);
+            return redirect()->back()->with(['success' => true, 'message' => 'Post deleted successfully!']);
+
+        } catch (Exception $e) {
+            Log::error('Failed to delete post: ' , ['post_id' => $post->id, 'error' => $e]);
+            return redirect()->back()->with(['success' => false, 'message' => 'Failed to delete post: ' . $e]);
         }
     }
 }
