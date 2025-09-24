@@ -50,7 +50,6 @@ class UpdatePostRequest extends FormRequest
                 'content' => '',
             ]);
         }
-        
         if ($this->has('removedImageIds') && is_string($this->removedImageIds)) {
             $decoded = json_decode($this->removedImageIds, true);
             $this->merge([

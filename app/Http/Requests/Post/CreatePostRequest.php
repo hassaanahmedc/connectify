@@ -22,7 +22,7 @@ class CreatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' =>  ['required', 'string', 'max:2000'],
+            'content' =>  ['required', 'string', 'max:5000'],
             'images' => ['nullable', 'array', 'max:5'],
             'images.*' => ['nullable', 'file', 'max:5120'],
         ];

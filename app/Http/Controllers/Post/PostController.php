@@ -61,20 +61,17 @@ class PostController extends Controller
     public function show(Request $request, Post $post)
     {
         if ($request->query('mode') === 'edit') {
+            $this->authorize('update', $post);
             $post->load(['postImages']);
             return new PostCardResource($post);
         }
 
-        $with = [
-            'postImages',
-            'user',
-            'limited_comments',
-        ];
-
+        $with = ['postImages', 'user', 'limited_comments'];
         $post->load($with)->loadCount(['likes', 'comment']);
 
-        return new PostCardResource($post);
-    }
+        if ($request->expectsJson()) return new PostCardResource($post);
+        return view('posts.show', ['user' => Auth::user(), 'posts' => $post]);
+    }   
 
     /**
      * Update the specified resource in storage.

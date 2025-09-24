@@ -1,9 +1,10 @@
 @vite('resources/js/features/search/index.js')
 
-<div x-data="{ searchOpen: false, leftSidebarOpen: false, rightSidebarOpen: false }" x-init="$watch('leftSidebarOpen', value => console.log('Sidebar state:', value))">
-    <nav class="flex justify-between items-center px-4 sm:px-8 md:px-12 lg:px-20 py-2 bg-white sticky top-0 w-full z-50">
-        <section id="searchSection"
-            class="flex items-center justify-between gap-4 md:gap-8 lg:gap-16 w-full md:w-2/5">
+<div x-data="{ searchOpen: false, leftSidebarOpen: false, rightSidebarOpen: false }" 
+     x-init="$watch('leftSidebarOpen', value => console.log('Sidebar state:', value))">
+    <nav class="flex justify-between items-center px-4 sm:px-8 md:px-10 h-16 bg-white fixed top-0 w-full z-50 ">
+        <section id="logoSection"
+            class="flex items-center justify-between">
             {{-- Left Sidebar Toggle (Mobile) --}}
             <div class="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-base">
                 <button @click="leftSidebarOpen = !leftSidebarOpen" class="p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center">
@@ -20,9 +21,12 @@
             <div x-show="!searchOpen || window.innerWidth >= 768" class="flex-shrink-0">
                 @include('components.application-logo')
             </div>
-            
+        </section>
+
+        <section id="searchSection">
             {{-- Search Bar (Desktop) --}}
-            <div class="hidden md:flex relative min-w-[250px] items-center justify-end w-full">
+            <div class="hidden md:flex relative md:min-w-80 lg:min-w-96 items-center ">
+            
                 <input type="search"
                     class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
                     name="search"
@@ -37,16 +41,13 @@
                     class="hidden absolute w-full top-full left-0 mt-2 bg-white border-zinc-200 rounded-xl shadow-xl">
                     <ul class="divide-y divide-grey-200 text-sm max-h-60 overflow-y-auto"></ul>
                 </div>
-
             </div>
-            
             {{-- Search Icon (Mobile) --}}
             <div class="md:hidden ml-auto">
                 <button @click="searchOpen = !searchOpen" class="mr-2 flex items-center justify-center">
                     <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-6 h-6">
                 </button>
             </div>
-            
             {{-- Search Bar (Mobile) --}}
             <div x-show="searchOpen" 
                  x-transition:enter="transition ease-out duration-200"
@@ -81,30 +82,82 @@
         </section>
 
         <section id="iconSection"
-            class="flex gap-2" x-show="!searchOpen || window.innerWidth >= 768">
-            <div id=desktop-icons class=hidden>
-                <div>
+            class="" x-show="!searchOpen || window.innerWidth >= 768">
+            <div id="desktop-icons" class="md:flex md:items-center md:gap-3">
+                <div class="hidden lg:block">
                     <a href="">
                         <img class="min-w-8 h-fit"
                             src="{{ Vite::asset('/public/svg-icons/user-plus.svg') }}"
                             alt="">
                     </a>
                 </div>
-                <div>
+                <div class="hidden lg:block">
                     <a href=""><img class="w-8 h-fit"
                             src="{{ Vite::asset('/public/svg-icons/message.svg') }}"
                             alt=""></a>
                 </div>
-                <div>
+                <div class="hidden md:block">
                     <a href=""><img class="w-8 h-auto"
                             src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
                             alt=""></a>
                 </div>
+                <div class="hidden md:block">
+                    <div class="flex">
+                        <a href=""><img class="w-9 h-auto rounded-full"
+                                src="{{ 'https://placewaifu.com/image/200' ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
+                                alt=""></a>
+                        <x-dropdown align="right"
+                            width="48"
+                            alignmentClasses="top-0 right-0"
+                            contentClasses="bg-white">
+                            <x-slot name="trigger">
+                                <div class="ms-1">
+                                    <img class="w-5 h-auto"
+                                        src="{{ Vite::asset('/public/svg-icons/expand.svg') }}"
+                                        alt="">
+                                </div>
+                            </x-slot>
+        
+                            <x-slot name="content">
+                                @auth
+                                    <x-dropdown-link :href="route('profile.edit')"
+                                        class="dark:text-black dark:hover:bg-lightMode-background">
+                                        {{ __('Edit Profile') }}
+                                    </x-dropdown-link>
+        
+                                    <x-dropdown-link :href="route('profile.view', Auth::id())"
+                                        class="dark:text-black dark:hover:bg-lightMode-background">
+                                        {{ __(optional(Auth::user())->fname) }}
+                                    </x-dropdown-link>
+        
+                                    <form method="POST" 
+                                        action="{{ route('logout') }}">
+                                        @csrf
+                                        <x-dropdown-link :href="route('logout')"
+                                            class="dark:text-black dark:hover:bg-lightMode-background"
+                                            onclick="event.preventDefault();
+                                                            this.closest('form').submit();">
+                                            {{ __('Log Out') }}
+                                        </x-dropdown-link>
+                                    </form>
+                                @endauth
+        
+                                @guest
+                                    <x-dropdown-link :href="route('login')"
+                                        class="dark:text-black dark:hover:bg-lightMode-background">
+                                        {{ __('Log in') }}
+                                    </x-dropdown-link>
+                                @endguest
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                </div>
             </div>
+
             {{-- Nav Dropdown {Mobile}--}}
-            <div class="flex">
-                <a href=""><img class="w-8 h-auto"
-                        src="{{ Vite::asset('/public/svg-icons/guest-icon.svg') }}"
+            <div class="flex md:hidden">
+                <a href=""><img class="w-9 h-auto rounded-full"
+                        src="{{ 'https://placewaifu.com/image/200' ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
                         alt=""></a>
                 <x-dropdown align="right"
                     width="48"

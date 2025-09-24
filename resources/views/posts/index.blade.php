@@ -1,4 +1,4 @@
-<div class="flex flex-col" id="newsfeed">
+<div class="flex flex-col " id="newsfeed">
     @if ($posts->count())
         @foreach ($posts as $post)
             @php
@@ -7,6 +7,7 @@
                     : 'https://placewaifu.com/image/200';
             @endphp
             @include('posts.feed-card', [
+                'showComments' => false,
                 'profileUrl' => route('profile.view', $post->user->id),
                 'postId' => $post->id,
                 'userName' =>
@@ -17,5 +18,7 @@
                 'comments' => $post->limited_comments,
             ])
         @endforeach
+        @else
+        <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
     @endif
 </div>

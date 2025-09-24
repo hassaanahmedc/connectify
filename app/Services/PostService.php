@@ -38,29 +38,18 @@ Class PostService {
             $updatedPost = DB::transaction(function () use (
                 $post, $data, $removedImageIds, $newImages, &$pathsToDeleteAfterCommit, &$newlyStoredPaths)
                 {
-                    Log::info('inside DB transaction: ', [
-                        'post' => $post,
-                        'data' => $data,
-                        'removedImageIds' => $removedImageIds,
-                        'newImages' => $newImages,
-                        'pathsToDeleteAfterCommit' => $pathsToDeleteAfterCommit,
-                        'newlyStoredPaths' => $newlyStoredPaths,
-                    ]);
                     if (array_key_exists('content', $data)) {
                         $post->content = $data['content'];
                     }
 
                     if (!empty($removedImageIds)) {
-                        Log::info(['remove image ids received: ' => $removedImageIds]);
                         $images = $post->postImages()->whereIn('id', $removedImageIds)->get();
-                        Log::info(['remove image ids found in database: ' => $images]);
                         foreach($images as $img) {
                             if ($img->path) {
                                 Log::info(['Saving img to path to delete: ' => $images]);
                                 $pathsToDeleteAfterCommit[] = $img->path;
                             }
                             $img->delete();
-                            Log::info(['Total images in path to delete: ' => $pathsToDeleteAfterCommit]);
                         }
                     }
                     

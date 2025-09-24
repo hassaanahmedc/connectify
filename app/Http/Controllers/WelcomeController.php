@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
+use App\Models\User;
 
 class WelcomeController extends Controller
 {
@@ -26,4 +27,9 @@ class WelcomeController extends Controller
         return response()->view('welcome', compact('posts'))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
+
+    // public function show()
+    // {
+    //     $user = User::select(['content',])
+    // }
 }
