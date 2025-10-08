@@ -1,110 +1,139 @@
 import { CACHE } from './storage';
 import { debounce } from './performance';
-import { generateSearchDropdownHtml } from "./templete";
+import { generateSearchDropdownHtml } from './templete';
+import { generateNoResultsHtml } from './templete';
+import { generateLoadingHtml } from './templete';
+import { fetchData } from './api';
 import { QUERY_MIN_LENGTH, CACHE_LIMIT } from '../config/constants';
+import { searchFilters } from '../config/constants';
 
 const cache = new CACHE(CACHE_LIMIT);
 
 /** getSearchResults is used to fetch search results from the server.
- * @param {String} query 
+ * @param {String} query
  * @param {object} options
- * @returns {Promise<Array>} 
+ * @returns {Promise<Array>}
  */
 
-export async function getSearchResults(query, searchRoute, { signal } = {}) {
-  console.log("in getSearchResults")
-  if (!query || query.length < QUERY_MIN_LENGTH) return [];
-  if (query && searchRoute) console.log("query:", query, "route:", searchRoute);
-  const cached = cache.get(query);
-  if (cached) return cached;
+export async function getSearchResults(url, { signal } = {}) {
+    const normalizeUrl = url.toLowerCase();
+    const cached = cache.get(normalizeUrl);
+    if (cached) return cached;
 
-  const res = await fetch(`${searchRoute}?q=${encodeURIComponent(query)}`, {
-    signal,
-  });
-  if (!res.ok) throw new Error("Network error");
+    let data;
+    const res = await fetchData(url, { signal });
+    data = res
 
-  let data;
-  try {
-    data = await res.json();
-  } catch (error) {
-    throw new Error("invalid json response");
-  }
-  
-  console.log("data returned:", data.results)
-  cache.store(query, data.results);
-  return data.results;
+    cache.store(normalizeUrl, data.results ?? data);
+    return data.results;
 }
 
-/** appendSearchResults is used to append data into search dropdown 
- * @param {Array} results 
- * @param {HTMLElement} dropdownElement 
+/** appendSearchResults is used to append data into search dropdown
+ * @param {Array} results
+ * @param {HTMLElement} dropdownElement
  */
 
 export function appendSearchResults(results, dropdownElement) {
-  const list = dropdownElement.querySelector("ul");
+    console.log("inside appendSearch")
+    const list = dropdownElement.querySelector('ul');
+    if (!list) {
+        console.error("appendSearchResults: <ul> not found in dropdownElement", dropdownElement);
+        return
+    } else {
+        console.log("<ul> found")
+    }
 
-  if (!results || results.length === 0) {
-    list.innerHTML = `<li class="p-2 text-gray-500">No results found</li>`;
-    dropdownElement.classList.remove("hidden");
-    return;
-  }
-  list.innerHTML = `<li class="p-2 text-gray-500">Loading…</li>`;
-  dropdownElement.classList.remove("hidden");
-  const html = results
-  .map((r) => {
-      return generateSearchDropdownHtml(r)
-    }).join("");
+    if (!results || results.length === 0) {
+        list.innerHTML = generateNoResultsHtml();
+        dropdownElement.classList.remove('hidden');
+        return;
+    }
 
-  list.innerHTML = html;
-  dropdownElement.classList.remove("hidden");
+    const html = results.map(r => generateSearchDropdownHtml(r)).join('');
+    console.log('appendSearchResults html:', html);
+    list.innerHTML = html;
+    dropdownElement.classList.remove('hidden');
 }
 
 /** setupSearch sets up search funcitonality for both input and output 
   by combining getSearchREsults and appendSearchResult functions together
- * @param {HTMLElement} InputElement  - The search input element
+ * @param {HTMLElement} SearchInputElement  - The search input element
  * @param {string} searchRoute - The API route for search
  * @param {HTMLElement} dropdownElement - The dropdown element to append search results
  */
+let lastQuery = '';
+let controller = null;
 
-export function setupSearch(InputElement, searchRoute, dropdownElement) {
-  if (!InputElement || !dropdownElement) return;
-
-  let lastQuery = "";
-  let controller = null;
-
-  InputElement.addEventListener(
-    "input",
-    debounce(async function (e) {
-      const query = e.target.value.trim();
-
-      if (query.length < QUERY_MIN_LENGTH) {
-        dropdownElement.classList.add("hidden");
+async function performSearch(query, fitlersArray = [], searchRoute, dropdownElement) {
+    if (query.length < QUERY_MIN_LENGTH) {
+        dropdownElement.classList.add('hidden');
         return;
-      }
+    }
 
-      if (controller) controller.abort();
-      controller = new AbortController();
-      const { signal } = controller;
+    lastQuery = query;
 
-      lastQuery = query;
-      // calling functions to get search data from API and insert it in the DOM
-      try { 
-        const results = await getSearchResults(query, searchRoute, { signal });
-        console.log('[search] got results; lastQuery=', lastQuery, 'query=', query);
-          if (query !== lastQuery) {
-            console.log('[search] stale result ignored for', query);
-            return;
-          } 
+    const listEl = dropdownElement.querySelector('ul');
+    if (!listEl) {
+      console.log("performSearch: <ul not fopund inside dropdownElement>")
+      return  
+    } 
 
-        try {
-          appendSearchResults(results, dropdownElement);
-        } catch (renderError) {
-          console.log("error in appendSearchResults", renderError)
+    listEl.innerHTML = generateLoadingHtml();
+    dropdownElement.classList.remove('hidden');
+
+    if (controller) controller.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+
+    const params = new URLSearchParams();
+    params.set('q', query);
+
+    const valid = fitlersArray.filter(f => searchFilters.includes(f));
+    valid.forEach(f => params.set(f, 'true'));
+
+    const paramString = params.toString();
+    const url = `${searchRoute}?${paramString}`;
+
+
+    // calling functions to get search data from API and insert it in the DOM
+    try {
+        console.log('performSearch: fetching', url);
+        const results = await getSearchResults(url, { signal });
+        
+        if (query !== lastQuery) {
+          console.log('performSearch: result stale, ignoring', query)
+          return
         }
 
-      } catch (error) {
-        if (error.name === "AbortError") return;
-      }
-    }, 500),
-  );
+        try {
+            appendSearchResults(results, dropdownElement);
+        } catch (renderError) {
+            console.error('performSearch -> appendSearchResults error', renderError);
+        }
+    } catch (error) {
+        if (error.name === 'AbortError') return;
+        console.error('performSearch: unexpected fetch error', error);
+    }
+}
+export function setupSearch(SearchInputElement, searchRoute, filterGetter, dropdownElement, filterContainer = null) {
+    if (!SearchInputElement || !dropdownElement) return;
+
+    const onInput = debounce(function (e) {
+        const query = e.target.value.trim();
+        const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
+        performSearch(query, filterArray, searchRoute, dropdownElement);
+    }, 500);
+
+    SearchInputElement.addEventListener('input', onInput);
+
+    if (filterContainer) {
+        const container = document.querySelector(filterContainer);
+        if (container) {
+            container.addEventListener('change', (e) => {
+                const query = SearchInputElement.value.trim();
+                const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
+                performSearch(query, filterArray, searchRoute, dropdownElement);
+            });
+        };
+    };
 }

@@ -92,3 +92,11 @@ export function generateSearchDropdownHtml(data) {
                 </a>
             </li>`;
 }
+
+export function generateLoadingHtml() {
+    return `<li class="p-2 text-gray-500">Loading…</li>`;
+}
+
+export function generateNoResultsHtml() {
+    return `<li class="p-2 text-gray-500">No results found</li>`;
+}

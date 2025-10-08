@@ -5,7 +5,7 @@
     <x-custom-nav />
 </header>
 
-<div class="h-screen pt-16">
+<div class="mx-auto max-w-[1600px]  h-screen pt-16">
     <div class="flex h-[calc(100vh-4rem)]">
         <x-left-sidebar />
 
@@ -13,7 +13,15 @@
             @yield('main')
         </main>
 
-        <x-right-sidebar />
+        <x-right-sidebar>
+            <x-slot name="upperContainer">
+                @hasSection('append-data-to-rightSidebar')
+                    @yield('append-data-to-rightSidebar')
+                @else
+                    @include('components.right-sidebar-friends')
+                @endif
+            </x-slot>
+        </x-right-sidebar>
     </div>
 </div>
 @endsection

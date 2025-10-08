@@ -8,6 +8,16 @@ export const API_ENDPOINTS = {
   likePost: (postId) => `/post/${postId}/like`,
 };
 
+export const state = {
+  query: '',
+  filters: [],
+  results: [],
+  activeState: '',
+  isLoading: false,
+  error: null,
+}
+
+export const searchFilters = ['all', 'users', 'posts', 'near'];
 export const QUERY_MIN_LENGTH = 2;
 export const SEARCH_ROUTE = "/search/results";
 export const CACHE_LIMIT = 50;

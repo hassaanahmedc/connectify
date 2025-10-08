@@ -25,60 +25,65 @@
 
         <section id="searchSection">
             {{-- Search Bar (Desktop) --}}
-            <div class="hidden md:flex relative md:min-w-80 lg:min-w-96 items-center ">
-            
-                <input type="search"
-                    class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
-                    name="search"
-                    id="search-nav-desktop"
-                    placeholder="search"
-                    required>
-                <a href=""
-                    class="ml-2 px-2 absolute right-0"><img
-                        src="{{ Vite::asset('/public/svg-icons/search.svg') }}"
-                        alt="" class="w-5 h-5"></a>
-                <div id="search-results-desktop" 
-                    class="hidden absolute w-full top-full left-0 mt-2 bg-white border-zinc-200 rounded-xl shadow-xl">
-                    <ul class="divide-y divide-grey-200 text-sm max-h-60 overflow-y-auto"></ul>
-                </div>
-            </div>
-            {{-- Search Icon (Mobile) --}}
-            <div class="md:hidden ml-auto">
-                <button @click="searchOpen = !searchOpen" class="mr-2 flex items-center justify-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-6 h-6">
-                </button>
-            </div>
-            {{-- Search Bar (Mobile) --}}
-            <div x-show="searchOpen" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 transform scale-95"
-                 x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 transform scale-100"
-                 x-transition:leave-end="opacity-0 transform scale-95"
-                 class="absolute left-0 top-0 w-full bg-white p-2 flex items-center z-50 md:hidden">
-                <button @click="searchOpen = false" class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <div class="relative flex-1 mx-2">
+            <form action="{{ route('search.results') }}" method="GET">
+                <div class="hidden md:flex relative md:min-w-80 lg:min-w-96 items-center ">
                     <input type="search"
                         class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
-                        name="search-nav-mobile"
-                        id="search-nav-mobile"
-                        placeholder="search"
-                        required
-                        @keydown.escape="searchOpen = false">
-                    <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2">
-                        <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-8 h-auto">
-                    </button>
-                    <div id="search-results-mobile"
-                        class="hidden absolute top-full left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-50">
-                        <ul class="divide-y divide-gray-200 text-sm max-h-60 overflow-y-auto"></ul>
+                        name="q" 
+                        :disabled="searchOpen"
+                        id="search-nav-desktop"
+                        placeholder="search">
+                    <button type="submit" class="ml-2 px-2 absolute right-0">
+                            <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}"
+                            alt="" class="w-5 h-5"></button>
+                    <div id="search-results-desktop" 
+                        class="hidden absolute w-full top-full left-0 mt-2 bg-white border-zinc-200 rounded-xl shadow-xl">
+                        <ul class="divide-y divide-grey-200 text-sm max-h-60 overflow-y-auto">
+                            {{-- Search results preview here (Desktop) --}}
+                        </ul>
                     </div>
                 </div>
-            </div>
+                {{-- Search Icon (Mobile) --}}
+                <div class="md:hidden ml-auto">
+                    <figure @click="searchOpen = !searchOpen" class="mr-2 flex items-center justify-center cursor-pointer">
+                        <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-6 h-6">
+                    </figure>
+                </div>
+            
+                {{-- Search Bar (Mobile) --}}
+                <div x-show="searchOpen" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 transform scale-100"
+                     x-transition:leave-end="opacity-0 transform scale-95"
+                     class="absolute left-0 top-0 w-full bg-white p-2 flex items-center z-50 md:hidden">
+                    <figure @click="searchOpen = false" class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </figure>
+                    <div class="relative flex-1 mx-2">
+                        <input type="search"    
+                            class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
+                            name="q"
+                            id="search-nav-mobile"
+                            :disabled="!searchOpen" 
+                            placeholder="search"
+                            @keydown.escape="searchOpen = false">
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                            <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-8 h-auto">
+                        </button>
+                        <div id="search-results-mobile"
+                            class="hidden absolute top-full left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-50">
+                            <ul class="divide-y divide-gray-200 text-sm max-h-60 overflow-y-auto">
+                            {{-- Search results preview here (Mobile) --}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </section>
 
         <section id="iconSection"

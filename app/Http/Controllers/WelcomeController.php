@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class WelcomeController extends Controller
 {
     public function index()
     {
         $user_id = Auth::id();
-        
+
         // Force a fresh query to avoid stale data
         $posts = Post::withoutGlobalScopes()
             ->with(['user', 'postImages', 'comment'])
@@ -21,6 +20,7 @@ class WelcomeController extends Controller
             ->get()
             ->map(function ($post) use ($user_id) {
                 $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
+
                 return $post;
             });
 

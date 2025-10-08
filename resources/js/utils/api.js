@@ -3,6 +3,7 @@ import { CSRF_TOKEN } from "../config/constants"
 export async function fetchData(url, options = {}) {
     const headers = {
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': CSRF_TOKEN,
         ...options.headers,
     };
@@ -18,22 +19,14 @@ export async function fetchData(url, options = {}) {
         ...options,
     });
 
-    const text = await response.text();
-    console.log('fetchData raw response:', { status: response.status, text });
-
     if (!response.ok) {
         console.error('fetchData error:', {
             status: response.status,
             statusText: response.statusText,
             responseText: text,
         });
-        throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    try {
-        return JSON.parse(text);
-    } catch (error) {
-        console.error('JSON parse error:', error, { responseText: text });
-        throw error;
-    }
+    
+    return response.json();
 }

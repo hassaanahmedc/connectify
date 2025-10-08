@@ -42,11 +42,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/post/{post}/comment', [CommentController::class, 'store'])->name('post.comment');
     Route::delete('/post/{comment}/delete', [CommentController::class, 'destroy'])->name('comment.delete');
     Route::patch('/post/{comment}/update', [CommentController::class, 'update'])->name('comment.update');
+    Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
 
 });
 // Non Protected Public routes
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.view');
 Route::get('/post/{post}/viewcomments', [CommentController::class, 'loadMore']);
-Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
 
 require __DIR__.'/auth.php';    
