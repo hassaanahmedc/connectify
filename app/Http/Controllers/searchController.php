@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\SearchRequest;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use App\Models\Post;
 use App\Models\User;
-use Laravel\Prompts\SearchPrompt;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class searchController extends Controller
 {
@@ -24,7 +22,9 @@ class searchController extends Controller
             'near' => $request->boolean('near'),
         ];
 
-        if(!array_filter($filters)) $filters['all'] = true;
+        if (! array_filter($filters)) {
+            $filters['all'] = true;
+        }
 
         $users = collect();
         $posts = collect();
@@ -32,55 +32,71 @@ class searchController extends Controller
         if ($filters['users'] || $filters['all'] || $filters['near']) {
             $usersQuery = User::query()->select(['id', 'fname', 'lname', 'avatar']);
 
-            $usersQuery->where(function ($w) use ($q) { 
+            $usersQuery->where(function ($w) use ($q) {
                 $w->where('fname', 'like', "%{$q}%")->orWhere('lname', 'like', "%{$q}%");
             });
 
             if ($filters['near'] && auth()->check() && auth()->user()->city) {
                 $usersQuery->where('city', auth()->user()->city);
             }
-            $users = $usersQuery->limit(10)->get()->map(function ($u) {
-                return [
-                    'type' => 'user',
-                    'id' => $u->id,
-                    'title' => trim("{$u->fname} {$u->lname}"),
-                    'avatar' => $u->avatar,
-                    'url' => route('profile.view', $u->id),
-                ];
+            $users = $usersQuery->limit(10)->get()->map(function ($user) {
+                $user->type = 'user';
+
+                return $user;
             });
-        };
+        }
 
         if ($filters['posts'] || $filters['all']) {
-            $posts = Post::query()->select(['id', 'content', 'created_at'])->where('content', 'like', "%{$q}%")
-                ->limit(10)
-                ->get()
-                ->map(function ($post) {
+            $posts = Post::query()->select(['id', 'user_id', 'content', 'created_at'])->where('content', 'like', "%{$q}%")
+                ->with('user')->limit(10)->get()->map(function ($post) {
+                    $post->type = 'post';
+
+                    return $post;
+                });
+        }
+
+        $results = $users->concat($posts)->values();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $jsonResults = $results->map(function ($result) {
+                if ($result->type === 'user') {
+                    return [
+                        'type' => 'user',
+                        'id' => $result->id,
+                        'title' => trim("{$result->fname} {$result->lname}"),
+                        'avatar' => $result->avatar,
+                        'url' => route('profile.view', $result->id),
+                    ];
+                }
+
+                if ($result->type === 'post') {
                     return [
                         'type' => 'post',
-                        'id' => $post->id,
-                        'snipped' => Str::limit($post->content, 100),
-                        'created_at' => $post->created_at->toDateString(),
-                        'url' => route('post.view', $post->id),
+                        'id' => $result->id,
+                        'snipped' => Str::limit($result->content, 50),
+                        'created_at' => $result->created_at->diffForHumans(),
+                        'user' => [
+                            'id' => $result->user->id,
+                            'name' => trim("{$result->user->fname} {$result->user->lname}"),
+                            'avatar' => $result->user->avatar,
+                        ],
+                        'url' => route('post.view', $result->id),
                     ];
-                });
-            }
-        $results = $users->concat($posts)->values();
-        Log::info(
-            ['Search Query' => $q, 
-            'Filter' => $filters, 
-            'Results' => ['users' => $users, 'posts' => $posts]
-        ]);
-        if ($request->ajax() || $request->wantsJson()) {
+                }
+            });
+
             return response()->json([
                 'query' => $q,
                 'filters' => $filters,
-                'results' => $results
+                'results' => $jsonResults,
             ]);
         }
 
-        return view('results');
+        return view('results', compact('results'));
     }
-    public function navSearchFilters ($type) {
-    //
+
+    public function navSearchFilters($type)
+    {
+        //
     }
 }

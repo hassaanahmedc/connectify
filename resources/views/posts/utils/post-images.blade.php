@@ -13,7 +13,7 @@
                             class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white cursor-pointer"
                             x-on:click.stop="imagesModal = true"
                             aria-label="View {{ $postImages->count() - 4 }} more images">
-                            +{{ $postImages->count() - 4 }} more
+                            {{ $postImages->count() - 4 }} more
                         </div>
                     @endif
                 </figure>
