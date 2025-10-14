@@ -20,6 +20,8 @@ class SearchResource extends JsonResource
                 'type' => 'user',
                 'id' => $this->id,
                 'title' => trim("{$this->fname} {$this->lname}"),
+                'bio' => Str::limit($this->bio, 25),
+                'location' => $this->location,
                 'avatar' => $this->avatar,
                 'url' => route('profile.view', $this->id),
             ];

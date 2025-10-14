@@ -29,6 +29,7 @@
                         <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
                 @endif
             </div>
+
         </div>
     </section>
 @endsection

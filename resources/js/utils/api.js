@@ -23,7 +23,6 @@ export async function fetchData(url, options = {}) {
         console.error('fetchData error:', {
             status: response.status,
             statusText: response.statusText,
-            responseText: text,
         });
         throw new Error(`HTTP error! Status: ${response.status}`);
     }

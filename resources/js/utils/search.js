@@ -65,6 +65,7 @@ let lastQuery = '';
 let controller = null;
 
 async function performSearch(query, fitlersArray = [], searchRoute, dropdownElement) {
+    console.log('performSearch called with', query, fitlersArray);
     if (query.length < QUERY_MIN_LENGTH) {
         dropdownElement.classList.add('hidden');
         return;
@@ -89,7 +90,7 @@ async function performSearch(query, fitlersArray = [], searchRoute, dropdownElem
     params.set('q', query);
 
     const valid = fitlersArray.filter(f => searchFilters.includes(f));
-    valid.forEach(f => params.set(f, 'true'));
+    valid.forEach(f => params.set(f, '1'));
 
     const paramString = params.toString();
     const url = `${searchRoute}?${paramString}`;
@@ -132,6 +133,7 @@ export function setupSearch(SearchInputElement, searchRoute, filterGetter, dropd
             container.addEventListener('change', (e) => {
                 const query = SearchInputElement.value.trim();
                 const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
+                console.log('Filters changed:', filterArray);
                 performSearch(query, filterArray, searchRoute, dropdownElement);
             });
         };

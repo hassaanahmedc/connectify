@@ -30,6 +30,7 @@
                     <input type="search"
                         class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
                         name="q" 
+                        value="{{ request('q', '') }}"
                         :disabled="searchOpen"
                         id="search-nav-desktop"
                         placeholder="search">
@@ -69,6 +70,7 @@
                             class="bg-lightMode-background rounded-xl border-zinc-200 w-full text-sm focus:border-none"
                             name="q"
                             id="search-nav-mobile"
+                            value="{{ request('q', '') }}"
                             :disabled="!searchOpen" 
                             placeholder="search"
                             @keydown.escape="searchOpen = false">

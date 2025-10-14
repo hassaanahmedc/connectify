@@ -11,4 +11,4 @@ function readfilters() {
 }
 
 setupSearch(searchInputDesktop, SEARCH_ROUTE, readfilters, searchDropdownDesktop, '#search-filters');
-setupSearch(searchInputMobile, SEARCH_ROUTE, readfilters, searchDropdownMobile, '#search-filters')
+// setupSearch(searchInputMobile, SEARCH_ROUTE, readfilters, searchDropdownMobile, '#search-filters')

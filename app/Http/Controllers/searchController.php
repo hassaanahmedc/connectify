@@ -37,7 +37,7 @@ class searchController extends Controller
             ]);
         }
 
-        return view('results', compact('results'));
+        return view('results', compact('results', 'q'));
     }
 
     public function navSearchFilters($type)
