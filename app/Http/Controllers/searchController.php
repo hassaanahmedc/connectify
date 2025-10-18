@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
-use App\Http\Resources\SearchResource;
+use App\Http\Resources\Post\PostCardResource;
+use App\Http\Resources\Search\PostSearchResource;
+use App\Http\Resources\Search\UserSearchResource;
 use App\Services\SearchService;
 
 class searchController extends Controller
@@ -27,7 +29,9 @@ class searchController extends Controller
 
         if ($request->ajax() || $request->wantsJson()) {
             $jsonResults = $results->map(function ($result) {
-                return new SearchResource($result);
+                return $result->type === 'user' 
+                    ? new UserSearchResource($result)
+                    : new PostCardResource($result);
             });
 
             return response()->json([
@@ -37,7 +41,7 @@ class searchController extends Controller
             ]);
         }
 
-        return view('results', compact('results', 'q'));
+        return view('results', compact('results'));
     }
 
     public function navSearchFilters($type)

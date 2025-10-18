@@ -1,29 +1,30 @@
 @php
     $limit = 3;
+    $user_results = $results->where('type', 'user');
+    $post_resutls = $results->where('type', 'post');
 @endphp
 @extends('layouts.main')
 
 @section('main')
     <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md py-4 md:w-11/12 lg:w-full lg:max-w-lg xl:max-w-xl">
-        @if ($results && count($results))
+        @if ($user_results->isNotEmpty())
             <div class="rounded-xl bg-white shadow-md" id="user-container">
                 <div class="flex flex-col justify-center">
                     <h3 class="border-b px-3 py-2 text-lg font-semibold sm:px-5">People</h3>
-                    @foreach ($results->take($limit) as $result)
-                        @if ($result->type === 'user')
+                    @foreach ($user_results->take($limit) as $user)
                             @include('profile.user-card', [
-                                'user' => $result,
-                                'profileImageUrl' => !empty($result->user->avatar)
-                                    ? $result->user->avatar
+                                'user' => $user,
+                                'profileImageUrl' => !empty($user->user->avatar)
+                                    ? $user->user->avatar
                                     : 'https://placewaifu.com/image/200',
-                                'profileUrl' => $result->url,
-                                'userName' => $result->fname . ' ' . $result->lname,
-                                'userBio' => $result->bio,
-                                'userLocation' => $result->location,
+                                'profileUrl' => $user->url,
+                                'userName' => $user->fname . ' ' . $user->lname,
+                                'userBio' => $user->bio,
+                                'userLocation' => $user->location,
                             ])
-                        @endif
+                       
                     @endforeach
-                    @if ($results->count() > $limit)
+                    @if ($user_results->count() > $limit)
                         <span class="border-t px-3 py-2 hover:text-lightMode-blueHighlight sm:px-5"><a href="See all">View
                                 more</a></span>
                     @endif
