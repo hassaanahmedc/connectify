@@ -1,14 +1,35 @@
-import { setupSearch } from "../../utils/search";
-import { SEARCH_ROUTE } from "../../config/constants";
+import { setupSearchDropdown } from '../../utils/search';
+import { setupSearchPage } from '../../utils/search';
+import { SEARCH_ROUTE } from '../../config/constants';
 
-const searchInputDesktop = document.getElementById("search-nav-desktop");
-const searchDropdownDesktop = document.getElementById("search-results-desktop");
-const searchInputMobile = document.getElementById("search-nav-mobile");
-const searchDropdownMobile = document.getElementById("search-results-mobile");
+const searchInputDesktop = document.getElementById('search-nav-desktop');
+const searchDropdownDesktop = document.getElementById('search-results-desktop');
+const searchInputMobile = document.getElementById('search-nav-mobile');
+const searchDropdownMobile = document.getElementById('search-results-mobile');
+const searchResultsContainer = document.getElementById('searchResults');
 
 function readfilters() {
-    return Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+    return Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(
+        cb => cb.value
+    );
 }
 
-setupSearch(searchInputDesktop, SEARCH_ROUTE, readfilters, searchDropdownDesktop, '#search-filters');
-// setupSearch(searchInputMobile, SEARCH_ROUTE, readfilters, searchDropdownMobile, '#search-filters')
+setupSearchDropdown({
+    searchInput: searchInputDesktop,
+    searchRoute: SEARCH_ROUTE,
+    dropdownContainer: searchDropdownDesktop,
+});
+
+setupSearchDropdown({
+    searchInput: searchInputMobile,
+    searchRoute: SEARCH_ROUTE,
+    dropdownContainer: searchDropdownMobile,
+});
+
+setupSearchPage({
+    searchInput: searchInputDesktop,
+    searchRoute: SEARCH_ROUTE,
+    resultsContainer: searchResultsContainer,
+    filterGetter: readfilters,
+    filterContainer: '#search-filters',
+});

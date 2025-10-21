@@ -20,39 +20,45 @@ export async function getSearchResults(url, { signal } = {}) {
     const cached = cache.get(normalizeUrl);
     if (cached) return cached;
 
-    let data;
     const res = await fetchData(url, { signal });
-    data = res
+    const data = res
 
-    cache.store(normalizeUrl, data.results ?? data);
-    return data.results;
+    cache.store(normalizeUrl, data);
+    return data;
 }
 
 /** appendSearchResults is used to append data into search dropdown
- * @param {Array} results
+ * @param {Array} resultsPayload
  * @param {HTMLElement} dropdownElement
  */
 
-export function appendSearchResults(results, dropdownElement) {
-    console.log("inside appendSearch")
-    const list = dropdownElement.querySelector('ul');
-    if (!list) {
-        console.error("appendSearchResults: <ul> not found in dropdownElement", dropdownElement);
-        return
-    } else {
-        console.log("<ul> found")
-    }
+export function appendSearchResults(resultsPayload, searchResultsContainer) {
 
-    if (!results || results.length === 0) {
-        list.innerHTML = generateNoResultsHtml();
-        dropdownElement.classList.remove('hidden');
+    if (!resultsPayload) {
+        console.error('appendSearchResults: resultsPayload is undefined or null', resultsPayload);
+        if (searchResultsContainer) searchResultsContainer.classList.add('hidden');
         return;
     }
 
-    const html = results.map(r => generateSearchDropdownHtml(r)).join('');
-    console.log('appendSearchResults html:', html);
-    list.innerHTML = html;
-    dropdownElement.classList.remove('hidden');
+    if (!searchResultsContainer) {
+        console.warn("appendSearchResults: container not found");
+        return;
+    }
+
+    if (resultsPayload.html) {
+        searchResultsContainer.innerHTML = resultsPayload.html;
+        return;
+    } 
+
+    if (resultsPayload.results) {
+        const html = results.map(r => generateSearchDropdownHtml(r)).join('');
+        console.log('appendSearchResults html:', html);
+        searchResultsContainer.innerHTML = html;
+        searchResultsContainer.classList.remove('hidden');
+        return;
+    }
+    
+    console.error("appendSearchResults: unexpected payload format", resultsPayload);
 }
 
 /** setupSearch sets up search funcitonality for both input and output 
@@ -64,23 +70,20 @@ export function appendSearchResults(results, dropdownElement) {
 let lastQuery = '';
 let controller = null;
 
-async function performSearch(query, fitlersArray = [], searchRoute, dropdownElement) {
-    console.log('performSearch called with', query, fitlersArray);
+async function performSearch({ query, route, filters = [], container } = {}) {
+    console.log('performSearch called with', query, filters);
     if (query.length < QUERY_MIN_LENGTH) {
-        dropdownElement.classList.add('hidden');
+        container.classList.add('hidden'); 
         return;
     }
 
+    if (container.querySelector('ul')) {
+        const listEl = container.querySelector('ul');
+        listEl.innerHTML = generateLoadingHtml();
+        container.classList.remove('hidden');
+    }
+
     lastQuery = query;
-
-    const listEl = dropdownElement.querySelector('ul');
-    if (!listEl) {
-      console.log("performSearch: <ul not fopund inside dropdownElement>")
-      return  
-    } 
-
-    listEl.innerHTML = generateLoadingHtml();
-    dropdownElement.classList.remove('hidden');
 
     if (controller) controller.abort();
     controller = new AbortController();
@@ -89,12 +92,11 @@ async function performSearch(query, fitlersArray = [], searchRoute, dropdownElem
     const params = new URLSearchParams();
     params.set('q', query);
 
-    const valid = fitlersArray.filter(f => searchFilters.includes(f));
+    const valid = filters.filter(f => searchFilters.includes(f));
     valid.forEach(f => params.set(f, '1'));
 
     const paramString = params.toString();
-    const url = `${searchRoute}?${paramString}`;
-
+    const url = `${route}?${paramString}`;
 
     // calling functions to get search data from API and insert it in the DOM
     try {
@@ -107,7 +109,7 @@ async function performSearch(query, fitlersArray = [], searchRoute, dropdownElem
         }
 
         try {
-            appendSearchResults(results, dropdownElement);
+            appendSearchResults(results, container);
         } catch (renderError) {
             console.error('performSearch -> appendSearchResults error', renderError);
         }
@@ -116,25 +118,26 @@ async function performSearch(query, fitlersArray = [], searchRoute, dropdownElem
         console.error('performSearch: unexpected fetch error', error);
     }
 }
-export function setupSearch(SearchInputElement, searchRoute, filterGetter, dropdownElement, filterContainer = null) {
-    if (!SearchInputElement || !dropdownElement) return;
-
+export function setupSearchDropdown({ searchInput, searchRoute, dropdownContainer } = {}) {
+    if (!searchInput || !searchInput) return;
+    
     const onInput = debounce(function (e) {
         const query = e.target.value.trim();
-        const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
-        performSearch(query, filterArray, searchRoute, dropdownElement);
+        performSearch({ query: query, route: searchRoute, container: dropdownContainer });
     }, 500);
 
-    SearchInputElement.addEventListener('input', onInput);
+    searchInput.addEventListener('input', onInput);
+}
 
-    if (filterContainer) {
+export function setupSearchPage({ searchInput, searchRoute, resultsContainer, filterGetter, filterContainer } ={}) {
+        if (filterContainer) {
         const container = document.querySelector(filterContainer);
         if (container) {
             container.addEventListener('change', (e) => {
-                const query = SearchInputElement.value.trim();
+                const query = searchInput.value.trim();
                 const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
                 console.log('Filters changed:', filterArray);
-                performSearch(query, filterArray, searchRoute, dropdownElement);
+                performSearch({ query: query, route: searchRoute, filters: filterArray, container: resultsContainer });
             });
         };
     };
