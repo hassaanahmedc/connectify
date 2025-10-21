@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
-use App\Http\Resources\Post\PostCardResource;
-use App\Http\Resources\Search\PostSearchResource;
-use App\Http\Resources\Search\UserSearchResource;
 use App\Services\SearchService;
 
 class searchController extends Controller
@@ -27,17 +24,13 @@ class searchController extends Controller
         }
         $results = $SearchService->search($q, $filters);
 
-        if ($request->ajax() || $request->wantsJson()) {
-            $jsonResults = $results->map(function ($result) {
-                return $result->type === 'user' 
-                    ? new UserSearchResource($result)
-                    : new PostCardResource($result);
-            });
+        if ($request->ajax()) {
+            $html = view('partials.search.search-results', compact('results'))->render();
 
             return response()->json([
                 'query' => $q,
                 'filters' => $filters,
-                'results' => $jsonResults,
+                'html' => $html,
             ]);
         }
 

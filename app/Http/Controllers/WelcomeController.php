@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class WelcomeController extends Controller
@@ -13,16 +12,14 @@ class WelcomeController extends Controller
         $user_id = Auth::id();
 
         // Force a fresh query to avoid stale data
-        $posts = Post::withoutGlobalScopes()
+        $posts = Post::query()
             ->with(['user', 'postImages', 'comment'])
             ->withCount(['likes', 'comment'])
+            ->withExists(['likes as liked_by_user' => function ($query) use ($user_id) {
+                $query->where('user_id', $user_id);
+            }])
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($post) use ($user_id) {
-                $post->liked_by_user = $post->likes()->where('user_id', $user_id)->exists();
-
-                return $post;
-            });
+            ->get();
 
         return response()->view('welcome', compact('posts'))
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
