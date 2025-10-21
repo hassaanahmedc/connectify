@@ -9,7 +9,7 @@
     <div class="flex h-[calc(100vh-4rem)]">
         <x-left-sidebar />
 
-        <main class="flex-1 overflow-y-auto px-4 py-6">
+        <main class="flex-1 overflow-y-auto py-4">
             @yield('main')
         </main>
 

@@ -1,4 +1,4 @@
-<aside class="hidden lg:block w-80 bg-white border-l overflow-y-auto">
+<aside class="hidden lg:block w-72 xl:w-80 bg-white border-l overflow-y-auto">
     <div class="py-4">
         {{-- Dynamic container for Online friends or Search Filters based on page--}}
         {{ $upperContainer }}

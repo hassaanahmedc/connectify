@@ -1,8 +1,8 @@
 @extends('layouts.main')
 
 @section('main')
-    <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md py-4 md:w-11/12 lg:w-full lg:max-w-lg xl:max-w-xl">
-        <div class="mb-4 rounded-xl bg-white px-4 py-2">
+    <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md md:w-11/12 lg:w-full lg:max-w-lg lg:px-5 xl:px-0 xl:max-w-xl">
+        <div class="mb-2 rounded-xl bg-white px-4 py-2 shadow-sm">
             <div class="flex gap-4 md:gap-6">
                 <div class="flex-shrink-0">
                     <img alt="" class="h-auto w-9 rounded-full bg-gray-200 object-cover"
