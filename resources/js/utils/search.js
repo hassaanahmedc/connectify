@@ -15,13 +15,13 @@ const cache = new CACHE(CACHE_LIMIT);
  * @returns {Promise<Array>}
  */
 
-export async function getSearchResults(url, { signal } = {}) {
+export async function getSearchResults(url, { signal, headers } = {}) {
     const normalizeUrl = url.toLowerCase();
     const cached = cache.get(normalizeUrl);
     if (cached) return cached;
 
-    const res = await fetchData(url, { signal });
-    const data = res
+    const res = await fetchData(url, { signal, headers });
+    const data = res;
 
     cache.store(normalizeUrl, data);
     return data;
@@ -45,14 +45,14 @@ export function appendSearchResults(resultsPayload, searchResultsContainer) {
         return;
     }
 
-    if (resultsPayload.html) {
+    if (typeof resultsPayload.html === "string") {
         searchResultsContainer.innerHTML = resultsPayload.html;
+        container.classList.remove("hidden");
         return;
     } 
 
-    if (resultsPayload.results) {
-        const html = results.map(r => generateSearchDropdownHtml(r)).join('');
-        console.log('appendSearchResults html:', html);
+    if (Array.isArray(resultsPayload.results)) {
+        const html = resultsPayload.results.map(r => generateSearchDropdownHtml(r)).join('');
         searchResultsContainer.innerHTML = html;
         searchResultsContainer.classList.remove('hidden');
         return;
@@ -70,7 +70,7 @@ export function appendSearchResults(resultsPayload, searchResultsContainer) {
 let lastQuery = '';
 let controller = null;
 
-async function performSearch({ query, route, filters = [], container } = {}) {
+async function performSearch({ query, route, filters = [], container, headers = {} } = {}) {
     console.log('performSearch called with', query, filters);
     if (query.length < QUERY_MIN_LENGTH) {
         container.classList.add('hidden'); 
@@ -101,7 +101,7 @@ async function performSearch({ query, route, filters = [], container } = {}) {
     // calling functions to get search data from API and insert it in the DOM
     try {
         console.log('performSearch: fetching', url);
-        const results = await getSearchResults(url, { signal });
+        const results = await getSearchResults(url, { signal, headers });
         
         if (query !== lastQuery) {
           console.log('performSearch: result stale, ignoring', query)
@@ -123,21 +123,30 @@ export function setupSearchDropdown({ searchInput, searchRoute, dropdownContaine
     
     const onInput = debounce(function (e) {
         const query = e.target.value.trim();
-        performSearch({ query: query, route: searchRoute, container: dropdownContainer });
+        performSearch({ 
+            query: query, 
+            route: searchRoute, 
+            container: dropdownContainer, 
+            headers: { 'X-Search-Context': 'dropdown' } });
     }, 500);
 
     searchInput.addEventListener('input', onInput);
 }
 
 export function setupSearchPage({ searchInput, searchRoute, resultsContainer, filterGetter, filterContainer } ={}) {
-        if (filterContainer) {
+    if (filterContainer) {
         const container = document.querySelector(filterContainer);
         if (container) {
             container.addEventListener('change', (e) => {
                 const query = searchInput.value.trim();
                 const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
                 console.log('Filters changed:', filterArray);
-                performSearch({ query: query, route: searchRoute, filters: filterArray, container: resultsContainer });
+                performSearch({ 
+                    query: query, 
+                    route: searchRoute, 
+                    filters: filterArray, 
+                    container: resultsContainer, 
+                    headers: { 'X-Search-Context': 'results' } });
             });
         };
     };

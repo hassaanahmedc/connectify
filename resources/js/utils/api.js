@@ -1,11 +1,15 @@
 import { CSRF_TOKEN } from "../config/constants"
 
 export async function fetchData(url, options = {}) {
-    const headers = {
+    const defaultHeaders = {
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': CSRF_TOKEN,
-        ...options.headers,
+    };
+
+    const headers = {
+        ...defaultHeaders,
+        ...(options.headers || {}),
     };
 
     // Only set content-type for non-FormData bodies
@@ -14,18 +18,24 @@ export async function fetchData(url, options = {}) {
     }
 
     const response = await fetch(url, {
-        headers,
         credentials: 'include',
         ...options,
+        headers,
     });
 
     if (!response.ok) {
         console.error('fetchData error:', {
             status: response.status,
             statusText: response.statusText,
+            url,
         });
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
     
-    return response.json();
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+        return response.json();
+    } else {
+        return response.text(); // fallback for HTML
+    }
 }
