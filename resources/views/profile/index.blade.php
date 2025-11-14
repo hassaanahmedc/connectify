@@ -1,213 +1,159 @@
-<x-app-layout>
-    <div class="mx-auto my-0 max-w-[1280px]">
-        {{-- header --}}
-        <div class="">
-            <header class="relative h-[50vh] max-h-[480px] w-full">
-                <img alt="" class="h-full w-full object-cover" src="{{ Vite::asset('/public/images/user/post/post.jpg') }}">
+{{-- @dd($user) --}}
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="{{ csrf_token() }}" name="csrf-token">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto&display=swap"
+        rel="stylesheet">
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/components/follow.js'])
+</head>
+
+<body class="light bg-lightMode-background">
+    <header>
+        <x-custom-nav />
+    </header>
+
+    <div class="mx-auto my-0">
+
+        <div class="flex h-[calc(100vh-4rem)] flex-col">
+            <header class="relative max-h-96 w-screen min-w-96 opacity-85">
+                <img alt="" class="h-full w-full object-cover"
+                    src="{{ Vite::asset('/public/images/user/post/post.jpg') }}">
+                <div class="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-b from-transparent to-white"></div>
             </header>
-            <section class="bg-white" x-data="{ edit_profile: false }">
-                <div class="mb-[-50px] flex translate-y-[-25%] transform flex-col items-center justify-center px-8 md:translate-y-[-50%] md:transform md:flex-row md:items-end md:justify-between">
-                    {{-- Profile Picture --}}
-                    <div class="flex flex-col items-center gap-2 md:flex-row md:items-end">
-                        <figure class="w-[168px] rounded-full bg-white p-1">
-                            <img alt="" class="aspect-square h-full w-full rounded-full object-cover" src="https://placewaifu.com/image/200">
+
+            <div class="wrapper flex flex-col items-center">
+                <div class="container w-11/12 min-w-80 max-w-lg -mt-20 flex flex-col justify-between gap-5 relative z-20"
+                    id="user-profile-card">
+
+                    <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md"
+                        x-data="{ edit_profile: false, edit_bio: false, create_post: false }">
+
+
+                        <figure class="w-36 rounded-full">
+                            <img alt="" class="aspect-square h-full w-full rounded-full object-cover"
+                                src="https://placewaifu.com/image/200">
                         </figure>
-                        <div class="my-2 text-center md:text-start">
-                            @auth
-                            @if ($user->id === Auth::id())
-                            <h1 class="text-3xl font-bold">
-                                {{ Auth::user()->fname }}
-                                {{ Auth::user()->lname }}</h1>
-                            <span class="text-lightMode-text">{{ Auth::user()->email }}</span>
-                            @else
-                            <h1 class="text-3xl font-bold">
+
+                        <div class="text-center">
+                            <h1 class="my-3 text-xl font-semibold">
                                 {{ $user->fname }}
                                 {{ $user->lname }}</h1>
-                            <span class="text-lightMode-text">{{ $user->email }}</span>
-                            @endif
+                            <span class="text-sm text-lightMode-text">{{ $user->bio }}</span><br>
+                            <div class="my-3 text-lightMode-text">
+                                <span class="">From <span
+                                        class="font-semibold">{{ $user->location }}</span></span>
+                            </div>
+                        </div>
+
+                        <div class="my-2 flex gap-2 text-sm sm:text-base">
+                            @auth
+                                @if ($user->id === Auth::id())
+                                    <a
+                                        class="flex items-center gap-2 rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white">
+                                        420 Followers
+                                    </a>
+                                    <button
+                                        class="flex items-center gap-2 rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
+                                        x-on:click="edit_profile=true">
+                                        Edit Profile
+                                    </button>
+                                @else
+                                    <span id="follower-count">{{ $user->followers_count }}</span>
+                                    <button
+                                        class="flex cursor-pointer items-center gap-2 rounded bg-lightMode-primary px-4 py-2 font-semibold text-white"
+                                        type="button">
+                                        <span data-user-id="{{ $user->id }}"
+                                            id="follow-btn">{{ $user->followed ? 'Unfollow' : 'Follow' }}</span>
+
+                                    </button>
+
+                                    <a class="flex items-center gap-2 rounded bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300"
+                                        href="{{ route('profile.edit') }}">
+                                        Message
+                                    </a>
+                                @endif
 
                             @endauth
+                            @include('profile.edit-profile-modal')
                         </div>
-                    </div>
-                    <div class="relative my-2 flex gap-2 text-sm sm:text-base">
-                        @auth
-                        @if ($user->id === Auth::id())
-                        <a class="flex items-center gap-2 rounded bg-lightMode-primary px-4 py-2 font-semibold text-white">
-                            <img alt="Edit Icon" class="text-black" src="{{ Vite::asset('/public/svg-icons/camera.svg') }}">
-                            420 Friends
-                        </a>
-                        <button class="flex items-center gap-2 rounded bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300" x-on:click="edit_profile=true">
-                            <img alt="Edit Icon" class="text-black" src="{{ Vite::asset('/public/svg-icons/edit.svg') }}">
-                            Edit Profile
-                        </button>
-                        @else
-                        <a class="flex items-center gap-2 rounded bg-lightMode-primary px-4 py-2 font-semibold text-white">
-                            <img alt="Edit Icon" class="text-black" src="{{ Vite::asset('/public/svg-icons/camera.svg') }}">
-                            Follow
-                        </a>
-                        <a class="flex items-center gap-2 rounded bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300" href="{{ route('profile.edit') }}">
-                            <img alt="Edit Icon" class="text-black" src="{{ Vite::asset('/public/svg-icons/edit.svg') }}">
-                            Message
-                        </a>
-                        @endif
+                    </section>
 
-                        @endauth
-                    </div>
-                </div>
-                @include('profile.edit-profile-modal')
-                <script></script>
-            </section>
-        </div>
-        {{-- Main content --}}
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
+                    <section class="rounded-lg bg-white px-5 py-4 shadow-md">
+                        <h6 class="text-lg font-semibold">Interests</h6>
+                        <ul class="mt-4 flex flex-wrap items-center gap-2 text-sm">
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Gaming</li>
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Coding</li>
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Anime</li>
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Video Editting</li>
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Music Desgin</li>
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Software Engineer</li>
+                        </ul>
+                    </section>
 
-        <div class="mx-auto my-0 flex min-w-[360px] max-w-5xl flex-col gap-6 px-6 md:flex-row md:px-0" x-data="{ edit_bio: false, create_post: false }">
-
-            <section class="mt-16 h-fit rounded-lg md:sticky md:top-0 md:w-2/5">
-                <div class="bg-white p-4 px-6 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
-                    <h1 class="mb-2 font-montserrat text-xl font-bold">Bio</h1>
-                    <span class="font-roboto">{{ $user->bio }}</span>
-                    <div class="mt-2 flex gap-1">
-                        <img alt="" src="{{ Vite::asset('/public/svg-icons/location.svg') }}">
-                        <span>From <span class="font-semibold">{{ $user->location }}</span></span>
-                    </div>
-
-                    <div class="mt-2 w-full cursor-pointer rounded bg-gray-200 py-2 text-center transition-all hover:bg-gray-300" x-on:click="edit_bio = true">
-                        <span class="font-semibold">Edit Bio</span>
-                    </div>
-
-                    @include('profile.edit-bio', ['user' => $user])
-                </div>
-                <div class="mt-8 bg-white p-4 px-6 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
-                    <h1 class="mb-2 font-montserrat text-xl font-bold">chem</h1>
-                    <span class="font-roboto">Lorem, ipsum dolor sit amet
-                        consectetur adipisicing elit. Delectus eaque
-                        eligendi
-                        deleniti quisquam, blanditiis sunt ratione maxime
-                        magni
-                        repudiandae sit nesciunt porro quaerat quod et
-                        culpa,
-                        amet ad vero quo? Voluptatibus beatae assumenda id
-                        temporibus nostrum excepturi quo esse
-                        molestias?</span>
-                    <div class="mt-2 flex gap-1">
-                        <img alt="" src="{{ Vite::asset('/public/svg-icons/location.svg') }}">
-                        <span>From <span class="font-semibold">Sukkur</span></span>
-                    </div>
-                </div>
-
-                <div class="mt-8 bg-white p-4 px-6 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
-                    <h1 class="mb-2 font-montserrat text-xl font-bold">SST</h1>
-                    <span class="font-roboto">Lorem, ipsum dolor sit amet
-                        consectetur adipisicing elit. Delectus eaque
-                        eligendi
-                        deleniti quisquam, blanditiis sunt ratione maxime
-                        magni
-                        repudiandae sit nesciunt porro quaerat quod et
-                        culpa,
-                        amet ad vero quo? Voluptatibus beatae assumenda id
-                        temporibus nostrum excepturi quo esse
-                        molestias?</span>
-                    <div class="mt-2 flex gap-1">
-                        <img alt="" src="{{ Vite::asset('/public/svg-icons/location.svg') }}">
-                        <span>From <span class="font-semibold">Sukkur</span></span>
-                    </div>
-                </div>
-
-                <div class="mt-8 bg-white p-4 px-6 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
-                    <h1 class="mb-2 font-montserrat text-xl font-bold">Physiscs
-                    </h1>
-                    <span class="font-roboto">Lorem, ipsum dolor sit amet
-                        consectetur adipisicing elit. Delectus eaque
-                        eligendi
-                        deleniti quisquam, blanditiis usnt ratione maxime
-                        magni
-                        repudiandae sit nesciunt porro quaerat quod et
-                        culpa,
-                        amet ad vero quo? Voluptatibus beatae assumenda id
-                        temporibus nostrum excepturi quo esse
-                        molestias?</span>
-                    <div class="mt-2 flex gap-1">
-                        <img alt="" src="{{ Vite::asset('/public/svg-icons/location.svg') }}">
-                        <span>From <span class="font-semibold">Sukkur</span></span>
-                    </div>
-                </div>
-
-
-            </section>
-
-            <section class="mt-16 rounded-lg md:w-3/5">
-                <div class="rounded-xl bg-white p-4 shadow-[0px_10px_34px_-15px_rgba(0,0,0,0.10)]">
-                    <div class="flex gap-4">
-                        <div class="w-10">
-                            <img alt="" class="h-10 w-10 rounded-full bg-gray-200" src="https://placewaifu.com/image/200">
+                    <section class="rounded-lg bg-white px-5 py-4 shadow-md">
+                        <h6 class="text-lg font-semibold">About {{ $user->fname }}</h6>
+                        <ul class="my-4 text-sm">
+                            <li>Occupation <span class="font-semibold">Software Engineer</span></li>
+                            <li>From <span class="font-semibold">{{ $user->location }}</span></li>
+                            <li>Joined <span class="font-semibold">September 2025</span></li>
+                        </ul>
+                        <div>
+                            <span class="font-bold"> 101 <span class="text-sm font-normal">Followers</span> </span>
+                            <span class="font-bold"> 254 <span class="text-sm font-normal">Following</span> </span>
                         </div>
-                        <div x-data="{ create_post: false }" 
-                        x-on:close-modal.window="if ($event.detail.modal === 'create_post') create_post = false"
-                        class="w-full">
-                        <div 
-                            class="relative flex items-center justify-end cursor-pointer"
-                            @click="create_post = true">
-                            <div
-                                class="bg-lightMode-background rounded-full border border-zinc-200 w-full text-sm py-2 px-4 text-gray-500">
-                                Share something...
-                            </div>
-                            <img src="{{ Vite::asset('/public/svg-icons/smiley.svg') }}"
-                                class="ml-2 px-2 absolute right-2"
-                                alt="">
-                        </div>
-                            {{-- Post Modal --}}
-                            @include('posts.create', [
-                            'showVariable' => 'create_post',    
-                            ])
-                            <div class="mt-4 flex items-center justify-around gap-8 sm:justify-around">
-                                <div @click="create_post = true" class="flex cursor-pointer items-center gap-2 text-base font-semibold transition-colors hover:text-lightMode-primary">
-                                    <img alt="" class="h-auto w-7" src="{{ Vite::asset('/public/svg-icons/photos.svg') }}">
-                                    <span>Image</span>
-                                </div>
+                    </section>
 
-                                <div @click="create_post = true" class="flex cursor-pointer items-center gap-2 text-base font-semibold transition-colors hover:text-lightMode-primary">
-                                    <img alt="" class="h-auto w-7" src="{{ Vite::asset('/public/svg-icons/videocam.svg') }}">
-                                    <span>Video</span>
-                                </div>
+                </div>
 
-                                <div @click="create_post = true" class="hidden cursor-pointer text-base font-semibold transition-colors hover:text-lightMode-primary sm:flex">
-                                    <img alt="" class="h-auto w-7" src="{{ Vite::asset('/public/svg-icons/poll.svg') }}">
-                                    <span>Poll</span>
-                                </div>
-                            </div>
-                        </div>
+                <div class="container w-11/12 max-w-lg mt-6 relative z-10" id="user-profile-data">
+                    <section class="">
+                    <div class="w-full bg-white border-b-2 border-b-lightMode-primary text-center py-2 rounded-t-lg">
+                        <span class="font-semibold">Posts</span>
                     </div>
+                    <div class="pt-2">
+                        <x-post-creation />
+                    </div>
+                        <div class="flex flex-col" id="newsfeed">
+                            @if ($user->post->count())
+                                @foreach ($user->post as $post)
+                                    @php
+                                        $profileImageUrl = !empty($user->avatar)
+                                            ? $user->avatar
+                                            : 'https://placewaifu.com/image/200';
+                                    @endphp
+                                    @include('posts.feed-card', [
+                                        'profileUrl' => route('profile.view', $post->user->id),
+                                        'postId' => $post->id,
+                                        'userName' => $user->fname . ' ' . $user->lname,
+                                        'postTime' => $post->created_at->diffForHumans(),
+                                        'postContent' => $post->content,
+                                        'postImages' => $post->postImages,
+                                        'comments' => $post->limited_comments,
+                                    ])
+                                @endforeach
+                            @endif
+                        </div>
+                    </section>
                 </div>
-                <div id="newsfeed" class="flex flex-col">
-                    @if ($user->post->count())
-                        @foreach ($user->post as $post)
-                            @php
-                                $profileImageUrl = !empty($user->avatar)
-                                ? $user->avatar
-                                : 'https://placewaifu.com/image/200';
-                            @endphp
-                            @include('posts.feed-card', [
-                                'profileUrl' => route('profile.view', $post->user->id),
-                                'postId' => $post->id,
-                                'userName' => $user->fname . ' ' . $user->lname,
-                                'postTime' => $post->created_at->diffForHumans(),
-                                'postContent' => $post->content,
-                                'postImages' => $post->postImages,
-                                'comments' => $post->limited_comments,
-                                ])
-                        @endforeach
-                    @endif
-                </div>
-            </section>
+            </div>
         </div>
     </div>
-</x-app-layout>
+
+    <script>
+        window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";
+    </script>
+</body>
+
+</html>
