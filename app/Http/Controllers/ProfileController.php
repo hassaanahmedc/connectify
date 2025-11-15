@@ -21,7 +21,7 @@ class ProfileController extends Controller
     public function view(Request $request, User $user) :View
     {
         $isOwnProfile = Auth::check() && Auth::id() === $user->id;
-        $currentUserId = Auth::id(); // Use authenticated user's ID
+        $currentUserId = Auth::id();
 
         $user->load(['post' => function ($query) {
             $query->orderBy('created_at', 'desc')
@@ -32,6 +32,9 @@ class ProfileController extends Controller
         $user->post->each(function ($post) use ($currentUserId) {
             $post->liked_by_user = $post->likes()->where('user_id', $currentUserId)->exists();
         });
+        
+        $user->followed = Auth::check() ? Auth::user()->isFollowing($user) : 'false';
+        $user->followers_count = $user->followers()->count();
 
         return view('profile.index', compact('user', 'isOwnProfile'));
 

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Http\Requests\Post\CreatePostRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -64,5 +62,31 @@ class User extends Authenticatable
     public function tokens(): MorphMany
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'followed_id');
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'followed_id', 'follower_id');
+    }
+
+    public function isFollowing(User $user)
+    {
+        return $this->following()->where('followed_id', $user->id)->exists();
+    }
+
+    public function follow(User $user)
+    {
+        if ($this->id === $user->id) return false;
+        return $this->following()->syncWithoutDetaching([$user->id]);
+    }
+
+    public function unfollow(User $user)
+    {
+        return $this->following()->detach($user->id);
     }
 }
