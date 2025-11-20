@@ -24,21 +24,20 @@
         <x-custom-nav />
     </header>
 
-    <div class="mx-auto my-0">
+    <div class="mx-auto max-w-[1600px]" x-data="{ edit_profile: false, create_post: false }">
 
         <div class="flex h-[calc(100vh-4rem)] flex-col">
-            <header class="relative max-h-96 w-screen min-w-96 opacity-85">
+            <header class="relative max-h-96 w-full min-w-96 opacity-85">
                 <img alt="" class="h-full w-full object-cover"
                     src="{{ Vite::asset('/public/images/user/post/post.jpg') }}">
-                <div class="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-b from-transparent to-white"></div>
+                <div class="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-b from-transparent to-white md:hidden">
+                </div>
             </header>
 
-            <div class="wrapper flex flex-col items-center">
-                <div class="container w-11/12 min-w-80 max-w-lg -mt-20 flex flex-col justify-between gap-5 relative z-20"
-                    id="user-profile-card">
+            <div class="flex flex-col items-center gap-5 md:flex-row md:items-start md:justify-center">
+                <div class="z-10 -mt-20 w-11/12 md:w-1/3 lg:w-1/3 xl:w-1/4" id="user-profile-card">
 
-                    <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md"
-                        x-data="{ edit_profile: false, edit_bio: false, create_post: false }">
+                    <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md">
 
 
                         <figure class="w-36 rounded-full">
@@ -47,39 +46,43 @@
                         </figure>
 
                         <div class="text-center">
-                            <h1 class="my-3 text-xl font-semibold">
+                            <h1 class="my-3 font-semibold md:text-2xl lg:text-3xl">
                                 {{ $user->fname }}
                                 {{ $user->lname }}</h1>
-                            <span class="text-sm text-lightMode-text">{{ $user->bio }}</span><br>
-                            <div class="my-3 text-lightMode-text">
-                                <span class="">From <span
-                                        class="font-semibold">{{ $user->location }}</span></span>
-                            </div>
+                            @if ($user->bio !== null)
+                                <span
+                                    class="text-sm text-lightMode-text md:text-base lg:text-base">{{ $user->bio }}</span><br>
+                            @endif
+                            @if ($user->location !== null)
+                                <div class="my-3 text-lightMode-text">
+                                    <span class="">From <span
+                                            class="font-semibold">{{ $user->location }}</span></span>
+
+                                </div>
+                            @endif
                         </div>
 
-                        <div class="my-2 flex gap-2 text-sm sm:text-base">
+                        <div
+                            class="my-2 flex w-full flex-wrap gap-2 text-center text-sm md:text-base lg:flex-nowrap lg:text-base">
                             @auth
                                 @if ($user->id === Auth::id())
-                                    <a
-                                        class="flex items-center gap-2 rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white">
+                                    <a class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white">
                                         420 Followers
                                     </a>
-                                    <button
-                                        class="flex items-center gap-2 rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
+                                    <button class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
                                         x-on:click="edit_profile=true">
                                         Edit Profile
                                     </button>
                                 @else
-                                    <span id="follower-count">{{ $user->followers_count }}</span>
                                     <button
-                                        class="flex cursor-pointer items-center gap-2 rounded bg-lightMode-primary px-4 py-2 font-semibold text-white"
+                                        class="w-full cursor-pointer rounded bg-lightMode-primary px-4 py-2 font-semibold text-white"
                                         type="button">
                                         <span data-user-id="{{ $user->id }}"
                                             id="follow-btn">{{ $user->followed ? 'Unfollow' : 'Follow' }}</span>
 
                                     </button>
 
-                                    <a class="flex items-center gap-2 rounded bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300"
+                                    <a class="w-full rounded bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300"
                                         href="{{ route('profile.edit') }}">
                                         Message
                                     </a>
@@ -90,9 +93,9 @@
                         </div>
                     </section>
 
-                    <section class="rounded-lg bg-white px-5 py-4 shadow-md">
-                        <h6 class="text-lg font-semibold">Interests</h6>
-                        <ul class="mt-4 flex flex-wrap items-center gap-2 text-sm">
+                    <section class="my-4 rounded-lg bg-white px-5 py-4 shadow-md">
+                        <h6 class="text-lg font-semibold md:text-xl lg:text-xl">Interests</h6>
+                        <ul class="mt-4 flex flex-wrap items-center gap-2 text-sm md:text-base lg:text-base">
                             <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Gaming</li>
                             <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Coding</li>
                             <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Anime</li>
@@ -103,28 +106,35 @@
                     </section>
 
                     <section class="rounded-lg bg-white px-5 py-4 shadow-md">
-                        <h6 class="text-lg font-semibold">About {{ $user->fname }}</h6>
-                        <ul class="my-4 text-sm">
+                        <h6 class="text-lg font-semibold md:text-xl lg:text-xl">About {{ $user->fname }}</h6>
+                        <ul class="my-4 text-sm md:text-base lg:text-base">
                             <li>Occupation <span class="font-semibold">Software Engineer</span></li>
-                            <li>From <span class="font-semibold">{{ $user->location }}</span></li>
                             <li>Joined <span class="font-semibold">September 2025</span></li>
+                            <li>From <span class="font-semibold">{{ $user->location }}</span></li>
                         </ul>
-                        <div>
-                            <span class="font-bold"> 101 <span class="text-sm font-normal">Followers</span> </span>
-                            <span class="font-bold"> 254 <span class="text-sm font-normal">Following</span> </span>
+                        <div class="">
+                            <div class="inline mr-4">
+                                <span id="follower-count" class="font-bold"> {{ $user->followers_count }}</span>
+                                <span class="text-sm font-normal">Followers</span>
+                            </div>
+                            <div class="inline">
+                                <span id="following-count" class="font-bold" id="following-count">{{ $user->following_count}}</span>
+                                <span class="text-sm font-normal">Following</span>
+                            </div>
                         </div>
                     </section>
 
                 </div>
 
-                <div class="container w-11/12 max-w-lg mt-6 relative z-10" id="user-profile-data">
+                <div class="w-11/12 md:w-1/2 lg:w-2/4 xl:w-2/5">
                     <section class="">
-                    <div class="w-full bg-white border-b-2 border-b-lightMode-primary text-center py-2 rounded-t-lg">
-                        <span class="font-semibold">Posts</span>
-                    </div>
-                    <div class="pt-2">
-                        <x-post-creation />
-                    </div>
+                        <div
+                            class="w-full rounded-t-lg border-b-2 border-b-lightMode-primary bg-white py-2 text-center">
+                            <span class="text-lg font-semibold md:text-xl lg:text-xl">Posts</span>
+                        </div>
+                        <div class="pt-2">
+                            <x-post-creation />
+                        </div>
                         <div class="flex flex-col" id="newsfeed">
                             @if ($user->post->count())
                                 @foreach ($user->post as $post)
@@ -143,6 +153,8 @@
                                         'comments' => $post->limited_comments,
                                     ])
                                 @endforeach
+                            @else
+                                <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
                             @endif
                         </div>
                     </section>

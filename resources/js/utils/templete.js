@@ -75,10 +75,10 @@ export function generateCommentHtml(comment) {
         ` : ''}
     </div>
     `;
-} 
+}
 
 export function generateSearchDropdownHtml(data) {
-      return `
+    return `
             <li>
                 <a href="${escapeHtml(data.url ?? "#")}" class="flex gap-4 px-4 py-2 text-gray-500 hover:bg-lightMode-background">
                     <figure>
@@ -95,6 +95,16 @@ export function generateSearchDropdownHtml(data) {
 
 export function generateLoadingHtml() {
     return `<li class="p-2 text-gray-500">Loading…</li>`;
+}
+
+export function generateLocationDropdownHtml(locationString) {
+    return `        <li>
+            <div 
+                class="w-full text-left px-4 py-2 hover:bg-lightMode-background text-gray-600 cursor-pointer"
+                data-location="${locationString}">
+                ${locationString}
+            </div>
+        </li>`;
 }
 
 export function generateNoResultsHtml() {

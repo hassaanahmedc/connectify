@@ -1,88 +1,38 @@
-<div class="w-screen fixed h-screen bg-black/80 top-0 left-0  flex justify-center items-center z-50 "
-    x-cloak
-    x-show="edit_profile"
-    @click.away="edit_profile=false">
-    <section
-        class="relative bg-white max-w-screen-sm bg-base-200 min-w-[350px] py-8 px-6  flex justify-center overflow-y-scroll md:w-3/4">
-        {{-- close Modal Button --}}
-        <svg class="swap-on fill-current absolute right-4 top-8 cursor-pointer"
-            x-on:click="edit_profile=false"
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 512 512">
-            <polygon
-                points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
-        </svg>
+@vite('resources/js/components/locations.js')
+<div class="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-black/80"
+     x-cloak x-show="edit_profile">
+    <section @click.outside="edit_profile=false"
+        class="bg-base-200 flex w-full max-w-screen-sm justify-center overflow-y-scroll bg-white mx-4 p-4 md:w-3/4 rounded-lg">
 
         <div class="w-full">
-            <h2 class="text-3xl font-bold mb-8 text-center">Edit Details
-            </h2>
-            <form action="{{ route('profile.update', $user->id) }}"
-                method="POST">
+            <h2 class="mb-8 text-center text-3xl font-bold">Edit Details</h2>
+            <form action="{{ route('profile.update', $user->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
 
-                <div class="">
-                    <x-input-label for="cover"
-                        :value="__('Cover Image')"
-                        class="text-xl font-semibold" />
-                        <img id="cover" name="cover" src="" alt="">
-
-    
-                    <x-input-error :messages="$errors->get('cover')"
-                        class="mt-2" />
-                </div>
-
-                <div class="mt-4">
-                    <x-input-label for="bio"
-                        :value="__('Bio')"
-                        class="text-xl font-semibold" />
+                <div class="my-4">
+                    <x-input-label :value="__('Bio')" class="text-start text-xl font-semibold" for="bio" />
                     <textarea
-                        class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                        name="bio"
-                        id="bio"
-                        value=""
-                        placeholder="Type your Bio...">{{ old('bio', $user->bio) }}</textarea>
-                    <x-input-error :messages="$errors->get('bio')"
-                        class="mt-2" />
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 resize-none overflow-y-auto"
+                        id="bio" rows="3" name="bio" placeholder="Type your Bio..." value="">{{ old('bio', $user->bio) }}</textarea>
+                    <x-input-error :messages="$errors->get('bio')" class="mt-2" />
                 </div>
 
-                <div class="mt-4">
-                    <x-input-label for="bio"
-                        :value="__('Bio')"
-                        class="text-xl font-semibold" />
-                    <textarea
-                        class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                        name="bio"
-                        id="bio"
-                        value=""
-                        placeholder="Type your Bio...">{{ old('bio', $user->bio) }}</textarea>
-                    <x-input-error :messages="$errors->get('bio')"
-                        class="mt-2" />
+                <div class="my-4">
+                    <x-input-label :value="__('Location')" class="text-start text-xl font-semibold" for="location" />
+                    <x-text-input :value="old('location', $user->location)" autocomplete="location" autofocus 
+                        class="relative mt-1 block w-full"
+                        id="location-input" name="location" required type="text" />
+                    <x-input-error :messages="$errors->get('location')" class="mt-2" />
+                    <div id="location-dropdown" class="absolute list-none  bg-white text-left overflow-y-auto">
+                    </div>
                 </div>
 
-                <div class="mt-4">
-                    <x-input-label for="location"
-                        :value="__('Location')"
-                        class="text-xl font-semibold" />
-                    <x-text-input id="location"
-                        class="block mt-1 w-full"
-                        type="text"
-                        name="location"
-                        :value="old('location', $user->location)"
-                        required
-                        autofocus
-                        autocomplete="location" />
-                    <x-input-error :messages="$errors->get('location')"
-                        class="mt-2" />
-                </div>
-
-                <div class="mt-8 ">
-                    <a href=""
-                        class="px-4 py-2 text-lg mr-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</a>
-                    <button type="submit"
-                        class="px-8 py-2 text-lg rounded bg-lightMode-primary text-white">Save</button>
+                <div class="flex w-full flex-wrap gap-2 text-center text-sm md:text-base sm:flex-nowrap lg:text-base">
+                    <button type="button" class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
+                            @click="edit_profile=false">Cancel</button>
+                    <button class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white"
+                        type="submit">Save</button>
                 </div>
             </form>
         </div>

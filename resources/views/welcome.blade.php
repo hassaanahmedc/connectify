@@ -20,26 +20,6 @@
                     <!-- Post Creation Modal -->
                     @include('posts.create', ['showVariable' => 'create_post'])
 
-                    <div class="mt-2 hidden items-center justify-around gap-4 sm:flex md:flex-nowrap md:gap-8">
-                        <div @click="create_post = true"
-                            class="flex min-h-[44px] cursor-pointer items-center gap-2 text-xs font-semibold transition-colors hover:text-lightMode-primary sm:text-sm lg:text-base">
-                            <img alt="" class="h-auto w-6" src="{{ Vite::asset('/public/svg-icons/photos.svg') }}">
-                            <span>Image</span>
-                        </div>
-
-                        <div @click="create_post = true"
-                            class="flex min-h-[44px] cursor-pointer items-center gap-2 text-xs font-semibold transition-colors hover:text-lightMode-primary sm:text-sm lg:text-base">
-                            <img alt="" class="h-auto w-6"
-                                src="{{ Vite::asset('/public/svg-icons/videocam.svg') }}">
-                            <span>Video</span>
-                        </div>
-
-                        <div @click="create_post = true"
-                            class="flex min-h-[44px] cursor-pointer items-center gap-2 text-xs font-semibold transition-colors hover:text-lightMode-primary sm:text-sm lg:text-base">
-                            <img alt="" class="h-auto w-6" src="{{ Vite::asset('/public/svg-icons/poll.svg') }}">
-                            <span>Poll</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

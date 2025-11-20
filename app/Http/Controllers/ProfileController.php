@@ -35,6 +35,7 @@ class ProfileController extends Controller
         
         $user->followed = Auth::check() ? Auth::user()->isFollowing($user) : 'false';
         $user->followers_count = $user->followers()->count();
+        $user->following_count = $user->following()->count();
 
         return view('profile.index', compact('user', 'isOwnProfile'));
 

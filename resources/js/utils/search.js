@@ -1,6 +1,7 @@
 import { CACHE } from './storage';
 import { debounce } from './performance';
 import { generateSearchDropdownHtml } from './templete';
+import { generateLocationDropdownHtml } from './templete';
 import { generateNoResultsHtml } from './templete';
 import { generateLoadingHtml } from './templete';
 import { fetchData } from './api';
@@ -49,7 +50,14 @@ export function appendSearchResults(resultsPayload, searchResultsContainer) {
         searchResultsContainer.innerHTML = resultsPayload.html;
         container.classList.remove("hidden");
         return;
-    } 
+    }
+
+    if (Array.isArray(resultsPayload) && typeof resultsPayload[0] === "string") {
+        const html = resultsPayload.map(r => generateLocationDropdownHtml(r)).join('');
+        searchResultsContainer.innerHTML = html;
+        searchResultsContainer.classList.remove('hidden');
+        return;
+    }
 
     if (Array.isArray(resultsPayload.results)) {
         const html = resultsPayload.results.map(r => generateSearchDropdownHtml(r)).join('');
