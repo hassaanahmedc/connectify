@@ -16,7 +16,7 @@
         rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/components/follow.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/components/follow.js', 'resources/js/features/profile/profileImages.js', 'resources/js/components/locations.js'])
 </head>
 
 <body class="light bg-lightMode-background">
@@ -24,7 +24,7 @@
         <x-custom-nav />
     </header>
 
-    <div class="mx-auto max-w-[1600px]" x-data="{ edit_profile: false, create_post: false }">
+    <div class="mx-auto max-w-[1600px]">
 
         <div class="flex h-[calc(100vh-4rem)] flex-col">
             <header class="relative max-h-96 w-full min-w-96 opacity-85">
@@ -39,11 +39,37 @@
 
                     <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md">
 
-
-                        <figure class="w-36 rounded-full">
-                            <img alt="" class="aspect-square h-full w-full rounded-full object-cover"
-                                src="https://placewaifu.com/image/200">
-                        </figure>
+                        <div x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '', errors: '' }"
+                                @profile-image-selected.window="
+                                previewUrl = $event.detail.previewImage;
+                                errors = ($event.detail.errors || []).join(', ');
+                                editProfileModal = true;"
+                                @close-profile-modal.window="editProfileModal = false;">
+                            <figure class="relative w-36 rounded-full bg-black">
+                                @auth
+                                    @if ($user->id === Auth::id())
+                                        <img @click="editProfilePicture = true" alt="" id="profile-picture"
+                                            class="aspect-square h-full w-full cursor-pointer rounded-full object-cover transition-opacity ease-in-out hover:opacity-70"
+                                            src="{{ asset('storage/' . $user->avatar) }}">
+                                    @else
+                                        <img alt="" class="aspect-square h-full w-full rounded-full object-cover"
+                                            src="{{ asset('storage/' . $user->avatar) }}">
+                                    @endif
+                                @endauth
+                            </figure>
+                            <ul @click.outside="editProfilePicture = false"
+                                class="absolute mt-1 rounded-lg border bg-white shadow-md" x-cloak
+                                x-show="editProfilePicture">
+                                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="upload-profile-picture">
+                                    Upload new photo</li>
+                                <input hidden id="select-profile-picture" type="file">
+                                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="remove-profile-picture">
+                                    Remove photo</li>
+                                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="view-profile-picture">
+                                    View photo</li>
+                            </ul>
+                            @include('profile.upload-profile-img')
+                        </div>
 
                         <div class="text-center">
                             <h1 class="my-3 font-semibold md:text-2xl lg:text-3xl">
@@ -62,15 +88,15 @@
                             @endif
                         </div>
 
-                        <div
-                            class="my-2 flex w-full flex-wrap gap-2 text-center text-sm md:text-base lg:flex-nowrap lg:text-base">
+                        <div class="my-2 flex w-full flex-wrap gap-2 text-center text-sm md:text-base lg:flex-nowrap lg:text-base"
+                            x-data="{ edit_profile_details: false }">
                             @auth
                                 @if ($user->id === Auth::id())
                                     <a class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white">
                                         420 Followers
                                     </a>
                                     <button class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
-                                        x-on:click="edit_profile=true">
+                                        x-on:click="edit_profile_details=true">
                                         Edit Profile
                                     </button>
                                 @else
@@ -101,7 +127,8 @@
                             <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Anime</li>
                             <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Video Editting</li>
                             <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Music Desgin</li>
-                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Software Engineer</li>
+                            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Software Engineer
+                            </li>
                         </ul>
                     </section>
 
@@ -113,12 +140,13 @@
                             <li>From <span class="font-semibold">{{ $user->location }}</span></li>
                         </ul>
                         <div class="">
-                            <div class="inline mr-4">
-                                <span id="follower-count" class="font-bold"> {{ $user->followers_count }}</span>
+                            <div class="mr-4 inline">
+                                <span class="font-bold" id="follower-count"> {{ $user->followers_count }}</span>
                                 <span class="text-sm font-normal">Followers</span>
                             </div>
                             <div class="inline">
-                                <span id="following-count" class="font-bold" id="following-count">{{ $user->following_count}}</span>
+                                <span class="font-bold" id="following-count"
+                                    id="following-count">{{ $user->following_count }}</span>
                                 <span class="text-sm font-normal">Following</span>
                             </div>
                         </div>
@@ -132,19 +160,17 @@
                             class="w-full rounded-t-lg border-b-2 border-b-lightMode-primary bg-white py-2 text-center">
                             <span class="text-lg font-semibold md:text-xl lg:text-xl">Posts</span>
                         </div>
-                        <div class="pt-2">
-                            <x-post-creation />
+                        <div class="pt-2" x-data="{ create_post: false }">
+                            <x-post-creation :user=$user />
                         </div>
                         <div class="flex flex-col" id="newsfeed">
                             @if ($user->post->count())
                                 @foreach ($user->post as $post)
-                                    @php
-                                        $profileImageUrl = !empty($user->avatar)
-                                            ? $user->avatar
-                                            : 'https://placewaifu.com/image/200';
-                                    @endphp
                                     @include('posts.feed-card', [
                                         'profileUrl' => route('profile.view', $post->user->id),
+                                        'profileImageUrl' => !empty($post->user->avatar)
+                                            ? asset('storage/' . $post->user->avatar)
+                                            : 'https://placewaifu.com/image/200',
                                         'postId' => $post->id,
                                         'userName' => $user->fname . ' ' . $user->lname,
                                         'postTime' => $post->created_at->diffForHumans(),

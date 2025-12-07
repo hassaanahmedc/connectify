@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\AvatarService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,5 +78,30 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function uploadPicture(Request $request, AvatarService $service) 
+    {
+        $request->validate(['profile_picture' => ['required', 'image', 'max:2048']]);
+
+        $user = $request->user();
+        $file = $request->file('profile_picture');
+
+        try {
+            $path = $service->update($user, $file);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Profile picture updated successfully',
+                'path' => asset("storage/{$path}")
+            ]);
+        } catch (Exception $e) {
+            Log::error("Avatar Update Error: " . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to upload profile picture. Please try again.'
+            ], 500);
+        }
     }
 }

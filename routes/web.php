@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
 //Laravel Sanctum Protected routes
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home');
+    // User Profile Routes
+    Route::post('/profile/upload-picture', [ProfileController::class, 'uploadPicture'])->name('profile.upload.picture');
     // Post Routes
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::delete('/post/{post}/destroy', [PostController::class, 'destroy'])->name('post.destroy');

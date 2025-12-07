@@ -19,6 +19,9 @@ export const state = {
 }
 
 export const searchFilters = ['all', 'users', 'posts', 'near'];
+export const IMAGE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"]
+export const IMAGE_MAX_SIZE = 5 * 1024 * 1024;
+export const IMAGE_MAX_COUNT = 10;
 export const QUERY_MIN_LENGTH = 2;
 export const SEARCH_ROUTE = "/search/results";
 export const CACHE_LIMIT = 50;

@@ -111,7 +111,7 @@
                 <div class="hidden md:block">
                     <div class="flex">
                         <a href=""><img class="w-9 h-auto rounded-full"
-                                src="{{ 'https://placewaifu.com/image/200' ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
+                                src="{{ asset('storage/' . $navUser->avatar) ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
                                 alt=""></a>
                         <x-dropdown align="right"
                             width="48"
@@ -132,9 +132,9 @@
                                         {{ __('Edit Profile') }}
                                     </x-dropdown-link>
         
-                                    <x-dropdown-link :href="route('profile.view', Auth::id())"
+                                    <x-dropdown-link :href="route('profile.view', $navUser->id)"
                                         class="dark:text-black dark:hover:bg-lightMode-background">
-                                        {{ __(optional(Auth::user())->fname) }}
+                                        {{ __(optional($navUser)->fname) }}
                                     </x-dropdown-link>
         
                                     <form method="POST" 
@@ -164,7 +164,7 @@
             {{-- Nav Dropdown {Mobile}--}}
             <div class="flex md:hidden">
                 <a href=""><img class="w-9 h-auto rounded-full"
-                        src="{{ 'https://placewaifu.com/image/200' ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
+                        src="{{  asset('storage/' . $navUser->avatar ) ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
                         alt=""></a>
                 <x-dropdown align="right"
                     width="48"
@@ -199,9 +199,9 @@
                                 {{ __('Edit Profile') }}
                             </x-dropdown-link>
 
-                            <x-dropdown-link :href="route('profile.view', Auth::id())"
+                            <x-dropdown-link :href="route('profile.view', $navUser->id)"
                                 class="dark:text-black dark:hover:bg-lightMode-background">
-                                {{ __(optional(Auth::user())->fname) }}
+                                {{ __(optional($navUser)->fname) }}
                             </x-dropdown-link>
 
                             <form method="POST" 
