@@ -6,7 +6,7 @@
             <div class="flex gap-4 md:gap-6">
                 <div class="flex-shrink-0">
                     <img alt="" class="h-auto w-9 rounded-full bg-gray-200 object-cover"
-                        src="https://placewaifu.com/image/200">
+                        src="{{  asset('storage/' . Auth::user()->avatar ) ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}">
                 </div>
 
                 <div class="flex-1" x-data="{ create_post: false }"
@@ -27,14 +27,12 @@
         <div class="flex flex-col" id="newsfeed">
             @if ($posts->count())
                 @foreach ($posts as $post)
-                    @php
-                        $profileImageUrl = !empty($post->user->avatar)
-                            ? $post->user->avatar
-                            : 'https://placewaifu.com/image/200';
-                    @endphp
                     @include('posts.feed-card', [
                         'showComments' => false,
                         'profileUrl' => route('profile.view', $post->user->id),
+                        'profileImageUrl' => !empty($post->user->avatar)
+                            ? asset('storage/' . $post->user->avatar)
+                            : 'https://placewaifu.com/image/200',
                         'postId' => $post->id,
                         'userName' => $post->user->fname . ' ' . $post->user->lname,
                         'postTime' => $post->created_at->diffForHumans(),

@@ -39,10 +39,9 @@
 
                     <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md">
 
-                        <div x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '', errors: '' }"
+                        <div x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '' }"
                                 @profile-image-selected.window="
                                 previewUrl = $event.detail.previewImage;
-                                errors = ($event.detail.errors || []).join(', ');
                                 editProfileModal = true;"
                                 @close-profile-modal.window="editProfileModal = false;">
                             <figure class="relative w-36 rounded-full bg-black">

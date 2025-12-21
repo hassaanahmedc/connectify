@@ -11,19 +11,22 @@
                 points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
         </svg>
         <div>
-            <figure class="my-4 w-full rounded-full">
-                <img :src="previewUrl" alt="profile picture" class="mb-1 max-h-[300px] w-full rounded-full"
-                    id="upload-profile-preview" x-show="previewUrl && !errors">
-                <div aria-live="assertive" class="mb-3 text-sm text-red-500" id="profile-error" role="alert"
-                    x-text="errors"></div>
+            <figure id="preview-container" class="my-4 w-full">
+                <img :src="previewUrl" alt="profile picture" class="mb-1 max-h-[300px] w-full"
+                    id="upload-profile-preview" x-show="previewUrl">
             </figure>
+            <div id="error-container" class="hidden text-center">
+                <div aria-live="assertive" class="text-sm text-red-500" id="profile-error" role="alert"></div>
+                <button id="try-again-button" 
+                    class="my-4 w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white">
+                    Select a Different File</button>
+            </div>
             <!-- inside modal next to preview -->
             <div class="flex w-full flex-wrap gap-2 text-center text-sm sm:flex-nowrap md:text-base lg:text-base">
                 <button @click="editProfileModal=false"
                     class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
                     type="button">Cancel</button>
-                <button :class="errors ? 'opacity-50 cursor-not-allowed' : ''" :disabled="errors.length > 0"
-                    class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white"
+                <button class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white"
                     id="save-profile-picture" type="submit">Save</button>
             </div>
         </div>

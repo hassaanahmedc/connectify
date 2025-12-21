@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\User\ProfilePictureRequest;
 use App\Services\AvatarService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,13 +81,11 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function uploadPicture(Request $request, AvatarService $service) 
+    public function uploadPicture(ProfilePictureRequest $request, AvatarService $service) 
     {
-        $request->validate(['profile_picture' => ['required', 'image', 'max:2048']]);
-
         $user = $request->user();
-        $file = $request->file('profile_picture');
-
+        $file = $request->validated()['profile_picture'];
+        
         try {
             $path = $service->update($user, $file);
             

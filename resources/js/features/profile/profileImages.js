@@ -1,115 +1,96 @@
-import { fetchData } from '../../utils/api';
-import { IMAGE_ALLOWED_TYPES, IMAGE_MAX_SIZE, IMAGE_MAX_COUNT } from '../../config/constants';
-const uploadProfilePicture = document.getElementById('upload-profile-picture');
-const selectProfilePicture = document.getElementById('select-profile-picture');
+import { API_ENDPOINTS } from '../../config/constants';
+import { 
+    createImagePreviews, 
+    prepareImages, formatImageErrors, 
+    uploadImages, 
+    displayAlerts, 
+    disableButton, 
+    enableButton, 
+    revokeImagePreviews
+ } from '../../utils/imageUploader';
+
 const deleteProfilePicture = document.getElementById('delete-profile-picture');
-const profilePicture = document.getElementById("profile-picture");
-const saveProfilePicture = document.getElementById('save-profile-picture');
 const viewProfilePicture = document.getElementById('view-profile-picture');
 const profilePreview = document.getElementById('upload-profile-preview');
-const profileErrors = document.getElementById('profile-error');
 
-let currentValidatedFiles = [];
-let currentPreviewUrls = [];
-let currentErrors = [];
-
-uploadProfilePicture.addEventListener('click', () => { selectProfilePicture.click() })
-
-selectProfilePicture.addEventListener('change', (e) => {
-    const files = Array.from(e.target.files || []);
-    const {validatedImages, previewImage, errors} = prepareImages(files);
-    
-    window.dispatchEvent(new CustomEvent('profile-image-selected', {
-        detail: { previewImage, errors }
-    }));
-    
-    currentValidatedFiles = validatedImages;
-    currentPreviewUrls = previewImage;
-    currentErrors = errors;
-    console.log(errors)
-})
-
-saveProfilePicture.addEventListener('click', async () => {
-    if (!currentValidatedFiles.length) {
-        alert('Please select an image')
-        return;   
+function setupProfileImageUploader() {
+    let state = {
+        filesToUpload: [],
+        currentPreviews: []
     }
 
-    saveProfilePicture.disabled = true;
-    saveProfilePicture.textContent = 'Saving...'
+    const elements = {
+        uploadProfilePicture: document.getElementById('upload-profile-picture'),
+        selectProfilePicture: document.getElementById('select-profile-picture'),
+        profilePicture: document.getElementById("profile-picture"),
+        saveProfilePicture: document.getElementById('save-profile-picture'),
+        profileErrors: document.getElementById('profile-error'),
+        tryAgainButton: document.getElementById('try-again-button'),
+        previewContainer: document.getElementById('preview-container'),
+        errorContainer: document.getElementById('error-container')
+    }
 
-    if (currentValidatedFiles.length > 0) {
-        const profileRequest = new FormData();
-        currentValidatedFiles.forEach(img => { profileRequest.append('profile_picture', img) });
+    function handleProfileImage(e) {
+        if (state.currentPreviews.length > 0) {
+            revokeImagePreviews(state.currentPreviews);
+        }
+        const files = Array.from(e.target.files || []);
+        const {validatedImages, errors} = prepareImages(files);
+        
+        if (errors.length > 0) {
+            elements.previewContainer.classList.add('hidden')
+            elements.errorContainer.classList.remove('hidden')
 
+            const formattedErrorMessages = formatImageErrors(errors)
+            displayAlerts(elements.profileErrors, formattedErrorMessages, 'error')
+            disableButton(elements.saveProfilePicture, 'save')
+
+            state.filesToUpload = [];
+            state.currentPreviews = [];
+        } else {
+            elements.previewContainer.classList.remove('hidden')
+            elements.errorContainer.classList.add('hidden')
+
+            state.filesToUpload = validatedImages;
+            state.currentPreviews = createImagePreviews(validatedImages);
+            enableButton(elements.saveProfilePicture, 'Save')
+
+        }
+        window.dispatchEvent(new CustomEvent('profile-image-selected', {
+            detail: { previewImage: state.currentPreviews }
+        }));
+    }
+
+    async function handleUplaod() {
+        if (state.filesToUpload.length === 0) return;
+
+        disableButton(elements.saveProfilePicture, 'Saving...')
         try {
-            const response = await fetchData('/profile/upload-picture', {
-                method: "POST",
-                body: profileRequest,
-            });
-
-            if (response.status === 'success') {
-                profilePicture.src = response.path;
+            const result = await uploadImages(state.filesToUpload, API_ENDPOINTS.uploadProfilePictureReq);
+            if (result.ok) {
+                elements.profilePicture.src = result.data;
                 window.dispatchEvent(new CustomEvent("close-profile-modal"));
-
-                currentPreviewUrls.forEach(img => { URL.revokeObjectURL(img) })
-
-                currentPreviewUrls = [];
-                currentValidatedFiles = [];
-                currentErrors = [];
-                selectProfilePicture.value = '';
-                saveProfilePicture.disabled = false;
-                saveProfilePicture.textContent = 'Save';
-                return;
-            } 
-            
-            if (response.status === 'error') {
-                alert('Upload failed, please try again!')
-                saveProfilePicture.disabled = false;
-                saveProfilePicture.textContent = 'Save';
+            } else {
+                const errorMessages = results.error ? formattedErrorMessages([result.error]) : ['Upload failed, Please try again.']
+                displayAlerts(elements.profileErrors, errorMessages, 'error');
             }
-
         } catch (error) {
-            console.log('upload fail', error, currentErrors);
-            SuccessOrErrorMessage(profileErrors, currentErrors.join(', '));
-            saveProfilePicture.disabled = false;
-            saveProfilePicture.textContent = 'Save';
+            displayAlerts(elements.profileErrors, ['A network error occured, Please try again.'], 'error')
+            console.error("Upload failed: ", error)
+        } finally {
+            enableButton(elements.saveProfilePicture, 'Save')
+            if (state.currentPreviews.length > 0) {
+                revokeImagePreviews(state.currentPreviews)
+            }
+            state.filesToUpload = []
+            state.currentPreviews = [];
         }
     }
-}) 
-
-function prepareImages(files) {
-    let validatedImages = [];
-    let previewImage = [];
-    let errors = [];
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        if (validatedImages.length >= IMAGE_MAX_COUNT) break;
-
-        if (!IMAGE_ALLOWED_TYPES.includes(file.type)) {
-            errors.push(`${file.name} is not a valid image type.`)
-            continue;
-        }
-
-        if (file.size > IMAGE_MAX_SIZE) {
-            errors.push(`Image should be under ${IMAGE_MAX_SIZE / (1024*1024)} MB` )
-            continue;
-        }
-
-        validatedImages.push(file);
-    }
-    previewImage = validatedImages.map(img => URL.createObjectURL(img));
-
-    return  {validatedImages, previewImage, errors};
+    
+    elements.uploadProfilePicture.addEventListener('click', () => elements.selectProfilePicture.click() )
+    elements.tryAgainButton.addEventListener('click', () => elements.selectProfilePicture.click())
+    elements.selectProfilePicture.addEventListener('change', handleProfileImage)
+    elements.saveProfilePicture.addEventListener('click', handleUplaod )
 }
 
-function SuccessOrErrorMessage(el, msg) {
-    const element = el;
-    if (!element) return;
-    const span = document.createElement('span'); 
-    span.classList.add('bg-red-100', 'border', 'border-red-400', 'text-red-700', 'px-4', 'py-3', 'rounded', 'relative', 'z-10');
-    element.innerHTML = msg;
-    element.appendChild(span);
-}
+setupProfileImageUploader();
