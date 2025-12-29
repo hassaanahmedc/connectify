@@ -110,8 +110,8 @@
                 </div>
                 <div class="hidden md:block">
                     <div class="flex">
-                        <a href=""><img class="w-9 h-auto rounded-full"
-                                src="{{ asset('storage/' . $navUser->avatar) ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
+                        <a href=""><img class="profile-picture-display w-9 h-auto rounded-full"
+                                src="{{ $navUser->avatar_url }}"
                                 alt=""></a>
                         <x-dropdown align="right"
                             width="48"
@@ -163,8 +163,8 @@
 
             {{-- Nav Dropdown {Mobile}--}}
             <div class="flex md:hidden">
-                <a href=""><img class="w-9 h-auto rounded-full"
-                        src="{{  asset('storage/' . $navUser->avatar ) ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}"
+                <a href=""><img class="profile-picture-display w-9 h-auto rounded-full"
+                        src="{{ $navUser->avatar_url }}"
                         alt=""></a>
                 <x-dropdown align="right"
                     width="48"

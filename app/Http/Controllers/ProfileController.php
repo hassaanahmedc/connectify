@@ -103,4 +103,35 @@ class ProfileController extends Controller
             ], 500);
         }
     }
+
+    public function deletePicture(Request $request, AvatarService $service)
+    {
+        $user = $request->user();
+
+        if (!$user->avatar) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User does not have a profile picture to delete.'
+            ], 422);
+        }
+        
+        try {
+            $service->delete($user);
+            $user->refresh();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Profile picture deleted successfully',
+                'path' => $user->avatar_url
+            ], 200);
+
+        } catch (Exception $e) {
+            Log::error("Avatar Delete Error: " . $e->getMessage());
+
+            return response->json([
+                'status' => 'error',
+                'message' => 'Failed to delete profile picture. Please try again.'
+            ], 500);
+        }
+    }
 }

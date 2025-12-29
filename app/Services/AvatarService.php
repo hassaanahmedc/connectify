@@ -20,4 +20,13 @@ class AvatarService
         $user->update(['avatar' => $path]);
         return $path;
     }
+
+    public function delete(User $user)
+    {   
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $user->update(['avatar' => null]);
+    }
 }

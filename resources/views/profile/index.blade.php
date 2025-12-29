@@ -16,7 +16,7 @@
         rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/components/follow.js', 'resources/js/features/profile/profileImages.js', 'resources/js/components/locations.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/components/follow.js', 'resources/js/features/profile/profileImages.js', 'resources/js/components/locations.js', 'resources/js/features/profile/profileImageDeleter.js'])
 </head>
 
 <body class="light bg-lightMode-background">
@@ -39,20 +39,20 @@
 
                     <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md">
 
-                        <div x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '' }"
-                                @profile-image-selected.window="
+                        <div @close-profile-modal.window="editProfileModal = false;"
+                            @profile-image-selected.window="
                                 previewUrl = $event.detail.previewImage;
                                 editProfileModal = true;"
-                                @close-profile-modal.window="editProfileModal = false;">
+                            x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '' }">
                             <figure class="relative w-36 rounded-full bg-black">
                                 @auth
                                     @if ($user->id === Auth::id())
-                                        <img @click="editProfilePicture = true" alt="" id="profile-picture"
-                                            class="aspect-square h-full w-full cursor-pointer rounded-full object-cover transition-opacity ease-in-out hover:opacity-70"
-                                            src="{{ asset('storage/' . $user->avatar) }}">
+                                        <img @click="editProfilePicture = true" alt=""
+                                            class="profile-picture-display aspect-square h-full w-full cursor-pointer rounded-full object-cover transition-opacity ease-in-out hover:opacity-70"
+                                            id="profile-picture" src="{{ $user->avatar_url }}">
                                     @else
                                         <img alt="" class="aspect-square h-full w-full rounded-full object-cover"
-                                            src="{{ asset('storage/' . $user->avatar) }}">
+                                            src="{{ $user->avatar_url }}">
                                     @endif
                                 @endauth
                             </figure>
@@ -62,8 +62,12 @@
                                 <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="upload-profile-picture">
                                     Upload new photo</li>
                                 <input hidden id="select-profile-picture" type="file">
-                                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="remove-profile-picture">
-                                    Remove photo</li>
+                                @if ($user->avatar)
+                                    <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="remove-profile-picture"
+                                        x-date=""
+                                        x-on:click.prevent="$dispatch('open-modal', 'confirm-picture-deletion')">
+                                        Remove photo</li>
+                                @endif
                                 <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="view-profile-picture">
                                     View photo</li>
                             </ul>
@@ -187,6 +191,25 @@
             </div>
         </div>
     </div>
+
+    <x-modal :show="false" focusable name="confirm-picture-deletion">
+        <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Are you sure?</h2>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">This action cannot be undone. Your picture will be
+                replaced by default avatar</p>
+            <div class="mt-6 flex justify-end gap-2">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('cancel') }}
+                </x-secondary-button>
+
+                <x-primary-button id="comfirm-delete-" x-on:click="$dispatch('confirm-picture-deletion'); $dispatch('close')">
+                    {{ __('Confirm Delete') }}
+                </x-primary-button>
+            </div>
+
+        </div>
+
+    </x-modal>
 
     <script>
         window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";

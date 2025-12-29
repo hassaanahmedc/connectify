@@ -8,7 +8,8 @@ export const API_ENDPOINTS = {
   likePost: (postId) => `/post/${postId}/like`,
   followUser : (userId) => `/user/${userId}/follow`,
   // user profile
-  uploadProfilePictureReq: `/profile/upload-picture`
+  uploadProfilePictureReq: `/profile/upload-picture`,
+  deleteProfilePictureReq: `/profile/delete-picture`
 };
 
 export const state = {

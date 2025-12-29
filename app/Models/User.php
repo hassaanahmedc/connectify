@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -88,5 +89,17 @@ class User extends Authenticatable
     public function unfollow(User $user)
     {
         return $this->following()->detach($user->id);
+    }
+
+    public function avatarUrl(): Attribute 
+    {
+        return Attribute::make(
+            get: function () {
+                if ($this->avatar) {
+                    return asset('storage/' . $this->avatar);
+                }
+                return 'https://placewaifu.com/image/200';
+            },
+        );
     }
 }
