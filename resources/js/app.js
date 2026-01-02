@@ -253,6 +253,12 @@ document.addEventListener("alpine:init", () => {
   window.asset = function (path) {
     return path;
   };
+  
+  window.EventBus = {
+      dispatch(event, detail) {
+          window.dispatchEvent(new CustomEvent(event, { detail }));
+      }
+  };
 
 Alpine.start();
 

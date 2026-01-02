@@ -20,10 +20,11 @@
 </head>
 
 <body class="light bg-lightMode-background">
+    {{-- Toast Notification Component --}}
+    <x-notification />
     <header>
         <x-custom-nav />
     </header>
-
     <div class="mx-auto max-w-[1600px]">
 
         <div class="flex h-[calc(100vh-4rem)] flex-col">
@@ -39,11 +40,11 @@
 
                     <section class="flex flex-col items-center justify-center rounded-lg bg-white px-5 py-4 shadow-md">
 
-                        <div @close-profile-modal.window="editProfileModal = false;"
-                            @profile-image-selected.window="
+                        <div  x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '' }"
+                                @profile-image-selected.window="
                                 previewUrl = $event.detail.previewImage;
                                 editProfileModal = true;"
-                            x-data="{ editProfilePicture: false, editProfileModal: false, previewUrl: '' }">
+                                @close-profile-modal.window="editProfileModal = false;">
                             <figure class="relative w-36 rounded-full bg-black">
                                 @auth
                                     @if ($user->id === Auth::id())
@@ -63,8 +64,8 @@
                                     Upload new photo</li>
                                 <input hidden id="select-profile-picture" type="file">
                                 @if ($user->avatar)
-                                    <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="remove-profile-picture"
-                                        x-date=""
+                                    <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100"
+                                        id="remove-profile-picture"
                                         x-on:click.prevent="$dispatch('open-modal', 'confirm-picture-deletion')">
                                         Remove photo</li>
                                 @endif
@@ -192,6 +193,7 @@
         </div>
     </div>
 
+    {{-- Confirm Profile Picture Deletion Modal --}}
     <x-modal :show="false" focusable name="confirm-picture-deletion">
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Are you sure?</h2>
@@ -202,7 +204,8 @@
                     {{ __('cancel') }}
                 </x-secondary-button>
 
-                <x-primary-button id="comfirm-delete-" x-on:click="$dispatch('confirm-picture-deletion'); $dispatch('close')">
+                <x-primary-button id="comfirm-delete-"
+                    x-on:click="$dispatch('confirm-picture-deletion'); $dispatch('close')">
                     {{ __('Confirm Delete') }}
                 </x-primary-button>
             </div>
@@ -210,7 +213,6 @@
         </div>
 
     </x-modal>
-
     <script>
         window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";
     </script>

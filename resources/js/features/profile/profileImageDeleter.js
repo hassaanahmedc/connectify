@@ -10,11 +10,14 @@ function setupProfilePictureDeletor() {
 
             if (result.status === 'success') {
                 document.querySelectorAll('.profile-picture-display').forEach(img => img.src = result.path)
+                EventBus.dispatch('show-notification', { message: 'Profile Picture removed successfully', type: 'success' });
             } else {
                 console.error('Failed to delete profile picture')
+                EventBus.dispatch('show-notification', { message: 'Failed to delete profile picture', type: 'error' });
             }
         } catch (error) {
             console.error('Error deleting profile picture: ', error)
+            EventBus.dispatch('show-notification', { message: 'Error deleting profile picture, please try again', type: 'error' });
         }
     }
     window.addEventListener('confirm-picture-deletion', handleDelete)
