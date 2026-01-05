@@ -9,10 +9,6 @@ import {
     revokeImagePreviews
  } from '../../utils/imageUploader';
 
-const deleteProfilePicture = document.getElementById('delete-profile-picture');
-const viewProfilePicture = document.getElementById('view-profile-picture');
-const profilePreview = document.getElementById('upload-profile-preview');
-
 function setupProfileImageUploader() {
     let state = {
         filesToUpload: [],
@@ -71,7 +67,7 @@ function setupProfileImageUploader() {
                 elements.profilePicture.src = result.data;
                 window.dispatchEvent(new CustomEvent("close-profile-modal"));
             } else {
-                const errorMessages = results.error ? formattedErrorMessages([result.error]) : ['Upload failed, Please try again.']
+                const errorMessages = result.error ? formattedErrorMessages([result.error]) : ['Upload failed, Please try again.']
                 displayAlerts(elements.profileErrors, errorMessages, 'error');
             }
         } catch (error) {

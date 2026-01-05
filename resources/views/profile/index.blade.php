@@ -69,7 +69,10 @@
                                         x-on:click.prevent="$dispatch('open-modal', 'confirm-picture-deletion')">
                                         Remove photo</li>
                                 @endif
-                                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="view-profile-picture">
+                                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="view-profile-picture"
+                                    x-on:click.stop="
+                                        $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->avatar_url }}' });
+                                        $nextTick(() => editProfilePicture = false);">
                                     View photo</li>
                             </ul>
                             @include('profile.upload-profile-img')
@@ -194,6 +197,7 @@
     </div>
 
     {{-- Confirm Profile Picture Deletion Modal --}}
+        <x-image-viewer />
     <x-modal :show="false" focusable name="confirm-picture-deletion">
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Are you sure?</h2>
@@ -213,6 +217,7 @@
         </div>
 
     </x-modal>
+
     <script>
         window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";
     </script>
