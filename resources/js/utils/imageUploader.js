@@ -3,7 +3,8 @@ import { IMAGE_ALLOWED_TYPES, IMAGE_MAX_SIZE, IMAGE_MAX_COUNT, state } from '../
 
 export const ErrorMessages = {
     NO_FILES: () => 'Please select at least one image.',
-    INVALID_TYPE: (meta) => `${meta.fileName} is not a supported image type.`,
+    INVALID_TYPE: (meta) => `${meta.fileName} is not a supported image type. 
+        Please upload a JPG, PNG, or WebP image under 5MB `,
     TOO_LARGE: (meta) => `${meta.fileName} is too large (${meta.sizeMB}MB). Max ${meta.maxMB}MB.`,
     UPLOAD_FAILED: () => 'Upload failed. Please try again.',
     NETWORK: () => 'Network error. Check your connection.',
@@ -47,18 +48,18 @@ export function prepareImages(files) {
     return  {validatedImages, errors};
 }
 
-export async function uploadImages(files, route) {
+export async function uploadImages(files, route, fieldName) {
     if (!files.length) {
         return ({ ok:false, error: { code: 'NO_FILE', meta: {} }});
     } 
 
-    const profileRequest = new FormData();
-    files.forEach(img => { profileRequest.append('profile_picture', img) });
+    const imageRequest = new FormData();
+    files.forEach(img => { imageRequest.append(fieldName, img) });
 
     try {
         const response = await fetchData(route, {
             method: "POST",
-            body: profileRequest,
+            body: imageRequest,
         });
 
         if (response && response.status === 'success') return ({ ok: true, data: response.path })

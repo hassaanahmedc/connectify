@@ -9,7 +9,9 @@ export const API_ENDPOINTS = {
   followUser : (userId) => `/user/${userId}/follow`,
   // user profile
   uploadProfilePictureReq: `/profile/upload-picture`,
-  deleteProfilePictureReq: `/profile/delete-picture`
+  deleteProfilePictureReq: `/profile/delete-picture`,
+  uploadCoverPictureReq: `/profile/upload-cover`,
+  deleteCoverPictureReq: `/profile/delete-cover`,
 };
 
 export const state = {

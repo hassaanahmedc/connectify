@@ -102,4 +102,16 @@ class User extends Authenticatable
             },
         );
     }
+
+    public function coverUrl(): Attribute 
+    {
+        return Attribute::make(
+            get: function () {
+                if ($this->cover) {
+                    return asset('storage/' . $this->cover);
+                }
+                return 'https://placewaifu.com/image/1000/400';
+            },
+        );
+    }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\User\ProfilePictureRequest;
+use App\Http\Requests\User\CoverPhotoRequest;
 use App\Services\AvatarService;
+use App\Services\CoverPhotoService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -131,6 +133,30 @@ class ProfileController extends Controller
             return response->json([
                 'status' => 'error',
                 'message' => 'Failed to delete profile picture. Please try again.'
+            ], 500);
+        }
+    }
+
+    public function uploadCover(CoverPhotoRequest $request, CoverPhotoService $service)
+    {
+        $user = $request->user();
+        $file = $request->validated()['cover_photo'];
+
+        try {
+            $path = $service->update($user, $file);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cover Image updated successfully',
+                'path' => asset("storage/{$path}")
+            ]);
+
+        } catch (Exception $e) {
+            Log::error("Cover Photo Update Rrror: " . $e->getMessage());
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to upload cover photo. Please try again.'
             ], 500);
         }
     }

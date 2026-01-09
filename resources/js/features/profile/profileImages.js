@@ -1,28 +1,30 @@
 import { API_ENDPOINTS } from '../../config/constants';
-import { 
-    createImagePreviews, 
-    prepareImages, formatImageErrors, 
-    uploadImages, 
-    displayAlerts, 
-    disableButton, 
-    enableButton, 
+import {
+    createImagePreviews,
+    prepareImages, 
+    formatImageErrors,
+    uploadImages,
+    displayAlerts,
+    disableButton,
+    enableButton,
     revokeImagePreviews
- } from '../../utils/imageUploader';
+} from '../../utils/imageUploader';
 
 function setupProfileImageUploader() {
     let state = {
         filesToUpload: [],
-        currentPreviews: []
+        currentPreviews: [],
+        errorsToDispatch: [],
     }
 
     const elements = {
         uploadProfilePicture: document.getElementById('upload-profile-picture'),
         selectProfilePicture: document.getElementById('select-profile-picture'),
         profilePicture: document.getElementById("profile-picture"),
-        saveProfilePicture: document.getElementById('save-profile-picture'),
+        saveProfilePicture: document.getElementById('save-upload-button'),
         profileErrors: document.getElementById('profile-error'),
         tryAgainButton: document.getElementById('try-again-button'),
-        previewContainer: document.getElementById('preview-container'),
+        previewContainer: document.getElementById('image-upload-preview-container'),
         errorContainer: document.getElementById('error-container')
     }
 
@@ -31,48 +33,61 @@ function setupProfileImageUploader() {
             revokeImagePreviews(state.currentPreviews);
         }
         const files = Array.from(e.target.files || []);
-        const {validatedImages, errors} = prepareImages(files);
-        
-        if (errors.length > 0) {
-            elements.previewContainer.classList.add('hidden')
-            elements.errorContainer.classList.remove('hidden')
+        const { validatedImages, errors } = prepareImages(files);
 
-            const formattedErrorMessages = formatImageErrors(errors)
-            displayAlerts(elements.profileErrors, formattedErrorMessages, 'error')
-            disableButton(elements.saveProfilePicture, 'save')
+        if (errors.length > 0) {
+            const formattedErrorMessages = formatImageErrors(errors);
 
             state.filesToUpload = [];
             state.currentPreviews = [];
-        } else {
-            elements.previewContainer.classList.remove('hidden')
-            elements.errorContainer.classList.add('hidden')
+            state.errorsToDispatch = formattedErrorMessages;
 
+        } else {
             state.filesToUpload = validatedImages;
             state.currentPreviews = createImagePreviews(validatedImages);
-            enableButton(elements.saveProfilePicture, 'Save')
-
         }
-        window.dispatchEvent(new CustomEvent('profile-image-selected', {
-            detail: { previewImage: state.currentPreviews }
+
+        window.dispatchEvent(new CustomEvent ('open-image-preview', {
+            detail: {
+                previewUrl: state.currentPreviews,
+                profileErrors: state.errorsToDispatch,
+                title: 'Upload Profile Picture',
+                previewClass: 'w-64 h-64'
+            }
         }));
+
+        window.dispatchEvent(new CustomEvent ('open-modal', { detail: 'image-upload-preview' }));
+
+        state.errorsToDispatch = [];
     }
 
     async function handleUplaod() {
         if (state.filesToUpload.length === 0) return;
-
         disableButton(elements.saveProfilePicture, 'Saving...')
+        
         try {
-            const result = await uploadImages(state.filesToUpload, API_ENDPOINTS.uploadProfilePictureReq);
+            const result = await uploadImages(state.filesToUpload, API_ENDPOINTS.uploadProfilePictureReq, 'profile_picture');
+
             if (result.ok) {
                 elements.profilePicture.src = result.data;
-                window.dispatchEvent(new CustomEvent("close-profile-modal"));
+
+                window.dispatchEvent(new CustomEvent('close-modal', { detail: 'image-upload-preview' }));
+                window.dispatchEvent(new CustomEvent('show-notification', {
+                    detail: { message: 'Profile picture updated!', type: 'success' }
+                }));
+
             } else {
-                const errorMessages = result.error ? formattedErrorMessages([result.error]) : ['Upload failed, Please try again.']
-                displayAlerts(elements.profileErrors, errorMessages, 'error');
+                const errorMessages = result.error ? formattedErrorMessages(
+                    [result.error]) : ['Upload failed, Please try again.']
+
+                window.dispatchEvent(new CustomEvent('open-image-preview', { detail: { profileErrors: errorMessages } }));
             }
+
         } catch (error) {
-            displayAlerts(elements.profileErrors, ['A network error occured, Please try again.'], 'error')
-            console.error("Upload failed: ", error)
+            window.dispatchEvent(new CustomEvent('open-image-preview', {
+                detail: { profileErrors: ['A network error occured, Please try again.'] }
+            }));
+            
         } finally {
             enableButton(elements.saveProfilePicture, 'Save')
             if (state.currentPreviews.length > 0) {
@@ -82,11 +97,11 @@ function setupProfileImageUploader() {
             state.currentPreviews = [];
         }
     }
-    
-    elements.uploadProfilePicture.addEventListener('click', () => elements.selectProfilePicture.click() )
+
+    elements.uploadProfilePicture.addEventListener('click', () => elements.selectProfilePicture.click())
     elements.tryAgainButton.addEventListener('click', () => elements.selectProfilePicture.click())
     elements.selectProfilePicture.addEventListener('change', handleProfileImage)
-    elements.saveProfilePicture.addEventListener('click', handleUplaod )
+    elements.saveProfilePicture.addEventListener('click', handleUplaod)
 }
 
 setupProfileImageUploader();
