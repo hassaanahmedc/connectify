@@ -22,7 +22,7 @@ class CoverPhotoService
         return $path;
     }
 
-    public function remove(User $user) 
+    public function delete(User $user) 
     {
         if ($user->cover) {
             Storage::disk('public')->delete($user->cover);

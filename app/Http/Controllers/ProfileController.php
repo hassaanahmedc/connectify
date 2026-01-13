@@ -160,4 +160,35 @@ class ProfileController extends Controller
             ], 500);
         }
     }
+
+    public function deleteCover(Request $request, CoverPhotoService $service)
+    {
+        $user = $request->user();
+
+        if (!$user->cover) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User does not have a cover photo to delete.'
+            ], 422);
+        };
+        
+        try {
+            $service->delete($user);
+            $user->refresh();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cover photo deleted successfully',
+                'path' => $user->cover_url
+            ], 200);
+
+        } catch (Exception $e) {
+            Log::error("Cover Delete Error: " . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to delete cover photo. Please try again.'
+            ], 422);
+        };
+    }
 }

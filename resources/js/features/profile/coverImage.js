@@ -23,7 +23,6 @@ import {
         coverPicture: document.getElementById("cover-picture"),
         saveCoverPicture: document.getElementById('save-upload-button'),
         profileErrors: document.getElementById('profile-error'),
-        tryAgainButton: document.getElementById('try-again-button'),
         previewContainer: document.getElementById('image-upload-preview-container'),
         errorContainer: document.getElementById('error-container')
     }
@@ -52,7 +51,8 @@ import {
                 previewUrl: state.currentPreviews,
                 profileErrors: state.errorsToDispatch,
                 title: 'Upload Cover Picture',
-                previewClass: 'w-full aspect-video'
+                previewClass: 'w-full aspect-video',
+                tryAgainId: 'try-again-button-cover',
             }
         }));
 
@@ -111,7 +111,6 @@ import {
     }
 
     elements.uploadCoverPicture.addEventListener('click', () => elements.selectCoverPicture.click());
-    elements.tryAgainButton.addEventListener('click', () => elements.selectCoverPicture.click());
     elements.selectCoverPicture.addEventListener('change', handleCoverImage);
     elements.saveCoverPicture.addEventListener('click', handleUplaod);
  };

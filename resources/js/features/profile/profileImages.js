@@ -23,7 +23,6 @@ function setupProfileImageUploader() {
         profilePicture: document.getElementById("profile-picture"),
         saveProfilePicture: document.getElementById('save-upload-button'),
         profileErrors: document.getElementById('profile-error'),
-        tryAgainButton: document.getElementById('try-again-button'),
         previewContainer: document.getElementById('image-upload-preview-container'),
         errorContainer: document.getElementById('error-container')
     }
@@ -52,7 +51,8 @@ function setupProfileImageUploader() {
                 previewUrl: state.currentPreviews,
                 profileErrors: state.errorsToDispatch,
                 title: 'Upload Profile Picture',
-                previewClass: 'w-64 h-64'
+                previewClass: 'w-64 h-64',
+                tryAgainId: 'try-again-button-profile',
             }
         }));
 
@@ -99,7 +99,6 @@ function setupProfileImageUploader() {
     }
 
     elements.uploadProfilePicture.addEventListener('click', () => elements.selectProfilePicture.click())
-    elements.tryAgainButton.addEventListener('click', () => elements.selectProfilePicture.click())
     elements.selectProfilePicture.addEventListener('change', handleProfileImage)
     elements.saveProfilePicture.addEventListener('click', handleUplaod)
 }

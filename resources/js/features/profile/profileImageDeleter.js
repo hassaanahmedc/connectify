@@ -20,7 +20,14 @@ function setupProfilePictureDeletor() {
             EventBus.dispatch('show-notification', { message: 'Error deleting profile picture, please try again', type: 'error' });
         }
     }
-    window.addEventListener('confirm-picture-deletion', handleDelete)
+    window.addEventListener('execute-confirmed-action', (event) => { 
+        const actionType = event.detail.actionType;
+        if (actionType !== 'profile_picture') {
+         console.log('not profile picture');
+         return;   
+        }
+        handleDelete();
+    })
 }
 
 setupProfilePictureDeletor()
