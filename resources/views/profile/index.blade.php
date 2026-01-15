@@ -1,53 +1,64 @@
-{{-- @dd($user) --}}
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+{{-- 
+    This is the main public-facing Profile Page.
+    
+    This view acts as a simply layout file. It is responsible for rendeting the
+    larger self-contained partials that render that make up the page, such as header, 
+    sidebar, user-posts. It passes the required data such as $user object down to these partials.
+ --}}
 
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <meta content="{{ csrf_token() }}" name="csrf-token">
+@extends('layouts.app')
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto&display=swap"
-        rel="stylesheet">
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/components/follow.js', 'resources/js/features/profile/profileImages.js', 'resources/js/components/locations.js', 'resources/js/features/profile/profileImageDeleter.js', 'resources/js/features/profile/coverImage.js', 'resources/js/features/profile/coverImageDeleter.js'])
-</head>
-
-<body class="light bg-lightMode-background">
-    {{-- Toast Notification Component --}}
+@section('content')
+  {{-- 
+    THis is a global component to display toast notifications triggered by
+    Api requests or user actions  
+    --}}
     <x-notification />
     <header>
         <x-custom-nav />
     </header>
+
     <div class="mx-auto mt-16 max-w-[1600px]">
 
         <div class="h-[calc(100vh-4rem)] xl:mx-auto xl:my-0 xl:w-4/5">
-            {{-- Cover Image --}}
+            {{-- The Profile header, containing cover photo and user actions --}}
             @include('profile.partials.profile-header')
 
             <div class="flex w-full flex-col items-center gap-5 md:flex-row md:items-start md:justify-center">
+
+                {{-- The Profile sidebarx containing user info, stats and main avatar --}}
                 @include('profile.partials.profile-sidebar')
+
+                {{-- The feed of posts belonging to this user --}}
                 @include('profile.partials.profile-feed')
                 
             </div>
         </div>
     </div>
 
+    {{-- 
+    Global Application Modals
+    ----------------------------------------------------------------------------------
+    These components are single, page-wide instances for handling Common UI patterns 
+    like vciwing images or confirming actions.
+
+    They are designed to be "dumb" and are controlled entirely by dispatching 
+    global window events from other components or Javascript files. 
+    For example, to open confirm action modal, another component dispatches 'open-modal'
+    event with 'confirm-action' payload. 
+     --}}
+
     <x-image-viewer />
-    {{-- Modal for uploading Cover Image  --}}
     <x-modals.image-upload-preview-modal />
-    {{-- Confirm Profile Picture Deletion Modal --}}
     <x-modals.confirm-action />
 
-    <script>
-        window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";
-    </script>
-</body>
+@endsection
 
-</html>
+@push('scripts')
+    @vite('resources/js/components/follow.js')
+    @vite('resources/js/features/profile/profileImages.js')
+    @vite('resources/js/components/locations.js')
+    @vite('resources/js/features/profile/profileImageDeleter.js')
+    @vite('resources/js/features/profile/coverImage.js')
+    @vite('resources/js/features/profile/coverImageDeleter.js')
+@endpush

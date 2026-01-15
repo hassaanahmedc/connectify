@@ -1,3 +1,9 @@
+{{--
+  This partial is responsible for rendering the feed of posts on a user's
+  profile page. It includes the post creation component and iterates through
+  the user's posts, rendering a 'feed-card' for each one.
+--}}
+
 <div class="w-full max-w-2xl px-4 md:w-1/2 md:px-0 lg:w-2/4">
 
     <section class="">

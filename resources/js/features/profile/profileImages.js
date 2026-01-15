@@ -1,22 +1,34 @@
+/**
+ * This file manages the entire workflow for uploading profile picture.
+ * 
+ * @summary this script handles user interaction for profile picture upload.
+ * It listens for click on 'upload-profile-picture' button and triggers the file input.
+ * Validates the selected files, then dispatches events to the global image preview modal
+ * to display the image or erros if validation failed.
+ * Then finally it makes API request to the server to update the file. 
+ */
+
 import { API_ENDPOINTS } from '../../config/constants';
 import {
     createImagePreviews,
     prepareImages, 
     formatImageErrors,
     uploadImages,
-    displayAlerts,
     disableButton,
     enableButton,
     revokeImagePreviews
 } from '../../utils/imageUploader';
 
 function setupProfileImageUploader() {
+
+    // A privatestate for this scpecifc function.
     let state = {
         filesToUpload: [],
         currentPreviews: [],
         errorsToDispatch: [],
     }
 
+    // A central place to gather all DOM elements this script interacts with,
     const elements = {
         uploadProfilePicture: document.getElementById('upload-profile-picture'),
         selectProfilePicture: document.getElementById('select-profile-picture'),
@@ -27,6 +39,13 @@ function setupProfileImageUploader() {
         errorContainer: document.getElementById('error-container')
     }
 
+    /**
+     * Handles the change event from hidden file input.
+     * This is the entry point for preview and validation logic,
+     * It validates selected files and and dispatchs the event to UI.
+     * @param {Event} - the file input change,
+     * 
+     */
     function handleProfileImage(e) {
         if (state.currentPreviews.length > 0) {
             revokeImagePreviews(state.currentPreviews);
@@ -61,6 +80,11 @@ function setupProfileImageUploader() {
         state.errorsToDispatch = [];
     }
 
+    /**
+     * Handles click event from 'Save' button from preview modal.
+     * It takes validated file stored within the 'state', uploads it to the server.
+     * and handles success and error responses by dispatching events,
+     */
     async function handleUplaod() {
         if (state.filesToUpload.length === 0) return;
         disableButton(elements.saveProfilePicture, 'Saving...')
@@ -98,6 +122,7 @@ function setupProfileImageUploader() {
         }
     }
 
+    // Ataches initial event listeners to the SOM elements.
     elements.uploadProfilePicture.addEventListener('click', () => elements.selectProfilePicture.click())
     elements.selectProfilePicture.addEventListener('change', handleProfileImage)
     elements.saveProfilePicture.addEventListener('click', handleUplaod)
