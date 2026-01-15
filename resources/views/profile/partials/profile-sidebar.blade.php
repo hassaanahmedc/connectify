@@ -78,11 +78,6 @@
                     View photo</li>
             </ul>
 
-            {{-- Here we are opening the modal to edit profile details triggered by 'editProfileModal'  --}}
-            @include('profile.upload-profile-img', [
-                'toggleVariable' => 'editProfileModal',
-                'previewUrl' => 'previewUrl',
-            ])
         </div>
 
         <div class="text-center">
@@ -108,7 +103,7 @@
                         420 Followers
                     </a>
                     <button class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
-                        x-on:click="edit_profile_details=true">
+                        x-on:click="$dispatch('open-modal', 'edit-profile-details-modal')">
                         Edit Profile
                     </button>
                 @else
@@ -123,8 +118,6 @@
                     </a>
                 @endif
             @endauth
-
-            @include('profile.edit-profile-modal')
         </div>
     </section>
 
@@ -163,6 +156,6 @@
                 <span class="text-sm font-normal">Following</span>
             </div>
         </div>
-
     </section>
 </div>
+@include('profile.partials.edit-profile-details-modal')

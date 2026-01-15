@@ -47,7 +47,6 @@
     For example, to open confirm action modal, another component dispatches 'open-modal'
     event with 'confirm-action' payload. 
      --}}
-
     <x-image-viewer />
     <x-modals.image-upload-preview-modal />
     <x-modals.confirm-action />
