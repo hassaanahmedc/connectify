@@ -6,34 +6,31 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Requests\Api\LikeRequest;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Likes;
+use App\Notifications\LikeNotification;
 
 class LikeController extends Controller
 {
-    public function store(LikeRequest $request)
+    public function store(Request $request, Post $post)
     {
+        $liker = $request->user();
+        $postOwner = $post->user;
         
-        $validatedData = $request->validated();
-
-        $post = Post::find($validatedData['posts_id']);
-        if (!$post) {
-            return response()->json(['error' => 'post not found'], 400);
-        }
-
-        $user_id = Auth::id();
-    
-        $existingLike = Likes::where('posts_id', $validatedData['posts_id'])->where('user_id', $user_id)->first();
+        $existingLike = Likes::where('posts_id', $post->id)->where('user_id', $liker->id)->first();
     
         if ($existingLike) {
             $existingLike->delete();
             return response()->json(['liked' => false, 'message' => 'Like removed successfully!'], 200);
         }
     
-        Likes::create(['posts_id' =>  $validatedData['posts_id'], 'user_id' => $user_id]);
-    
+        Likes::create(['posts_id' =>  $post->id, 'user_id' => $liker->id]);
+
+        if ($postOwner->id !== $liker->id) {
+            $postOwner->notify(new LikeNotification($liker, $post));
+        }
+
         return response()->json(['liked' => true, 'message' => 'Post liked successfully!'], 200);
     }
 }
