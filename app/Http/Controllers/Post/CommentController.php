@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -7,19 +8,20 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Post\CommentRequest;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Notifications\CommentNotification;
+
 class CommentController extends Controller
 {
-    public function store(CommentRequest $request)
+    public function store(CommentRequest $request, Post $post)
     {
         $validatedData = $request->validated();
-        $post = Post::find($validatedData['posts_id']);
-        if (! $post) {
-            return response()->json(['error' => 'Post not found'], 400);
-        }
-        $user_id = Auth::id();
+
+        $commentor = $request->user();
+        $postOwner = $post->user;
+
         $comment = Comment::create([
-            'posts_id' => $validatedData['posts_id'],
-            'user_id' => $user_id,
+            'posts_id' => $post->id,
+            'user_id' => $commentor->id,
             'content' => $validatedData['content'],
         ]);
         $comment->load('user');
@@ -27,6 +29,10 @@ class CommentController extends Controller
         $commentData['can_delete'] = auth()->user()->can('delete', $comment);
         $commentData['can_update'] = auth()->user()->can('update', $comment);
         
+        if ($postOwner->id !== $commentor->id) {
+            $postOwner->notify(new CommentNotification($commentor, $post));
+        }
+
         return response()->json(['success' => 'Comment added successfully!', 'comment' => $commentData], 200);
     }
 

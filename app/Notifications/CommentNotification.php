@@ -4,24 +4,25 @@ namespace App\Notifications;
 
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class LikeNotification extends Notification implements ShouldQueue
+class CommentNotification extends Notification
 {
     use Queueable;
-    
-    public User $liker;
+
+    public User $commentor;
     public Post $post;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $liker, Post $post)
+    public function __construct(User $commentor, Post $post)
     {
-        $this->liker = $liker;
+        $this->commentor = $commentor;
         $this->post = $post;
     }
 
@@ -43,10 +44,10 @@ class LikeNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'liker_id' => $this->liker->id,
-            'liker_name' => $this->liker->fname . ' ' . $this->liker->lname,
-            'liker_avatar' => $this->liker->avatar,
             'post_id' => $this->post->id,
+            'commentor_id' => $this->commentor->id,
+            'commentor_name' => $this->commentor->fname . ' ' . $this->commentor->lname,
+            'commentor_avatar' => $this->commentor->avatar,
             'link' => route('post.view', $this->post->id)
         ];
     }
