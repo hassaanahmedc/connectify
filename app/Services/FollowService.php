@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\FollowNotification;
 use Exception;
 
 class FollowService
@@ -28,6 +29,7 @@ class FollowService
             ];
         } else {
             $authUser->follow($targetUser);
+            $targetUser->notify(new FollowNotification($authUser));
             return [
                 'success' => true,
                 'message' => 'followed user',

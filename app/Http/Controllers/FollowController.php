@@ -29,14 +29,16 @@ class FollowController extends Controller
     public function following(Request $request, User $user)
     {
         $following = $user->isFollowing;
-        return response()->json(['following' => $following], 200);
+
         Log::info(['incomming request for controller:following' => $request->all(), 'user' => $user]);
+        return response()->json(['following' => $following], 200);
     }
 
     public function follower(Request $request, User $user)
     {
         $followers = $user->followers();
-        return response()->json(['followers' => $followers], 200);
+        
         Log::info(['incomming request for controller:follower' => $request->all(), 'user' => $user]);
+        return response()->json(['followers' => $followers], 200);
     }
 }
