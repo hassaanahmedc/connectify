@@ -11,7 +11,7 @@
  --}}
 
 {{-- The main root element of Alpine component. It controls the 'editCoverPicture' state. --}}
-<header class="relative max-h-96 min-w-96 bg-black opacity-85 xl:rounded-b-lg" 
+<header class="relative max-h-96 min-w-96 bg-black xl:rounded-b-lg" 
     x-data="{ editCoverPicture: false, addCoverModal: false, cuurentPreview: '' }">
     @auth
         @if ($user->id === Auth::id())
@@ -29,7 +29,7 @@
         @else
 
         {{-- For other users, the cover image is not interactive except for viewing the image. --}}
-            <img alt="" class="ah-full w-full object-cover xl:rounded-b-lg" src="{{ $user->cover_url }}"
+            <img alt="" class="h-80 w-full cursor-pointer object-cover transition-opacity ease-in-out hover:opacity-70 hover:shadow-lg xl:rounded-b-lg" src="{{ $user->cover_url }}"
                 x-on:click.stop="
                     $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->cover_url }}' });
                     $nextTick(() => editCoverPicture = false);">
@@ -51,7 +51,7 @@
         - It closes if the user clicks outside of it,
      --}}
     <ul @click.outside="editCoverPicture = false"
-        class="bottom-0- absolute right-4 mt-1 rounded-lg border bg-white shadow-md" 
+        class="absolute right-4 mt-1 rounded-lg border bg-white shadow-md" 
         x-cloak 
         x-show="editCoverPicture">
 

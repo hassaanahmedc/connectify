@@ -7,7 +7,7 @@
 
         <div class="flex-1" x-data="{ create_post: false }"
             x-on:close-modal.window="if ($event.detail.modal === 'create_post') create_post = false">
-            <div @click="create_post = true" class="relative">
+            <div @click="create_post = true">
                 <div class="cursor-pointer rounded-full border px-4 py-2 text-gray-500">
                     Share something...
                 </div>
