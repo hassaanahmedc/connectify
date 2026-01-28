@@ -7,6 +7,7 @@ use App\Http\Controllers\Post\LikeController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 /*
@@ -53,8 +54,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/user/{user}/follow', [FollowController::class, 'toggleFollow'])->name('user.follow');
     Route::get('/user/{user}/followers', [FollowController::class, 'follower'])->name('user.followers');
     Route::get('/user/{user}/following', [FollowController::class, 'following'])->name('user.following');
-
-});
+    // Notification Route
+    
+    });
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('user.notifications');
 // Non Protected Public routes
 Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.view');

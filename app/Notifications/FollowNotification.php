@@ -42,6 +42,7 @@ class FollowNotification extends Notification
         return [
             'follower_id' => $this->follower->id,
             'follower_name' => $this->follower->fname . ' ' . $this->follower->lname,
+            'message' => $this->liker->fname . ' ' . $this->liker->lname . ' started following you.',
             'follower_avatar' => $this->follower->avatar,
             'link' => route('profile.view', $this->follower->id),
         ];
