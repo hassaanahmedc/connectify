@@ -46,7 +46,7 @@
                 </div>
                 {{-- Search Icon (Mobile) --}}
                 <div class="md:hidden ml-auto">
-                    <figure @click="searchOpen = !searchOpen" class="mr-2 flex items-center justify-center cursor-pointer">
+                    <figure @click="searchOpen = !searchOpen" class="cursor-pointer">
                         <img src="{{ Vite::asset('/public/svg-icons/search.svg') }}" alt="" class="w-6 h-6">
                     </figure>
                 </div>
@@ -104,9 +104,16 @@
                             alt=""></a>
                 </div>
                 <div class="hidden md:block">
-                    <a href=""><img class="w-8 h-auto"
-                            src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
-                            alt=""></a>
+                    <x-notification-dropdown>
+                        <x-slot name="trigger">
+                            <img class="notification-icon w-8 h-auto"
+                                 src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
+                                 alt="Notifications">
+                        </x-slot>
+                        <x-slot name="content">
+                            @include('partials.notifications-list')
+                        </x-slot>
+                    </x-notification-dropdown>
                 </div>
                 <div class="hidden md:block">
                     <div class="flex">
@@ -163,37 +170,32 @@
 
             {{-- Nav Dropdown {Mobile}--}}
             <div class="flex md:hidden">
-                <a href=""><img class="profile-picture-display w-9 h-auto rounded-full"
-                        src="{{ $navUser->avatar_url }}"
-                        alt=""></a>
-                <x-dropdown align="right"
-                    width="48"
-                    contentClasses="bg-white">
+                <div class="flex gap-2">
+                {{-- Notificatopm Dropdpwm --}}
+                    <x-notification-dropdown>
+                        <x-slot name="trigger">
+                            <img class="notification-icon w-8 h-auto"
+                                 src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
+                                 alt="Notifications">
+                        </x-slot>
+                        <x-slot name="content">
+                            @include('partials.notifications-list')
+                        </x-slot>
+                    </x-notification-dropdown>
+                    <a href=""><img class="profile-picture-display w-9 h-auto rounded-full"
+                            src="{{ $navUser->avatar_url }}"
+                            alt=""></a>
+                </div>
+                {{-- Collapsed Nav Links --}}
+                <x-dropdown width="48" contentClasses="bg-white">
                     <x-slot name="trigger">
-                        <div class="ms-1">
-                            <img class="w-5 h-auto"
-                                src="{{ Vite::asset('/public/svg-icons/expand.svg') }}"
-                                alt="">
-                        </div>
+                        <img class="w-5 h-auto"
+                            src="{{ Vite::asset('/public/svg-icons/expand.svg') }}"
+                            alt="">
                     </x-slot>
                     {{-- Nav Dropdown Links {Mobile}--}}
                     <x-slot name="content">
                         @auth
-                            <x-dropdown-link
-                                class="dark:text-black dark:hover:bg-lightMode-background">
-                                {{ __('Friend Requests') }}
-                            </x-dropdown-link>
-
-                            <x-dropdown-link
-                                class="dark:text-black dark:hover:bg-lightMode-background">
-                                {{ __('Messages') }}
-                            </x-dropdown-link>
-
-                            <x-dropdown-link 
-                                class="dark:text-black dark:hover:bg-lightMode-background">
-                                {{ __('Notification') }}
-                            </x-dropdown-link>
-
                             <x-dropdown-link :href="route('profile.edit')"
                                 class="dark:text-black dark:hover:bg-lightMode-background">
                                 {{ __('Edit Profile') }}
