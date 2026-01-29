@@ -1,13 +1,40 @@
-@vite('resources/js/features/search/index.js')
+@vite('resources/js/features/search/index.js', 'resources/js/components/notifications.js');
 
-<div x-data="{ searchOpen: false, leftSidebarOpen: false, rightSidebarOpen: false }" 
+<div x-data="{ searchOpen: false, leftSidebarOpen: false, rightSidebarOpen: false,
+                    notifications: [],
+                    open: false,
+                    error: '',
+                    isLoading: false,
+                    hasBeenFetched: false,
+                    storageBaseUrl: '{{ asset("storage") }}/',
+
+                    async fetchNotifications() {
+                        if (this.hasBeenFetched) return;
+                        this.isLoading = true;
+
+                        try {
+                            const response = await fetch('/notifications');
+                            if (!response) this.error = 'HTTP error! status: ${response.status}';
+
+                            const data = await response.json();
+                            this.notifications = data.notifications;
+                            this.hasBeenFetched = true;
+
+                        } catch (error) {
+                            this.error = 'Error fetching notifications.' ;
+
+                        } finally {
+                            this.isLoading = false;
+                        }
+                    } 
+                }" 
      x-init="$watch('leftSidebarOpen', value => console.log('Sidebar state:', value))">
     <nav class="flex justify-between items-center px-4 sm:px-8 md:px-10 h-16 bg-white fixed top-0 w-full z-50 ">
         <section id="logoSection"
             class="flex items-center justify-between">
             {{-- Left Sidebar Toggle (Mobile) --}}
             <div class="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center text-base">
-                <button @click="leftSidebarOpen = !leftSidebarOpen" class="p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center">
+                <button @click="leftSidebarOpen = !leftSidebarOpen" id="notification-icon-mobile" class="p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center">
                     <svg x-show="!leftSidebarOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -106,12 +133,34 @@
                 <div class="hidden md:block">
                     <x-notification-dropdown>
                         <x-slot name="trigger">
-                            <img class="notification-icon w-8 h-auto"
-                                 src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
-                                 alt="Notifications">
+                            <div @click="open = !open; fetchNotifications()">
+                                <img class="notification-icon w-8 h-auto"
+                                    src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
+                                    alt="Notifications">
+                            </div>
                         </x-slot>
                         <x-slot name="content">
-                            @include('partials.notifications-list')
+                            <div class="py-2">
+                                <h5 class="text-lg font-bold px-4 pb-2">Notifications</h5>
+                                <div id="notification-container-mobile" class="divide-y divide-gray-100">
+                                    <template x-if="isLoading">
+                                        <div class="p-4 text-center text-gray-500">Loading...</div>
+                                    </template>
+                                    <template x-for="notification in notifications" :key="notification.id">
+                                        <a :href="notification.data.link" class="block p-3 hover:bg-gray-50 
+                                            transition duration-150 ease-in-out">
+                                            <div class="flex gap-3 items-center text-sm">
+                                                <img :src="storageBaseUrl + notification.data.user_avatar" 
+                                                    class="w-12 h-12 rounded-full object-cover" alt="">
+                                                <strong class="font-bold" x-text="notification.data.user_name"></strong>
+                                                <p class="text-gray-700 dark:text-gray-300"
+                                                    x-text="notification.data.message">
+                                                </p>
+                                            </div>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
                         </x-slot>
                     </x-notification-dropdown>
                 </div>
@@ -174,12 +223,34 @@
                 {{-- Notificatopm Dropdpwm --}}
                     <x-notification-dropdown>
                         <x-slot name="trigger">
-                            <img class="notification-icon w-8 h-auto"
-                                 src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
-                                 alt="Notifications">
+                            <div @click="open = !open; fetchNotifications()">
+                                <img class="w-8 h-auto" 
+                                     src="{{ Vite::asset('/public/svg-icons/notification.svg') }}"
+                                     alt="Notifications">
+                            </div>
                         </x-slot>
                         <x-slot name="content">
-                            @include('partials.notifications-list')
+                            <div class="py-2">
+                                <h5 class="text-lg font-bold px-4 pb-2">Notifications</h5>
+                                <div id="notification-container-mobile" class="divide-y divide-gray-100">
+                                    <template x-if="isLoading">
+                                        <div class="p-4 text-center text-gray-500">Loading...</div>
+                                    </template>
+                                    <template x-for="notification in notifications" :key="notification.id">
+                                        <a :href="notification.data.link" class="block p-3 hover:bg-gray-50 
+                                            transition duration-150 ease-in-out">
+                                            <div class="flex gap-3 items-center text-sm">
+                                                <img :src="storageBaseUrl + notification.data.user_avatar" 
+                                                    class="w-12 h-12 rounded-full object-cover" alt="">
+                                                <strong class="font-bold" x-text="notification.data.user_name"></strong>
+                                                <p class="text-gray-700 dark:text-gray-300"
+                                                    x-text="notification.data.message">
+                                                </p>
+                                            </div>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
                         </x-slot>
                     </x-notification-dropdown>
                     <a href=""><img class="profile-picture-display w-9 h-auto rounded-full"

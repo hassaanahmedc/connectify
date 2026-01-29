@@ -40,10 +40,10 @@ class FollowNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'follower_id' => $this->follower->id,
-            'follower_name' => $this->follower->fname . ' ' . $this->follower->lname,
-            'message' => $this->liker->fname . ' ' . $this->liker->lname . ' started following you.',
-            'follower_avatar' => $this->follower->avatar,
+            'user_id' => $this->follower->id,
+            'user_name' => $this->follower->fname . ' ' . $this->follower->lname,
+            'message' => 'started following you.',
+            'user_avatar' => $this->follower->avatar,
             'link' => route('profile.view', $this->follower->id),
         ];
     }

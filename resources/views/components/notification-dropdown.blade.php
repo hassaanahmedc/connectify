@@ -1,8 +1,8 @@
 @props(['contentClasses' => 'bg-white rounded-lg shadow-xl overflow-hidden'])
 
-<div class="relative" x-data="{ open: false }">
+<div class="relative">
     {{-- Trigger --}}
-    <div @click="open = !open" class="cursor-pointer">
+    <div class="cursor-pointer">
         {{ $trigger }}
     </div>
 

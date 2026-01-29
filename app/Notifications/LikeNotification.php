@@ -43,10 +43,10 @@ class LikeNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'liker_id' => $this->liker->id,
-            'liker_name' => $this->liker->fname . ' ' . $this->liker->lname,
-            'message' => $this->liker->fname . ' ' . $this->liker->lname . ' liked your post.',
-            'liker_avatar' => $this->liker->avatar,
+            'user_id' => $this->liker->id,
+            'user_name' => $this->liker->fname . ' ' . $this->liker->lname,
+            'message' => 'liked your post.',
+            'user_avatar' => $this->liker->avatar,
             'post_id' => $this->post->id,
             'link' => route('post.view', $this->post->id)
         ];

@@ -45,10 +45,10 @@ class CommentNotification extends Notification
     {
         return [
             'post_id' => $this->post->id,
-            'commentor_id' => $this->commentor->id,
-            'commentor_name' => $this->commentor->fname . ' ' . $this->commentor->lname,
-            'message' => $this->liker->fname . ' ' . $this->liker->lname . ' commented on your post.',
-            'commentor_avatar' => $this->commentor->avatar,
+            'user_id' => $this->commentor->id,
+            'user_name' => $this->commentor->fname . ' ' . $this->commentor->lname,
+            'message' => 'commented on your post.',
+            'user_avatar' => $this->commentor->avatar,
             'link' => route('post.view', $this->post->id)
         ];
     }
