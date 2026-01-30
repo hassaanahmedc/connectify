@@ -29,8 +29,8 @@
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
          style="display: none;"
-         class="fixed z-40 top-16 inset-x-4 max-h-[80vh] overflow-y-auto rounded-lg shadow-lg mr-4
-                 md:right-0 md:inset-x-auto md:w-2/4 lg:w-2/5 xl:w-1/4"
+         class="fixed z-40 top-16 mt-2 inset-x-4 w-auto max-h-[80vh] overflow-y-auto shadow-lg
+                md:absolute md:top-full md:inset-auto md:right-0 md:w-96"
          >
         <div class="{{ $contentClasses }}">
             {{ $content }}

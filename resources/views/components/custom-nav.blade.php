@@ -149,13 +149,17 @@
                                     <template x-for="notification in notifications" :key="notification.id">
                                         <a :href="notification.data.link" class="block p-3 hover:bg-gray-50 
                                             transition duration-150 ease-in-out">
-                                            <div class="flex gap-3 items-center text-sm">
+                                            <div class="flex gap-3 items-start text-sm">
                                                 <img :src="storageBaseUrl + notification.data.user_avatar" 
-                                                    class="w-12 h-12 rounded-full object-cover" alt="">
-                                                <strong class="font-bold" x-text="notification.data.user_name"></strong>
-                                                <p class="text-gray-700 dark:text-gray-300"
-                                                    x-text="notification.data.message">
-                                                </p>
+                                                    class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" alt="">
+                                                <div class="flex-1 pt-0.5">
+                                                    <p class="text-gray-800 leading-snug">
+                                                        <strong class="font-bold text-black" 
+                                                                x-text="notification.data.user_name"></strong>
+                                                        <span x-text="notification.data.message"></span>
+                                                    </p>
+                                                    <span class="text-xs text-blue-600 font-medium mt-1 block">2m ago</span>
+                                                </div>
                                             </div>
                                         </a>
                                     </template>
@@ -239,13 +243,17 @@
                                     <template x-for="notification in notifications" :key="notification.id">
                                         <a :href="notification.data.link" class="block p-3 hover:bg-gray-50 
                                             transition duration-150 ease-in-out">
-                                            <div class="flex gap-3 items-center text-sm">
+                                            <div class="flex gap-3 items-start text-sm">
                                                 <img :src="storageBaseUrl + notification.data.user_avatar" 
-                                                    class="w-12 h-12 rounded-full object-cover" alt="">
-                                                <strong class="font-bold" x-text="notification.data.user_name"></strong>
-                                                <p class="text-gray-700 dark:text-gray-300"
-                                                    x-text="notification.data.message">
-                                                </p>
+                                                    class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" alt="">
+                                                <div class="flex-1 pt-0.5">
+                                                    <p class="text-gray-800 leading-snug">
+                                                        <strong class="font-bold text-black" 
+                                                                x-text="notification.data.user_name"></strong>
+                                                        <span x-text="notification.data.message"></span>
+                                                    </p>
+                                                    <span class="text-xs text-blue-600 font-medium mt-1 block">2m ago</span>
+                                                </div>
                                             </div>
                                         </a>
                                     </template>
