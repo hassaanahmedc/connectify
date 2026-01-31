@@ -12,4 +12,10 @@ class NotificationController extends Controller
     {
         return response()->json(['notifications' => Auth::user()->notifications]);
     }
+
+    public function markAllRead()
+    {
+        Auth::user()->unreadNotifications()->update(['read_at' => now()]);
+        return response()->noContent();
+    }
 }

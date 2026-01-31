@@ -17,7 +17,7 @@
 
         try {
             const response = await fetch('/notifications');
-            if (!response) this.error = 'HTTP error! status: ${response.status}';
+            if (!response.ok) this.error = 'HTTP error! status: ${response.status}';
 
             const data = await response.json();
             this.notifications = data.notifications;
@@ -29,8 +29,28 @@
             } finally {
                 this.isLoading = false;
             }
-        } 
-    }">
+    }, 
+    
+    async markAllAsRead() {
+        try {
+            const response = await fetch('/notifications/mark-all-read');
+            if (!response.ok) this.error = 'Failed to mark notifications as read';
+
+            this.notifications = this.notifications.map(notification => ({
+                ...notification,
+                read_at: new Date().toISOString()
+            }));
+            
+        } catch (error) {
+            this.error = 'Could not mark notifications as read';
+        }
+
+    },
+
+    get unreadCount() {
+        return this.notifications.filter(n => !n.read_at).length;
+    }
+}">
     <nav class="flex justify-between items-center w-full h-16 px-4 bg-white fixed top-0 z-50 sm:px-8 md:px-10">
         <section id="logoSection" class="flex items-center justify-between">
             {{-- Left Sidebar Toggle (Mobile) --}}

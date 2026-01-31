@@ -55,9 +55,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user/{user}/followers', [FollowController::class, 'follower'])->name('user.followers');
     Route::get('/user/{user}/following', [FollowController::class, 'following'])->name('user.following');
     // Notification Route
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('user.notifications');
+    Route::get('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
     
     });
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('user.notifications');
 // Non Protected Public routes
 Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.view');
