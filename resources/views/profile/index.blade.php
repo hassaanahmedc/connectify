@@ -15,7 +15,7 @@
     --}}
     <x-notification />
     <header>
-        <x-custom-nav />
+        <x-nav.index />
     </header>
 
     <div class="mx-auto mt-16 max-w-[1600px]">

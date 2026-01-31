@@ -2,7 +2,7 @@
 
 @section('content')
 <header>
-    <x-custom-nav />
+    <x-nav.index />
 </header>
 
 <div class="mx-auto max-w-[1600px]  h-screen pt-16">

@@ -21,6 +21,6 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('components.custom-nav', NavbarComposer::class);
+        View::composer('components.nav.index', NavbarComposer::class);
     }
 }
