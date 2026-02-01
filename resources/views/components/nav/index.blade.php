@@ -81,7 +81,7 @@
 
         <section id="iconSection">
             <div class="flex">
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-5">
                     <x-nav.notification-list />
                     <a href="{{ route('profile.view', $navUser->id) }}">
                         <img class="profile-picture-display w-9 h-auto rounded-full"
