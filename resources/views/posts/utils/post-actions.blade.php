@@ -4,7 +4,7 @@
     <button data-post-id="{{ $postId }}"
             data-user-id="{{ auth()->id() }}"
             class="like-btn flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg min-h-[44px]">
-        <x-svg-icons.heart :isLiked="$post->liked_by_user" />
+        <x-svg-icons.heart class="like-icon {{ $isLiked ? 'liked-icon' : 'default-svg-color' }}" />
         <span class="like-count text-xs sm:text-sm">{{ $post->likes_count ?? 0 }}</span>
     </button>
     {{-- Comments Button --}}

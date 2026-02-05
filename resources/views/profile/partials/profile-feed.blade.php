@@ -30,6 +30,7 @@
                         'postContent' => $post->content,
                         'postImages' => $post->postImages,
                         'comments' => $post->limited_comments,
+                        'isLiked' => $post->isLiked,
                     ])
                 @endforeach
             @else

@@ -24,17 +24,14 @@
                     :aria-expanded="post_menu"
                     aria-haspopup="true"
                     aria-label="Open post menu">
-                <img src="{{ Vite::asset('public/svg-icons/3dots.svg') }}"
-                     class="cursor-pointer"
-                     x-on:click="post_menu = true"
-                     alt="Post menu">
+                <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer" x-on:click="post_menu = true" />
             </button>
             <ul x-cloak
                 x-transition
                 x-show="post_menu"
                 @click.outside="post_menu = false"
                 aria-label="Post actions"
-                class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md z-10">
+                class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-md rounded-md z-10">
                 @can('delete', $post)
                     <li role="menuitem" class="px-2">
                         <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 

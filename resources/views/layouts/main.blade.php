@@ -5,7 +5,7 @@
     <x-nav.index />
 </header>
 
-<div class="mx-auto max-w-[1600px]  h-screen pt-16">
+<div class="mx-auto max-w-[1600px]  h-screen pt-10">
     <div class="flex h-[calc(100vh-4rem)]">
         <x-left-sidebar />
 

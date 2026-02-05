@@ -10,11 +10,10 @@
 <x-notification-dropdown>
     <x-slot name="trigger">
         <div @click="open = !open; fetchNotifications()">
-            <img alt="Notifications" class="notification-icon relative h-auto w-8"
-                src="{{ Vite::asset('/public/svg-icons/notification.svg') }}">
-                <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500" 
-                    x-show="unreadCount > 0"
-                    x-transition.opacity.scale.75 ></span>
+            <x-svg-icons.bell class="notification-icon relative h-auto w-8" />
+            <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500" 
+                x-show="unreadCount > 0"
+                x-transition.opacity.scale.75 ></span>
         </div>
     </x-slot>
     <x-slot name="content">
