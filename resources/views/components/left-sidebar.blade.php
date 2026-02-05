@@ -1,39 +1,72 @@
 <aside class="hidden md:block w-64 xl:w-72 bg-white border-r">
-    <div class="sticky top-16 p-4">
-        <div id="links" class="space-y-4">
-            <div class="flex items-center gap-3 text-sm font-semibold">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/feed.svg') }}" class="w-7 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>News Feed</span></a>
+    <div class="sticky top-16 py-4 h-[calc(100vh-64px)]">
+        <div class="h-full flex flex-col justify-between">
+            <div>
+
+                {{-- Profile Section --}}
+                <div class="flex items-center px-6 mb-6 gap-3">
+                    <img src="{{ Auth::user()->avatar_url }}" 
+                        class="w-12 h-12 object-cover rounded-full shadow-sm shrink-0" alt="">
+                    <div class="flex flex-col justify-center overflow-hidden">
+                        <span class="font-bold text-sm text-gray-900 truncate leading-tight">
+                            {{ Auth::user()->fname . ' ' . Auth::user()->lname }}</span>
+                        <div class="flex flex-col text-xs text-gray-500 font-medium leading-normal mt-0.5">
+                            <span>105 Followers</span>
+                            <span>241 Following</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Action Button --}}
+                <div class="px-4 mb-8">
+                    <div class="rounded-xl shadow-md px-4 py-3 bg-lightMode-primary text-white font-bold 
+                                flex items-center justify-center gap-2 cursor-pointer
+                                hover:bg-lightMode-blueHighlight active:scale-95 transition-transform"
+                            id="">
+                        <x-svg-icons.plus class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span class="text-sm">Create Post</span>
+                    </div>
+                </div>
+
+                {{-- Navigation Links --}}
+                <div id="links" class="space-y-2 px-4">
+                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.newsfeed class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>News Feed</span>
+                    </a>
+                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.user-icon class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>My Profile</span>
+                    </a>
+                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.user-plus class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>Following</span>
+                    </a>
+                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.user-group class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>Followers</span>
+                    </a>
+                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.magnifying-glass class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>Explore Users</span>
+                    </a>
+                </div>
             </div>
-            <div class="flex items-center gap-3 text-sm font-semibold">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/friends.svg') }}" class="w-7 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Friends</span></a>
+            
+            {{-- Footer --}}
+            <div class="mt-auto pt-10 pb-4 text-[11px] text-gray-400 px-3 text-center">
+                <p>Privacy · Terms · Connectify © 2026</p>
             </div>
-            <div class="flex items-center gap-3 text-sm font-semibold">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/calender.svg') }}" class="w-7 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Events</span></a>
-            </div>
-            <div class="flex items-center gap-3 text-sm font-semibold">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/marketplace.svg') }}" class="w-7 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Marketplace</span></a>
-            </div>
-            <div class="flex gap-3 text-sm sm:text-base lg:text-base font-semibold mb-4 min-h-[44px] items-center">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/orders.svg') }}" class="w-7  h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Orders and Payment</span></a>
-            </div>
-        </div>
-        <div class="mt-8 md:mt-12">
-            <span class="text-xs sm:text-sm lg:text-base font-bold text-zinc-400">PAGES YOU LIKE</span>
         </div>
     </div>
 </aside>
