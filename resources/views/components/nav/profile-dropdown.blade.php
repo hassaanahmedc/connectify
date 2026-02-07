@@ -1,6 +1,6 @@
 <x-dropdown contentClasses="bg-white" width="48">
     <x-slot name="trigger">
-        <img alt="" class="h-auto w-5" src="{{ Vite::asset('/public/svg-icons/expand.svg') }}">
+        <x-svg-icons.chevron-down class="w-5 h-auto cursor-pointer" />
     </x-slot>
     <x-slot name="content">
         @auth
