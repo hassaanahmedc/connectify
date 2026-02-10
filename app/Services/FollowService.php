@@ -11,12 +11,12 @@ class FollowService
     public function toggle(User $authUser, User $targetUser)
     {
         if ($authUser->id === $targetUser->id) {
-            throw new Exception('You cannot follow/unfollow yourself');
             return [
                 'success' => false,
                 'message' => 'You cannot follow/unfollow yourself',
                 'following' => false,
             ];
+            throw new Exception('You cannot follow/unfollow yourself');
         }
 
         if ($authUser->isFollowing($targetUser)) {
