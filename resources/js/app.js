@@ -1,5 +1,6 @@
 import "./bootstrap";
 import { fetchData } from "./utils/api.js";
+import followButton from "./components/follow.js";
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
@@ -259,6 +260,7 @@ document.addEventListener("alpine:init", () => {
           window.dispatchEvent(new CustomEvent(event, { detail }));
       }
   };
+  Alpine.data('followButton', followButton);
 
 Alpine.start();
 

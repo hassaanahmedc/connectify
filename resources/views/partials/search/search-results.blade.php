@@ -3,8 +3,7 @@
     $user_results = $results->where('type', 'user');
     $post_results = $results->where('type', 'post');
 @endphp
-
-<div class="max-w-3xl mx-auto space-y-10 pb-10">
+<div class="max-w-3xl mx-auto space-y-10 pb-10" >
 
     {{-- People Section --}}
     @if ($user_results->isNotEmpty())

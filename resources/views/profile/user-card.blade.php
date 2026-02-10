@@ -1,5 +1,6 @@
 <div class="w-full px-4 py-4 transition duration-200 hover:bg-gray-50 border-x border-b sm:px-6">
-    <div class="flex items-center justify-between gap-4">
+    <div class="flex items-center justify-between gap-4" x-data="
+    followButton({{$user->id}}, {{Auth::user()->isFollowing($user) ? 'true' : 'false'}} )">
         
         {{-- Left Side: Avatar and Info --}}
         <div class="flex min-w-0 gap-4">
@@ -30,24 +31,23 @@
             </div>
         </div>
 
-        {{-- Right Side: Action Button --}}
+        {{-- Right Side: Action Button --}} 
         <div class="flex-shrink-0">
-        @if(Auth::user()->isFollowing($user))
-            <button data-user-id="{{ $user->id }}" id="follow-btn" 
-                    class="group fflex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm 
-                        font-bold text-gray-700 transition hover:bg-red-50 hover:text-red-600 shadow-sm">
-                <span class="group-hover:hidden">Following</span>
-                <span class="hidden group-hover:inline">Unfollow</span>
+            <button 
+                @click="toggleFollow()"
+                :disabled="loading"
+                @mouseenter="isHovering = true"
+                @mouseleave="isHovering = false"
+                :class="loading ? 'opacity-50 cursor-not-allowed' :
+                    (isFollowing 
+                        ? (isHovering ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700' )
+                        : 'bg-lightMode-primary text-white')"
+                x-text="loading ? 'working...' :
+                    (isFollowing 
+                        ? (isHovering ? 'Unfollow' : 'Following')
+                        : 'Follow')"
+                class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95">
             </button>
-        @else
-            <button data-user-id="{{ $user->id }}" id="follow-btn"  
-                class="flex items-center gap-2 rounded-lg bg-lightMode-primary px-4 py-2 text-sm font-bold 
-                text-white transition hover:bg-lightMode-primary">
-                <x-svg-icons.user-plus class="w-5 h-auto" />
-                Follow
-            </button>
-        @endif
         </div>
-
     </div>
-</div> {{-- This is the critical closing tag --}}
+</div> 

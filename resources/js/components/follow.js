@@ -1,27 +1,34 @@
 import { fetchData } from "../utils/api";
 import { API_ENDPOINTS } from "../config/constants.js";
 
-const followBtn = document.getElementById('follow-btn');
-const followerCount = document.getElementById('follower-count');
-const userId = followBtn.dataset.userId;
+export default (userId, initialStatus) => ({
+    isFollowing: initialStatus,
+    followCount: null,
+    error: '',
+    isHovering: false,
+    loading: false,
+    
 
-const followUser = async () => {
-    try {
-        const response = await fetchData(API_ENDPOINTS.followUser(userId), {
-            method: 'POST', 
-            body: JSON.stringify({ user_id: userId })
-        });
-        
-        const data = await response;
+    async toggleFollow() {
+        if (this.loading) return;
+        this.loading = true;
 
-        if (!data.success) throw new Error('Request Failed');
+        try {
+            const response = await fetchData(API_ENDPOINTS.followUser(userId), {
+                method: 'POST', 
+                body: JSON.stringify({ user_id: userId })
+            });
 
-        followBtn.textContent = data.following ? 'Unfollow' : 'Follow';
-        followerCount.textContent = `${data.followers_count}`;
+            const data = await response;
+            if (!data.success) this.error = 'Request failed, please try again.';
+            this.isFollowing = data.following;
+            this.followCount = data.followers_count;
 
-    } catch (error) {
-        console.log('unable to follow user at the moment, please try again later...', error)
-    }
-}
+        } catch(error) {
+            this.error = 'unable to follow user at the moment, please try again later.';
 
-followBtn.addEventListener('click', followUser);
+        } finally {
+            this.loading = false;
+        }
+    } 
+})
