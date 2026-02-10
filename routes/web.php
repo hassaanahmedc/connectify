@@ -8,6 +8,7 @@ use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DiscoveryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 /*
@@ -57,7 +58,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Notification Route
     Route::get('/notifications', [NotificationController::class, 'index'])->name('user.notifications');
     Route::get('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
-    
+    // Discovery Routes
+    Route::get('/explore', [DiscoveryController::class, 'explore'])->name('users.explore');
+    Route::get('/users/suggested', [DiscoveryController::class, 'suggestions'])->name('users.suggested');
     });
 // Non Protected Public routes
 Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');

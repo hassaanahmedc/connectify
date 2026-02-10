@@ -12,11 +12,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Example: Create a single specific user (useful for a known login)
+        User::factory()->create([
+            'fname' => 'John',
+            'lname' => 'Doe',
+            'email' => 'john.doe@example.com',
+            'password' => bcrypt('password'), // Always hash passwords!
+        ]);
+        // Example: Create 50 random users
+        User::factory()->count(50)->create();
     }
 }

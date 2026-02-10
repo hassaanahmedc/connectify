@@ -17,20 +17,16 @@
             </div>
 
             <div class="overflow-hidden border border-gray-100 shadow-md bg-white">
-                <div class="divide-y divide-gray-100">
-                    @foreach ($user_results->take($limit) as $user)
-                        <div class="group">
-                             @include('profile.user-card', [
-                                'user' => $user,
-                                'profileImageUrl' => $user->avatar_url,
-                                'profileUrl' => route('profile.view', $user->id),
-                                'userName' => $user->fname . ' ' . $user->lname,
-                                'userBio' => $user->bio,
-                                'userLocation' => $user->location,
-                            ])
-                        </div>
-                    @endforeach
-                </div>
+                @foreach ($user_results->take($limit) as $user)
+                    @include('profile.user-card', [
+                       'user' => $user,
+                       'profileImageUrl' => $user->avatar_url,
+                       'profileUrl' => route('profile.view', $user->id),
+                       'userName' => $user->fname . ' ' . $user->lname,
+                       'userBio' => $user->bio,
+                       'userLocation' => $user->location,
+                    ])
+                @endforeach
             </div>
         </section>
     @endif

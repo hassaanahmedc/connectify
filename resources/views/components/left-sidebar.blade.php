@@ -30,13 +30,16 @@
 
                 {{-- Navigation Links --}}
                 <div id="links" class="space-y-2 px-4">
-                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
-                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer
-                            rounded-xl transition-all duration-200 group">
+                    <a href="{{ route('home') }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium cursor-pointer rounded-xl 
+                            transition-all duration-200 group {{ request()->routeIs('home') 
+                                ? 'text-lightMode-blueHighlight bg-blue-50' 
+                                : 'text-gray-600 hover:bg-blue-50 hover:text-lightMode-blueHighlight' }}">
                         <x-svg-icons.newsfeed class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>News Feed</span>
                     </a>
-                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                    <a href="{{ route('profile.view', auth()->user()->id) }}"
+                         class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">
                         <x-svg-icons.user-icon class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
@@ -54,9 +57,11 @@
                         <x-svg-icons.user-group class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>Followers</span>
                     </a>
-                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
-                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
-                            rounded-xl transition-all duration-200 group">
+                    <a href="{{ route('users.explore') }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium cursor-pointer rounded-xl 
+                            transition-all duration-200 group {{ request()->routeIs('users.explore') 
+                                ? 'text-lightMode-blueHighlight bg-blue-50' 
+                                : 'text-gray-600 hover:bg-blue-50 hover:text-lightMode-blueHighlight' }}">
                         <x-svg-icons.magnifying-glass class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>Explore Users</span>
                     </a>
