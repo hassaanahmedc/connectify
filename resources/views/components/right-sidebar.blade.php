@@ -1,5 +1,5 @@
 <aside class="hidden lg:block w-72 xl:w-80 bg-white border-l overflow-y-auto">
-    <div class="py-4">
+    <div class="sticky top-16 py-4  px-4">
         {{-- Dynamic container for Online friends or Search Filters based on page--}}
         {{ $upperContainer }}
         {{-- Static container for trending topics --}}
