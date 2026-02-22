@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('lname');
             $table->string('cover')->nullable();
             $table->string('avatar')->nullable();
-            $table->string('bio')->nullable();
+            $table->text('bio')->nullable();
             $table->string('location')->nullable();
             $table->string('website')->nullable();  
             $table->string('email')->unique();

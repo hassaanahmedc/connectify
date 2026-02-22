@@ -114,4 +114,10 @@ class User extends Authenticatable
             },
         );
     }
+
+    public function topic() 
+    {
+        return $this->belongsToMany(Topic::class);
+    }
 }
+ 
