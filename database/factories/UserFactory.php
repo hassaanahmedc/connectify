@@ -23,6 +23,8 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $seed = fake()->uuid();
+        
         return [
             'fname' => fake()->firstName(),
             'lname' => fake()->lastName(),
@@ -30,11 +32,11 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'cover' => fake()->boolean(20) ? fake()->imageUrl(1200, 300, 'nature', true) : null, // 20% chance of having a cover photo
-            'avatar' => fake()->boolean(70) ? fake()->imageUrl(200, 200, 'people', true) : null, // 70% chance of having an avatar
-            'bio' => fake()->boolean(50) ? fake()->paragraph(3) : null, // 50% chance of having a bio
-            'location' => fake()->boolean(60) ? fake()->city() : null, // 60% chance of having a location
-            'website' => fake()->boolean(30) ? fake()->url() : null, // 30% chance of having a website
+            'cover' => "https://picsum.photos/seed/{$seed}/1200/300",
+            'avatar' => "https://api.dicebear.com/7.x/adventurer/svg?seed={$seed}",
+            'bio' => fake()->paragraph(3), 
+            'location' => fake()->city(),
+            'website' => fake()->boolean(30) ? fake()->url() : null, 
         ];
     }
 
