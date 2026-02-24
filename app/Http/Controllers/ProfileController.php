@@ -24,25 +24,29 @@ class ProfileController extends Controller
 
     public function view(Request $request, User $user) :View
     {
-        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
         $currentUserId = Auth::id();
 
-        $user->load(['post' => function ($query) {
-            $query->orderBy('created_at', 'desc')
-                  ->with('postImages', 'comment')
-                  ->withCount(['likes', 'comment']);
+        $user->load([
+            'topics' => fn($q) => $q->select('id', 'name'), 
+
+            'post' => function ($query) use ($currentUserId) {
+            $query->latest()
+                  ->with(['postImages', 'comment', 'topics' => fn($q) => $q->select('id', 'name')])
+                  ->withCount(['likes', 'comment'])
+                  ->withExists(['likes as liked_by_user' => function ($q) use ($currentUserId) {
+                    $q->where('user_id', $currentUserId);
+                  }]);
         }]);
 
-        $user->post->each(function ($post) use ($currentUserId) {
-            $post->liked_by_user = $post->likes()->where('user_id', $currentUserId)->exists();
-        });
-        
-        $user->followed = Auth::check() ? Auth::user()->isFollowing($user) : 'false';
-        $user->followers_count = $user->followers()->count();
-        $user->following_count = $user->following()->count();
+        $user->loadCount(['followers', 'following']);
 
-        return view('profile.index', compact('user', 'isOwnProfile'));
+        $isFollowing = Auth::check() ? Auth::user()->isFollowing($user) : 'false';
+        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
 
+        return view('profile.index', [
+            'user' => $user, 
+            'iisOwnProfiles' => $isOwnProfile, 
+            'isFollowing' => $isFollowing]);
     }
 
     public function edit(Request $request): View

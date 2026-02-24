@@ -14,13 +14,13 @@ class Topic extends Model
         'slug'
     ];
 
-    public function post()
+    public function posts()
     {
-        return $this->belongsToMany(Post::class, 'posts_id');
+        return $this->belongsToMany(Post::class, 'post_topic');
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'user_topic');
     }
 }

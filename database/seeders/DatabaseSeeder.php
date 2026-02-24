@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $users->random()->id,
                 ]);
 
-                $post->topic()->attach(
+                $post->topics()->attach(
                     $topics->random(rand(1,3))->pluck('id')
                 );
 
@@ -46,6 +46,10 @@ class DatabaseSeeder extends Seeder
                         })->toArray()
                 );
             });
+
+            $user->topics()->attach(
+                $topics->random(rand(1, 5))->pluck('id')
+            );
         });
     }
 }

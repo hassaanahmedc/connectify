@@ -95,11 +95,14 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: function () {
-                if ($this->avatar) {
-                    return asset('storage/' . $this->avatar);
+                if (!$this->avatar) {
+                    return 'https://api.dicebear.com/7.x/adventurer/svg?seed=default';
                 }
-                return 'https://placewaifu.com/image/200';
-            },
+
+                return str_starts_with($this->avatar, 'http') 
+                    ? $this->avatar 
+                    : asset('storage/' . $this->avatar);
+                },
         );
     }
 
@@ -107,17 +110,20 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: function () {
-                if ($this->cover) {
-                    return asset('storage/' . $this->cover);
+                if (!$this->cover) {
+                    return 'https://picsum.photos/1200/300';
                 }
-                return 'https://placewaifu.com/image/1000/400';
-            },
+    
+                return str_starts_with($this->cover, 'http') 
+                    ? $this->cover 
+                    : asset('storage/' . $this->cover);
+                },
         );
     }
 
-    public function topic() 
+    public function topics() 
     {
-        return $this->belongsToMany(Topic::class);
+        return $this->belongsToMany(Topic::class, 'user_topic');
     }
 }
  
