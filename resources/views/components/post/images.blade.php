@@ -1,19 +1,19 @@
-@if (($postImages ?? collect([]))->count())
+@if (($images ?? collect([]))->count())
     <div id="post-imgs" class="flex flex-wrap gap-1 max-w-3xl">
-        @foreach ($postImages as $image)
+        @foreach ($images as $image)
             @if ($loop->index < 4) {{-- Limits to first 4 images for performance, shows overlay if more exist --}}
                 <figure class="relative flex-grow w-32 sm:w-40" role="img" x-on:click.stop="imagesModal = true">
                     <img 
-                        src="{{ asset('storage/' . $image->path) }}"
-                        class="post-image w-full h-32 sm:h-40 object-cover aspect-square"
+                        src="{{ str_starts_with($image->path, 'http') ? $image->path : asset('storage/' . $image->path) }}"
+                        class="w-full h-32 sm:h-40 object-cover aspect-square transition-opacity duration-500"
                         alt="Post Image {{ $loop->index + 1 }}"
                         loading="lazy">
-                    @if ($loop->index == 3 && $postImages->count() > 4)
+                    @if ($loop->index == 3 && $images->count() > 4)
                         <div 
                             class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white cursor-pointer"
                             x-on:click.stop="imagesModal = true"
-                            aria-label="View {{ $postImages->count() - 4 }} more images">
-                            {{ $postImages->count() - 4 }} more
+                            aria-label="View {{ $images->count() - 4 }} more images">
+                            {{ $images->count() - 4 }} more
                         </div>
                     @endif
                 </figure>
@@ -36,10 +36,10 @@
                 </svg>
             </button>
             <div class="flex flex-col gap-2 mt-6">
-                @foreach ($postImages as $image)
+                @foreach ($images as $image)
                     <figure class="w-full" role="img">
                         <img 
-                            src="{{ asset('storage/' . $image->path) }}"
+                            src="{{ str_starts_with($image->path, 'http') ? $image->path : asset('storage/' . $image->path) }}"
                             class="post-image w-full h-auto max-h-screen object-cover"
                             alt="Post Image {{ $loop->index + 1 }}"
                             loading="lazy">

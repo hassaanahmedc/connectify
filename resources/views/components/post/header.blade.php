@@ -2,18 +2,20 @@
 <div class="px-3 sm:px-5 pt-5 pb-2">
     <div class="flex justify-between items-center gap-3">
         <div class="flex items-center gap-3 min-w-0">
-            <a href="{{ $profileUrl }}" class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
-                aria-label="View profile of {{ $userName }}">
-                <img src="{{ $profileImageUrl }}"
+            <a href="{{ route('profile.view', $post->user->id) }}"
+                class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
+                aria-label="View profile of {{ $post->user->fname . ' ' . $post->user->lname }}">
+                <img src="{{ $post->user->avatar_url }}"
                      class="w-full h-full object-cover"
-                     alt="{{ $userName }}'s profile photo">
+                     alt="{{ $post->user->fname }}'s profile photo">
             </a>
 
             <div class="min-w-0">
-                <a href="{{ $profileUrl }}" class="block text-sm font-semibold leading-tight break-words hover:underline">
-                    {{ $userName }}
+                <a href="{{ route('profile.view', $post->user->id) }}" 
+                    class="block text-sm font-semibold leading-tight break-words hover:underline">
+                    {{ $post->user->fname . ' ' . $post->user->lname }}
                 </a>
-                <time datetime="" class="text-xs text-gray-400 block">{{ $postTime }}</time>
+                <time datetime="" class="text-xs text-gray-400 block">{{ $post->created_at->diffForHumans() }}</time>
             </div>
         </div>
         {{-- Post Menu: Alpine.js manages dropdown for edit, delete, and pin actions --}}
@@ -75,12 +77,12 @@
     {{-- Post Content: Displays text content if available --}}
 <div class="my-2" >
 
-    @if($postContent)
+    @if($post->content)
         <p class="text-xs sm:text-sm lg:text-base">
-            <span x-text="expanded ? @js($postContent) : '{{ Str::limit($postContent, 300, '...') }}'"></span>
+            <span x-text="expanded ? @js($post->content) : '{{ Str::limit($post->content, 300, '...') }}'"></span>
         </p>
 
-        @if(strlen($postContent) > 300)
+        @if(strlen($post->contentt) > 300)
             <button x-on:click="expanded = !expanded" 
                     class="mt-2 text-sm font-medium hover:underline text-blue-600">
                     <span x-text="expanded ? '<Show less' : 'Read more'"></span>

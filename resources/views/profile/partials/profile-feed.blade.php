@@ -17,25 +17,11 @@
         </div>
 
         <div class="flex flex-col" id="newsfeed">
-            @if ($user->post->count())
-                @foreach ($user->post as $post)
-                    @include('posts.feed-card', [
-                        'profileUrl' => route('profile.view', $post->user->id),
-                        'profileImageUrl' => !empty($post->user->avatar)
-                            ? asset('storage/' . $post->user->avatar)
-                            : 'https://placewaifu.com/image/200',
-                        'postId' => $post->id,
-                        'userName' => $user->fname . ' ' . $user->lname,
-                        'postTime' => $post->created_at->diffForHumans(),
-                        'postContent' => $post->content,
-                        'postImages' => $post->postImages,
-                        'comments' => $post->limited_comments,
-                        'isLiked' => $post->isLiked,
-                    ])
-                @endforeach
-            @else
+            @forelse ($user->post as $post)
+                <x-post.card :post="$post" />
+            @empty
                 <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
-            @endif
+            @endforelse
         </div>
 
     </section>

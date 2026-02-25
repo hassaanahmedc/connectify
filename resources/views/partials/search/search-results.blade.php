@@ -38,7 +38,7 @@
                         font-bold uppercase tracking-widest text-gray-500 border-x border-t shadow-md">Posts</h3>
             
             <div id="post-wrapper" class="flex flex-col gap-y-1">
-                @foreach ($post_results as $post)
+                {{-- @foreach ($post_results as $post)
                     <article class="w-full">
                         @include('posts.feed-card', [
                             'post' => $post,
@@ -55,7 +55,14 @@
                             'isLiked' => $post->isLiked ?? false,
                         ])
                     </article>
-                @endforeach
+                @endforeach --}}
+                @forelse ($post_results as $post)
+                    <article class="w-full">
+                        <x-post.card :post="$post" />
+                @empty
+                    <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
+                    </article>
+                @endforelse
             </div>
         </section>
     @endif
