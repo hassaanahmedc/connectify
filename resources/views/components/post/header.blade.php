@@ -1,21 +1,32 @@
 {{-- Post Header: Displays user profile, name, post time, and action menu (edit/delete/pin) --}}
 <div class="px-3 sm:px-5 pt-5 pb-2">
-    <div class="flex justify-between items-center gap-3">
-        <div class="flex items-center gap-3 min-w-0">
-            <a href="{{ route('profile.view', $post->user->id) }}"
-                class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
-                aria-label="View profile of {{ $post->user->fname . ' ' . $post->user->lname }}">
-                <img src="{{ $post->user->avatar_url }}"
-                     class="w-full h-full object-cover"
-                     alt="{{ $post->user->fname }}'s profile photo">
-            </a>
-
-            <div class="min-w-0">
-                <a href="{{ route('profile.view', $post->user->id) }}" 
-                    class="block text-sm font-semibold leading-tight break-words hover:underline">
-                    {{ $post->user->fname . ' ' . $post->user->lname }}
+    <div class="flex justify-between items-start gap-3">
+        <div class="flex flex-wrap flex-1 items-center gap-3 min-w-0">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('profile.view', $post->user->id) }}"
+                    class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
+                    aria-label="View profile of {{ $post->user->fname . ' ' . $post->user->lname }}">
+                    <img src="{{ $post->user->avatar_url }}"
+                        class="w-full h-full object-cover flex-shrink-0"
+                        alt="{{ $post->user->fname }}'s profile photo">
                 </a>
-                <time datetime="" class="text-xs text-gray-400 block">{{ $post->created_at->diffForHumans() }}</time>
+
+                <div class="min-w-0">
+                    <a href="{{ route('profile.view', $post->user->id) }}" 
+                        class="block text-sm font-semibold leading-tight break-words hover:underline truncate">
+                        {{ $post->user->fname . ' ' . $post->user->lname }}
+                    </a>
+                    <time datetime="{{ $post->created_at->toIso8601String() }}" 
+                        class="text-xs text-gray-400 block">{{ $post->created_at->diffForHumans() }}</time>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @foreach($post->topics as $topic)
+                    <a href="" class="px-2 py-1 text-gray-700 bg-gray-100 border 
+                        text-xs font-semibold rounded-full border-gray-300
+                        hover:bg-gray-200 transition-colors duration-200
+                         flex-shrink-0">{{ $topic->name }}</a>
+                @endforeach
             </div>
         </div>
         {{-- Post Menu: Alpine.js manages dropdown for edit, delete, and pin actions --}}
@@ -43,7 +54,7 @@
                         {{-- Delete Confirmation: Renders a modal to confirm post deletion --}}
                         <x-confirm-alert :show-variable="'confirm_delete'"
                                          :message="'Are you sure you want to delete this post?'"
-                                         :action="route('post.destroy', ['post' => $postId])" />
+                                         :action="route('post.destroy', ['post' => $post->id])" />
                     </li>
                 @endcan
 
@@ -82,7 +93,7 @@
             <span x-text="expanded ? @js($post->content) : '{{ Str::limit($post->content, 300, '...') }}'"></span>
         </p>
 
-        @if(strlen($post->contentt) > 300)
+        @if(strlen($post->content) > 300)
             <button x-on:click="expanded = !expanded" 
                     class="mt-2 text-sm font-medium hover:underline text-blue-600">
                     <span x-text="expanded ? '<Show less' : 'Read more'"></span>

@@ -125,13 +125,12 @@
 
         <h6 class="text-lg font-semibold md:text-xl lg:text-xl">Interests</h6>
         <ul class="mt-4 flex flex-wrap items-center gap-2 text-sm md:text-base lg:text-base">
-            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Gaming</li>
-            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Coding</li>
-            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Anime</li>
-            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Video Editting</li>
-            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Music Desgin</li>
-            <li class="rounded-full border border-gray-400 px-3 py-1.5 shadow-sm">Software Engineer
-            </li>
+            @foreach($user->topics as $topic)
+                <a href="" class="px-2 py-1 text-lightMode-blueHighlight bg-blue-50/30 border 
+                    border-lightMode-blueHighlight shadow-sm text-xs font-semibold rounded-full 
+                    hover:bg-opacity-10 transition-colors duration-200
+                    flex-shrink-0">{{ $topic->name }}</a>
+            @endforeach
         </ul>
 
     </section>

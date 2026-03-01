@@ -1,11 +1,11 @@
 <div id="friends-container">
-    <div class="flex items-center justify-between">
-        <h5 class="mb-2 px-4 text-xs font-extrabold uppercase tracking-widest text-zinc-400">Suggested for you</h5>
-        <span class="cursor-pointer px-4 pb-2 font-semibold text-lightMode-primary hover:underline">See all</span>
+    <div class="flex items-center justify-between px-6 mb-2">
+        <h5 class="text-xs font-extrabold uppercase tracking-widest text-zinc-400">Suggested for you</h5>
+        <span class="cursor-pointer font-semibold text-lightMode-primary hover:underline">See all</span>
     </div>
-    <div>
+    <div class="px-4">
         @foreach ($suggestions as $user)
-            <div class="mt-1 flex cursor-pointer items-center gap-2 rounded-xl px-4 py-3 transition-all 
+            <div class="mt-1 flex cursor-pointer items-center gap-2 rounded-xl  px-4 py-3 transition-all 
                     duration-200 hover:cursor-pointer hover:bg-blue-50 hover:text-lightMode-blueHighlight"
                 x-data="followButton({{ $user->id }}, {{ Auth::user()->isFollowing($user) ? 'true' : 'false' }})">
 

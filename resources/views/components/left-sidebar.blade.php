@@ -1,5 +1,5 @@
 <aside class="hidden md:block w-64 xl:w-72 bg-white border-r">
-    <div class="sticky top-16 py-4">
+    <div class="sticky py-4">
         <div class="h-full flex flex-col justify-between">
             <div>
 
