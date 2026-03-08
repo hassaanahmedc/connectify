@@ -14,10 +14,18 @@
                 <div class="w-full flex flex-wrap gap-2 px-6">
                     {{-- Repeatable Trend Row --}}
                     @foreach ($topics as $topic)
-                        <a class="break-words rounded-full border border-lightMode-blueHighlight 
-                                bg-blue-50/30 px-2 py-1 text-xs font-semibold text-lightMode-blueHighlight 
-                                shadow-sm transition-colors duration-200 hover:bg-opacity-10"
-                            href="">{{ $topic->name }}</a>
+                    @php
+                        $isActive = request()->routeIs('topic.trending') 
+                            && request()->route('topic')->slug === $topic->slug
+                    @endphp
+                        <a href="{{ route('topic.trending', $topic->slug) }}" 
+                            class="break-words rounded-full border  px-2 py-1 text-xs font-semibold shadow-sm 
+                                transition-colors duration-200 {{ $isActive
+                                    ? 'bg-lightMode-blueHighlight text-white border-lightMode-blueHighlight'
+                                    : 'border-lightMode-blueHighlight bg-blue-50/30 text-lightMode-blueHighlight 
+                                        hover:bg-opacity-10' }}">
+                            {{ $topic->name }}
+                        </a>
                     @endforeach
                 </div>
             </div>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DiscoveryController;
+use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 /*
@@ -61,6 +62,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Discovery Routes
     Route::get('/explore', [DiscoveryController::class, 'explore'])->name('users.explore');
     Route::get('/users/suggested', [DiscoveryController::class, 'suggestions'])->name('users.suggested');
+    // Topics
+    Route::get('/topics/{topic:slug}', [TopicController::class, 'getTrending'])->name('topic.trending');
     });
 // Non Protected Public routes
 Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');
