@@ -3,7 +3,14 @@
 @section('main')
     {{-- The section stays centered and responsive --}}
     <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md md:w-11/12 lg:w-full lg:max-w-lg lg:px-5 xl:max-w-xl xl:px-0 py-6">
-        
+            <x-feed-header 
+                :context="$header_data['context']" 
+                :title="$header_data['title']" 
+                :count="$header_data['count']"
+                :label="$header_data['label']" 
+                icon="explore"    
+            />
+
         {{-- GAP-4 creates the space between the individual cards --}}
         <div class="flex flex-col gap-4">
             @if ($results->isNotEmpty())

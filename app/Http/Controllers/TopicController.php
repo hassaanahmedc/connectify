@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Topic;
 use App\Models\Likes;
 use Aapp\Models\Post;
@@ -32,6 +33,14 @@ class TopicController extends Controller
         }])
         ->latest()
         ->paginate(15);
-        return view('trendingTopic', compact('topic_posts'));
+        
+        $header_data = [
+            'context' => 'Trending Topic',
+            'title' => '#' . $topic->name,
+            'count' => $topic_posts->count(),
+            'label' => Str::plural('post', $topic_posts->count())
+        ];
+
+        return view('trendingTopic', compact('topic_posts', 'header_data'));
     }
 }

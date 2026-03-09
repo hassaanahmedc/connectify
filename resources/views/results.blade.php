@@ -6,6 +6,13 @@
             <x-right-sidebar-filters instance="mobile" />
         </div>
         <div id="searchResults">
+            <x-feed-header 
+                :context="$header_data['context']" 
+                :title="$header_data['title']" 
+                :count="$header_data['count']"
+                :label="$header_data['label']" 
+                icon="search"    
+            />
             @include('partials.search.search-results', ['results' => $results])
         </div>
     </section>

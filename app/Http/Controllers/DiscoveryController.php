@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\UserDiscoveryService;
+use Illuminate\Support\Str;
 use App\Models\User;
 
 class DiscoveryController extends Controller
@@ -22,7 +23,14 @@ class DiscoveryController extends Controller
 
         $results = $this->service->exploreUsers($user);
 
-        return view('explore', compact('results'));
+        $header_data = [
+            'context' => 'Discovery',
+            'title' => 'Explore Users',
+            'count' => $results->total(),
+            'label' => Str::plural('user', $results->total())
+        ];
+
+        return view('explore', compact('results', 'header_data'));
     }
 
     public function suggestions()

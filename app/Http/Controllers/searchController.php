@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use Illuminate\Support\Facades\Log;
 use App\Services\SearchService;
+use Illuminate\Support\Str;
 use App\Http\Resources\search\UserSearchResource;
 use App\Http\Resources\search\PostSearchResource;
 
@@ -52,6 +53,14 @@ class searchController extends Controller
             return response()->json(['query' => $q, 'filters' => $filters, 'html' => $html]);
         }
         Log::info('Results Page', ['query' => $q, 'filters' => $filters, 'results' => $results]);
-        return view('results', compact('results'));
+
+        $header_data = [
+            'context' => 'Search Results',
+            'title' => 'Results for: ' . $q,
+            'count' => $results->count(),
+            'label' => Str::plural('result', $results->count())
+        ];
+
+        return view('results', compact('results', 'header_data'));
     }
 }
