@@ -1,10 +1,29 @@
 <x-guest-layout>
-    <main class="flex gap-10">
-        {{-- Login Form --}}
-        <section class="w-1/2  p-8">
-            {{-- <!-- Session Status -->
+    <main class="flex flex-row-reverse items-stretch">
+
+        {{-- Branding Section --}}
+        <section class="hidden md:w-2/5 lg:w-1/2 px-12 md:flex flex-col justify-center items-center 
+            bg-lightMode-primary text-center">
+            
+            {{-- Logo and Typography --}}
+            <x-application-logo class="md:text-4xl lg:text-5xl md:font-extrabold text-white tracking-tight" />
+            <h4 class="text-white mt-4 mb-2 font-medium leading-relaxed max-w-xs">Connect with the world and
+                friends around you on Connectify</h4>
+            
+            {{-- login button --}}
+            <div class="mt-4">
+                <a href="{{ route('login') }}" class="border-2 px-8 py-2 border-white bg-transparent 
+                    text-white rounded-full font-bold uppercase text-xs tracking-widest 
+                    hover:bg-white hover:text-lightMode-primary transition duration-200"> Login
+                </a>
+            </div>
+        </section>
+
+        {{-- Sign-up Form Section --}}
+        <section class="w-full md:w-3/5 lg:w-1/2 p-8">
+            <!-- Session Status -->
             <x-auth-session-status class="mb-4"
-                :status="session('status')" /> --}}
+                :status="session('status')" />
 
             <h1
                 class="mb-4 font-montserrat text-2xl text-lightMode-primary font-bold">
@@ -92,7 +111,6 @@
                         class="mt-2" />
                 </div>
 
-
                 <!-- Remember Me -->
                 <div class=" mt-4">
                     <label for="remember_me"
@@ -105,7 +123,7 @@
                             class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
                     </label>
                 </div>
-                <div class="flex flex-col items-center justify-center gap-4">
+                <div class="flex flex-col items-center justify-center gap-3">
                     {{-- Login Button --}}
                     <x-primary-button
                         class="bg-lightMode-primary hover:bg-lightMode-blueHighlight mt-4 w-full justify-center">
@@ -113,65 +131,45 @@
                     </x-primary-button>
 
                     {{-- Login and social buttons divider --}}
-                    <div class="flex items-center w-full">
-                        <div class="border-t border-gray-400 h-0 w-full mx-4">
-                        </div>
+                    <span class="text-gray-400">OR</span>
 
-                        <span class="text-gray-400"">OR</span>
-
-                        <div class=" border-t border-gray-400 h-0 w-full mx-4">
-                        </div>
-                    </div>
+                    {{-- Social Acoounts --}}
+                    <div class="w-full">
                     {{-- Facebook Login --}}
-                    <div
-                        class="w-full flex bg-[#316FF6] hover:bg-[#316FF6] rounded-full ">
                         <div
-                            class="border border-[#316FF6] rounded-full p-2 w-fit bg-white">
-                            <img src="{{ Vite::asset('/public/svg-icons/fb.svg') }}"
-                                class="w-6 "
-                                alt="">
+                            class="w-full flex bg-[#316FF6] hover:bg-[#316FF6] rounded-full mb-2">
+                            <div
+                                class="border border-[#316FF6] rounded-full p-2 w-fit bg-white">
+                                <img src="{{ Vite::asset('/public/svg-icons/fb.svg') }}"
+                                    class="w-6 "
+                                    alt="">
+                            </div>
+                            <div
+                                class="flex justify-center px-4 py-2 rounded-md font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm dark:hover:bg-gray-700 focus:outline-none disabled:opacity-25 transition ease-in-out duration-150  w-full ">
+                                <button class=" text-white ">
+                                    {{ __('Continue with Facebook') }}
+                                </button>
+                            </div>
                         </div>
+                        {{-- Google Login --}}
                         <div
-                            class="flex justify-center px-4 py-2 rounded-md font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm dark:hover:bg-gray-700 focus:outline-none disabled:opacity-25 transition ease-in-out duration-150  w-full ">
-                            <button class=" text-white ">
-                                {{ __('Continue with Facebook') }}
-                            </button>
-                        </div>
-                    </div>
-                    {{-- Google Login --}}
-                    <div
-                        class="w-full flex bg-[#DB4437] hover:bg-[#DB4437] rounded-full">
-                        <div
-                            class="border border-[#DB4437] rounded-full p-2 w-fit bg-white">
-                            <img src="{{ Vite::asset('/public/svg-icons/google.svg') }}"
-                                class="w-6 "
-                                alt="">
-                        </div>
-                        <div
-                            class="flex justify-center px-4 py-2 rounded-md font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm dark:hover:bg-gray-700 focus:outline-none disabled:opacity-25 transition ease-in-out duration-150  w-full">
-                            <button class=" text-white ">
-                                {{ __('Continue with Google') }}
-                            </button>
+                            class="w-full flex bg-[#DB4437] hover:bg-[#DB4437] rounded-full">
+                            <div
+                                class="border border-[#DB4437] rounded-full p-2 w-fit bg-white">
+                                <img src="{{ Vite::asset('/public/svg-icons/google.svg') }}"
+                                    class="w-6 "
+                                    alt="">
+                            </div>
+                            <div
+                                class="flex justify-center px-4 py-2 rounded-md font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm dark:hover:bg-gray-700 focus:outline-none disabled:opacity-25 transition ease-in-out duration-150  w-full">
+                                <button class=" text-white ">
+                                    {{ __('Continue with Google') }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </form>
-        </section>
-        {{-- Branding --}}
-        <section class="w-1/2 p-8 bg-lightMode-primary text-center">
-            <x-application-logo class="text-3xl text-white pt-10" />
-            <h4 class="text-white">Connect with the world and
-                friends around you on Connectify</h4>
-            {{-- login button --}}
-
-            <div class="mt-4">
-                <a href="{{ route('login') }}">
-                    <x-primary-button
-                        class="bg-transparent hover:bg-lightMode-blueHighlight text-black rounded-3xl border-spacing-2 border-white p-2">
-                        {{ __('Login') }}
-                    </x-primary-button>
-                </a>
-            </div>
         </section>
     </main>
 </x-guest-layout>

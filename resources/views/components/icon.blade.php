@@ -1,13 +1,15 @@
 @props([
     'title' => null,
+    'fill' => 'none',
+    'stroke' => 'currentColor',
 ])
 
 <svg
     xmlns="http://www.w3.org/2000/svg" 
-    fill="none" 
+    fill="{{ $fill }}" 
     viewBox="0 0 24 24" 
     stroke-width="1.1"
-    stroke="currentColor"
+    stroke="{{ $stroke }}"
     {{ $attributes->merge([
         'class' => 'inline-block shrink-0',
         'aria-hidden' => $title ? 'false' : 'true',
