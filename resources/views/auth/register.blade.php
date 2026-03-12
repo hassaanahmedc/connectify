@@ -137,12 +137,10 @@
                     <div class="w-full">
                     {{-- Facebook Login --}}
                         <div
-                            class="w-full flex bg-[#316FF6] hover:bg-[#316FF6] rounded-full mb-2">
+                            class="w-full flex bg-[#316FF6] hover:bg-[#316FF6] rounded-full mb-2 ">
                             <div
                                 class="border border-[#316FF6] rounded-full p-2 w-fit bg-white">
-                                <img src="{{ Vite::asset('/public/svg-icons/fb.svg') }}"
-                                    class="w-6 "
-                                    alt="">
+                                <x-svg-icons.facebook-icon class=" w-6 h-auto" />
                             </div>
                             <div
                                 class="flex justify-center px-4 py-2 rounded-md font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm dark:hover:bg-gray-700 focus:outline-none disabled:opacity-25 transition ease-in-out duration-150  w-full ">
@@ -153,12 +151,10 @@
                         </div>
                         {{-- Google Login --}}
                         <div
-                            class="w-full flex bg-[#DB4437] hover:bg-[#DB4437] rounded-full">
+                            class="w-full flex bg-[#DB4437] hover:bg-[#DB4437] rounded-full shadow-md">
                             <div
                                 class="border border-[#DB4437] rounded-full p-2 w-fit bg-white">
-                                <img src="{{ Vite::asset('/public/svg-icons/google.svg') }}"
-                                    class="w-6 "
-                                    alt="">
+                                <x-svg-icons.google-icon class=" w-6 h-auto" />
                             </div>
                             <div
                                 class="flex justify-center px-4 py-2 rounded-md font-semibold text-sm text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm dark:hover:bg-gray-700 focus:outline-none disabled:opacity-25 transition ease-in-out duration-150  w-full">
