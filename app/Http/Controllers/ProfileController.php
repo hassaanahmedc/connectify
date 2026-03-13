@@ -27,7 +27,7 @@ class ProfileController extends Controller
         $currentUserId = Auth::id();
 
         $user->load([
-            'topics' => fn($q) => $q->select('id', 'name'), 
+            'topics' => fn($q) => $q->select('id', 'name', 'slug'), 
 
             'post' => function ($query) use ($currentUserId) {
             $query->latest()
@@ -39,14 +39,13 @@ class ProfileController extends Controller
         }]);
 
         $user->loadCount(['followers', 'following']);
-
-        $isFollowing = Auth::check() ? Auth::user()->isFollowing($user) : 'false';
         $isOwnProfile = Auth::check() && Auth::id() === $user->id;
 
         return view('profile.index', [
             'user' => $user, 
-            'iisOwnProfiles' => $isOwnProfile, 
-            'isFollowing' => $isFollowing]);
+            'isOwnProfile' => $isOwnProfile,
+            'viewTab' => 'posts'
+        ]);
     }
 
     public function edit(Request $request): View
@@ -194,5 +193,41 @@ class ProfileController extends Controller
                 'message' => 'Failed to delete cover photo. Please try again.'
             ], 422);
         };
+    }
+
+    public function following(Request $request, User $user) 
+    {
+        $currentUserId = Auth::id();
+
+        $user->load('topics:id,name,slug');
+        $following = $user->following()->paginate(15);
+        $user->loadCount(['followers', 'following']);
+
+        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
+
+        return view('profile.index', [
+            'user' => $user, 
+            'isOwnProfile' => $isOwnProfile,
+            'followingList' => $following,
+            'viewTab' => 'following'
+        ]);
+    }
+
+    public function followers(Request $request, User $user) 
+    {
+        $currentUserId = Auth::id();
+
+        $user->load('topics:id,name,slug');
+        $followers = $user->followers()->paginate(15);
+        $user->loadCount(['followers', 'following']);
+
+        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
+
+        return view('profile.index', [
+            'user' => $user, 
+            'isOwnProfile' => $isOwnProfile,
+            'followersList' => $followers,
+            'viewTab' => 'followers'
+        ]);
     }
 }

@@ -39,19 +39,21 @@
                         <span>News Feed</span>
                     </a>
                     <a href="{{ route('profile.view', auth()->user()->id) }}"
-                         class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">
                         <x-svg-icons.user-icon class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>My Profile</span>
                     </a>
-                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                    <a href="{{ route('profile.following', auth()->user()->id) }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">
                         <x-svg-icons.user-plus class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>Following</span>
                     </a>
-                    <a class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                    <a href="{{ route('profile.followers', auth()->user()->id) }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">
                         <x-svg-icons.user-group class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />

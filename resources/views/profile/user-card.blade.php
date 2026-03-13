@@ -5,27 +5,29 @@
         {{-- Left Side: Avatar and Info --}}
         <div class="flex min-w-0 gap-4">
             {{-- Avatar --}}
-            <a href="{{ $profileUrl }}" class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full">
-                <img src="{{ $profileImageUrl }}" alt="{{ $userName }}" class="h-full w-full object-cover">
+            <a href="{{ route('profile.view', $user->id) }}" class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full">
+                <img src="{{ $user->avatar_url }}" alt="{{ $user->fname . ' ' . $user->lname }}" 
+                    class="h-full w-full object-cover">
             </a>
 
             {{-- Text Content --}}
             <div class="flex min-w-0 flex-col justify-center">
-                <a href="{{ $profileUrl }}" class="block truncate font-semibold text-gray-900 hover:underline leading-tight">
-                    {{ $userName }}
+                <a href="{{ route('profile.view', $user->id) }}" 
+                    class="block truncate font-semibold text-gray-900 hover:underline leading-tight">
+                    {{ $user->fname . ' ' . $user->lname }}
                 </a>
                 
-                @if($userBio)
+                @if($user->bio)
                     <p class="text-sm text-gray-600 line-clamp-1 mt-0.5">
-                        {{ $userBio }}
+                        {{ $user->bio }}
                     </p>
                 @endif
 
                 <div class="mt-1 flex items-center gap-2 text-[12px] text-gray-500 font-medium">
                     <span>482 Followers</span>
-                    @if($userLocation)
+                    @if($user->location)
                         <span class="text-gray-300">•</span>
-                        <span class="truncate">{{ $userLocation }}</span>
+                        <span class="truncate">{{ $user->location }}</span>
                     @endif
                 </div>
             </div>

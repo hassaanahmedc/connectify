@@ -21,7 +21,6 @@ export default (userId, initialStatus) => ({
 
             const data = await response;
             if (!data.success) this.error = 'Request failed, please try again.';
-            this.isFollowing = data.following;
             this.followCount = data.followers_count;
 
         } catch(error) {

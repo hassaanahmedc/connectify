@@ -7,9 +7,9 @@
 <div class="w-full max-w-2xl px-4 md:w-1/2 md:px-0 lg:w-2/4">
 
     <section class="">
-    {{ $slot }}
+
         <div class="w-full rounded-t-lg border-b-2 border-b-lightMode-primary bg-white py-2 text-center">
-            <span class="text-lg font-semibold md:text-xl lg:text-xl">Posts</span>
+            <span class="text-lg font-semibold md:text-xl lg:text-xl">Followers</span>
         </div>
 
         <div class="pt-2" x-data="{ create_post: false }">
@@ -17,10 +17,10 @@
         </div>
 
         <div class="flex flex-col" id="newsfeed">
-            @forelse ($user->post as $post)
-                <x-post.card :post="$post" />
+            @forelse ($followersList as $followerUsers)
+                @include('profile.user-card', [ 'user' => $followerUsers ])
             @empty
-                <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
+                <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No results found.</span>
             @endforelse
         </div>
 

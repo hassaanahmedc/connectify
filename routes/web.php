@@ -43,6 +43,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/profile/delete-picture', [ProfileController::class, 'deletePicture'])->name('profile.delete.picture');
     Route::post('/profile/upload-cover', [ProfileController::class, 'uploadCover'])->name('profile.upload.cover');
     Route::delete('/profile/delete-cover', [ProfileController::class, 'deleteCover'])->name('profile.delete.cover');
+    Route::get('/profile/{user}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
+    Route::get('/profile/{user}/following', [ProfileController::class, 'following'])->name('profile.following');
     // Post Routes
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
     Route::delete('/post/{post}/destroy', [PostController::class, 'destroy'])->name('post.destroy');

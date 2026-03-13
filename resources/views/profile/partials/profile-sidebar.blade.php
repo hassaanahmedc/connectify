@@ -25,7 +25,7 @@
 
             <figure class="relative w-36 rounded-full bg-black">
                 @auth
-                    @if ($user->id === Auth::id())
+                    @if ($isOwnProfile)
                     {{-- 
                         The main Profile picture, It is only interactive for the profile owner.
                         On click, triggers the dropdown to view, edit and delete the image.
@@ -98,7 +98,7 @@
             x-data="{ edit_profile_details: false }">
 
             @auth
-                @if ($user->id === Auth::id())
+                @if ($isOwnProfile)
                     <a class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white">
                         420 Followers
                     </a>
@@ -107,12 +107,20 @@
                         Edit Profile
                     </button>
                 @else
-                    <button class="w-full cursor-pointer rounded bg-lightMode-primary px-4 py-2 font-semibold text-white"
-                        type="button">
-                        <span data-user-id="{{ $user->id }}"
-                            id="follow-btn">{{ $user->followed ? 'Unfollow' : 'Follow' }}</span>
+                    <button x-data="followButton({{ $user->id }}, {{ Auth::user()->isFollowing($user) ? 'true' : 'false' }})"
+                        :class="loading ? 'opacity-50 cursor-not-allowed' :
+                                (isFollowing ?
+                                    (isHovering ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700') :
+                                    'bg-lightMode-primary text-white')"
+                            :disabled="loading" @click="toggleFollow()" @mouseenter="isHovering = true"
+                            @mouseleave="isHovering = false"
+                            class="w-full rounded-lg px-4 py-2 font-bold transition-all duration-200 active:scale-95"
+                            x-text="loading ? 'working...' :
+                                    (isFollowing 
+                                        ? (isHovering ? 'Unfollow' : 'Following')
+                                        : 'Follow')">
                     </button>
-                    <a class="w-full rounded bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300"
+                    <a class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black transition-all hover:bg-gray-300"
                         href="{{ route('profile.edit') }}">
                         Message
                     </a>
@@ -126,10 +134,11 @@
         <h6 class="text-lg font-semibold md:text-xl lg:text-xl">Interests</h6>
         <ul class="mt-4 flex flex-wrap items-center gap-2 text-sm md:text-base lg:text-base">
             @foreach($user->topics as $topic)
-                <a href="" class="px-2 py-1 text-lightMode-blueHighlight bg-blue-50/30 border 
-                    border-lightMode-blueHighlight shadow-sm text-xs font-semibold rounded-full 
-                    hover:bg-opacity-10 transition-colors duration-200
-                    flex-shrink-0">{{ $topic->name }}</a>
+                <a href="{{ route('topic.trending', $topic->slug) }}" 
+                    class="px-2 py-1 text-lightMode-blueHighlight bg-blue-50/30 border 
+                        border-lightMode-blueHighlight shadow-sm text-xs font-semibold rounded-full 
+                        hover:bg-opacity-10 transition-colors duration-200
+                        flex-shrink-0">{{ $topic->name }}</a>
             @endforeach
         </ul>
 
@@ -145,15 +154,15 @@
         </ul>
         
         <div class="">
-            <div class="mr-4 inline">
+            <a href="{{ route('profile.followers', auth()->user()->id) }}" class="mr-4 inline hover:underline">
                 <span class="font-bold" id="follower-count"> {{ $user->followers_count }}</span>
                 <span class="text-sm font-normal">Followers</span>
-            </div>
+            </a>
 
-            <div class="inline">
+            <a href="{{ route('profile.following', auth()->user()->id) }}"  class="inline hover:underline">
                 <span class="font-bold" id="following-count" id="following-count">{{ $user->following_count }}</span>
                 <span class="text-sm font-normal">Following</span>
-            </div>
+            </a>
         </div>
     </section>
 </div>

@@ -7,7 +7,7 @@
 <div class="w-full max-w-2xl px-4 md:w-1/2 md:px-0 lg:w-2/4">
 
     <section class="">
-    {{ $slot }}
+
         <div class="w-full rounded-t-lg border-b-2 border-b-lightMode-primary bg-white py-2 text-center">
             <span class="text-lg font-semibold md:text-xl lg:text-xl">Posts</span>
         </div>

@@ -30,7 +30,7 @@
                 @include('profile.partials.profile-sidebar')
 
                 {{-- The feed of posts belonging to this user --}}
-                @include('profile.partials.profile-feed')
+                @include("profile.partials.tabs.{$viewTab}")
                 
             </div>
         </div>
