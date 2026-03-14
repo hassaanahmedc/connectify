@@ -16,7 +16,7 @@
                 @endif
             </div>
 
-            <div class="overflow-hidden border border-gray-100 shadow-md bg-white">
+            <div class="overflow-hidden">
                 @foreach ($user_results->take($limit) as $user)
                     @include('profile.user-card', [ 'user' => $user ])
                 @endforeach

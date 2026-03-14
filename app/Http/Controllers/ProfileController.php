@@ -22,13 +22,24 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
 
+    private function getProfileBaseData(User $user)
+    {
+        $user->load('topics:id,name,slug');
+        $user->loadCount(['followers', 'following']);
+
+        return [
+            'user' => $user,
+            'isOwnProfile' => Auth::id() === $user->id,
+        ];
+    }
+
     public function view(Request $request, User $user) :View
     {
         $currentUserId = Auth::id();
-
+        
+        $data = $this->getProfileBaseData($user);
+        
         $user->load([
-            'topics' => fn($q) => $q->select('id', 'name', 'slug'), 
-
             'post' => function ($query) use ($currentUserId) {
             $query->latest()
                   ->with(['postImages', 'comment', 'topics' => fn($q) => $q->select('id', 'name')])
@@ -38,14 +49,9 @@ class ProfileController extends Controller
                   }]);
         }]);
 
-        $user->loadCount(['followers', 'following']);
-        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
+        $data['viewTab'] = 'posts';
 
-        return view('profile.index', [
-            'user' => $user, 
-            'isOwnProfile' => $isOwnProfile,
-            'viewTab' => 'posts'
-        ]);
+        return view('profile.index', $data);
     }
 
     public function edit(Request $request): View
@@ -197,37 +203,21 @@ class ProfileController extends Controller
 
     public function following(Request $request, User $user) 
     {
-        $currentUserId = Auth::id();
+        $data = $this->getProfileBaseData($user);
 
-        $user->load('topics:id,name,slug');
-        $following = $user->following()->paginate(15);
-        $user->loadCount(['followers', 'following']);
+        $data['followingList'] = $user->following()->paginate(15);
+        $data['viewTab'] = 'following';
 
-        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
-
-        return view('profile.index', [
-            'user' => $user, 
-            'isOwnProfile' => $isOwnProfile,
-            'followingList' => $following,
-            'viewTab' => 'following'
-        ]);
+        return view('profile.index', $data);
     }
 
     public function followers(Request $request, User $user) 
     {
-        $currentUserId = Auth::id();
+        $data = $this->getProfileBaseData($user);
 
-        $user->load('topics:id,name,slug');
-        $followers = $user->followers()->paginate(15);
-        $user->loadCount(['followers', 'following']);
+        $data['followersList'] = $user->followers()->paginate(15);
+        $data['viewTab'] = 'followers';
 
-        $isOwnProfile = Auth::check() && Auth::id() === $user->id;
-
-        return view('profile.index', [
-            'user' => $user, 
-            'isOwnProfile' => $isOwnProfile,
-            'followersList' => $followers,
-            'viewTab' => 'followers'
-        ]);
+        return view('profile.index', $data);
     }
 }
