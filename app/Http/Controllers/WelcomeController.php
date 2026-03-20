@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Topic;
 use Illuminate\Support\Facades\Auth;
 
 class WelcomeController extends Controller
@@ -10,6 +11,7 @@ class WelcomeController extends Controller
     public function index()
     {
         $user_id = Auth::id();
+        $topics = Topic::select('id', 'slug', 'name')->get();
 
         $posts = Post::query()
             ->with(['user:id,fname,lname,avatar',
@@ -29,6 +31,6 @@ class WelcomeController extends Controller
             ->latest()
             ->paginate(15);
 
-        return response()->view('welcome', compact('posts'));
+        return response()->view('welcome', compact('posts', 'topics'));
     }
 }

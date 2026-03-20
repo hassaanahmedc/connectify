@@ -66,6 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users/suggested', [DiscoveryController::class, 'suggestions'])->name('users.suggested');
     // Topics
     Route::get('/topics/{topic:slug}', [TopicController::class, 'getTrending'])->name('topic.trending');
+    Route::post('/topics/attach', [TopicController::class, 'attach'])->name('topic.attach');
     });
 // Non Protected Public routes
 Route::get('/search/results', [searchController::class, 'navSearch'])->name('search.results');

@@ -1,29 +1,54 @@
+{{-- 
+    This is the entry point of the site that user will redirected to after logging in.
+    
+    This view acts as a simply layout file. It is responsible for rendeting the
+    middle (newsfeed) section of the page by rendering a post creation modal, Topics
+    selection modal, and finally user genereted posts with topics to make up the feed..
+ --}}
+
 @extends('layouts.main')
 
 @section('main')
     <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md md:w-11/12 lg:w-full lg:max-w-lg lg:px-5 xl:px-0 xl:max-w-xl">
-        <div class="mb-2 rounded-xl bg-white px-4 py-2 shadow-sm">
-            <div class="flex gap-4 md:gap-6">
-                <div class="flex-shrink-0">
-                    <img alt="" class="h-auto w-9 rounded-full bg-gray-200 object-cover"
-                        src="{{  asset('storage/' . Auth::user()->avatar ) ??  Vite::asset('/public/svg-icons/guest-icon.svg') }}">
-                </div>
-
-                <div class="flex-1" x-data="{ create_post: false }"
-                    x-on:close-modal.window="if ($event.detail.modal === 'create_post') create_post = false">
-                    <div @click="create_post = true" class="relative">
-                        <div class="cursor-pointer rounded-full border px-4 py-2 text-gray-500">
-                            Share something...
-                        </div>
-                    </div>
-
-                    <!-- Post Creation Modal -->
-                    @include('posts.create', ['showVariable' => 'create_post'])
-
-                </div>
-            </div>
+        {{-- Post creation modal  --}}
+        <div class="pt-2" x-data="{ create_post: false }">
+            <x-post-creation />
         </div>
 
+        {{-- Topics Selecton Modal (visible if user has none selected) --}}
+        @if(auth()->user()->topics->count() === 0 )
+            <div class="flex flex-col gap-3 px-4 py-2 bg-white mb-6" 
+                x-data="{ select-topics-modal: false }">
+
+                <div class="flex items-center justify-between group">
+                    <div x-on:click="$dispatch('open-modal', 'select-topics-modal')">
+ 
+                        <span class="text-xs font-extrabold tracking-wider text-lightMode-primary">
+                            Personalization
+                        </span>
+
+                        <h4 class="text-xl font-bold tracking-tight sm:truncate text-gray-900 cursor-pointer
+                            group-hover:text-lightMode-primary transition-colors">
+                            Customize your experience on Connectify!
+                        </h5>
+                        <p class="text-sm text-gray-500">
+                            Pick your favorite topics to see posts that matter to you.
+                        </p>
+                        
+                    </div>
+                    <div class=" pb-1">
+                        <x-svg-icons.pencil-square class="w-5 h-auto cursor-pointer 
+                        text-gray-400 group-hover:text-lightMode-primary transition-all" />
+                    </div>                
+                </div>
+                    
+                <div class="relative h-[2px] w-full bg-gray-100">
+                    <div class="absolute left-0 top-0 h-full w-24 bg-blue-600 rounded-full"></div>
+                </div>
+            </div>
+        @endif
+        
+        {{-- Feed Post Cards  --}}
         <div class="flex flex-col" id="newsfeed">
             @forelse ($posts as $post)
                 <x-post.card :post="$post" />
@@ -33,4 +58,8 @@
         </div>
 
     </section>
+    
+    {{-- Rendering Modal for topic selection and passing topics object  --}}
+    <x-modals.topics-selection-modal :topics="$topics" />
 @endsection
+

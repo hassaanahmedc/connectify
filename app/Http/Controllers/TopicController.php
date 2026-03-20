@@ -33,7 +33,7 @@ class TopicController extends Controller
         }])
         ->latest()
         ->paginate(15);
-        
+    
         $header_data = [
             'context' => 'Trending Topic',
             'title' => '#' . $topic->name,
@@ -42,5 +42,23 @@ class TopicController extends Controller
         ];
 
         return view('trendingTopic', compact('topic_posts', 'header_data'));
+    }
+
+    public function attach(Request $request)
+    {
+        $validated = $request->validate([
+            'topics' => 'required|array',
+            'topics.*' => 'integer|exists:topics,id'
+        ]);
+
+        try {
+            Auth::user()->topics()->sync($validated['topics']);
+            return redirect()->back()->with('success', 'Your feed is ready!');
+            
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong. Please try again later.');
+
+        }
     }
 }

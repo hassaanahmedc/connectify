@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<x-notification />
 <div class="flex h-screen flex-col overflow-hidden">
     
     <header class="flex-shrink-0 h-16 z-50">

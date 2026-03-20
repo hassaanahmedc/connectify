@@ -2,6 +2,18 @@
 
 <div 
     x-data="{ notificationShow: false, notificationMessage: '', notificationType: '{{ $type }}' }"
+    x-init="
+        @if(session('success'))
+            $nextTick(() => {
+                $dispatch('show-notification', {  message: '{{ session('success') }}', type:'success' });
+            });
+        @endif
+        @if(session('error'))
+            $nextTick(() => {
+                $dispatch('show-notification', { message: '{{ session('error') }}', type:'error' });
+            });
+        @endif
+    "
     x-on:show-notification.window="
         notificationMessage = $event.detail.message;
         notificationType = $event.detail.type || 'success';
