@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Topic;
 use PhpParser\Node\Stmt\Break_;
 
 class ProfileController extends Controller
@@ -26,9 +27,11 @@ class ProfileController extends Controller
     {
         $user->load('topics:id,name,slug');
         $user->loadCount(['followers', 'following']);
+        $topics = Topic::select('id', 'slug', 'name')->get();
 
         return [
             'user' => $user,
+            'topics' => $topics,
             'isOwnProfile' => Auth::id() === $user->id,
         ];
     }

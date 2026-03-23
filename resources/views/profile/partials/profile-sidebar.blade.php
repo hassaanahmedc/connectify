@@ -129,7 +129,9 @@
         </div>
     </section>
 
-    <section class="my-4 rounded-lg bg-white px-5 py-4 shadow-md">
+    {{-- Interest Section --}}
+    <section class="my-4 rounded-lg bg-white px-5 py-4 shadow-md"
+        x-data="{ selectTopicsModal: false }">
 
         <h6 class="text-lg font-semibold md:text-xl lg:text-xl">Interests</h6>
         <ul class="mt-4 flex flex-wrap items-center gap-2 text-sm md:text-base lg:text-base">
@@ -140,6 +142,19 @@
                         hover:bg-opacity-10 transition-colors duration-200
                         flex-shrink-0">{{ $topic->name }}</a>
             @endforeach
+
+            {{-- Add interest button (visible if user user hasnt reached topics limit) --}}
+            @if($user->topics->count() < $topics->count())
+                <div class="px-2 py-1 text-lightMode-blueHighlight bg-blue-50/30 border 
+                            border-lightMode-blueHighlight shadow-sm text-xs font-semibold rounded-full 
+                            hover:bg-opacity-10 transition-colors duration-200
+                            flex-shrink-0 flex items-center cursor-pointer"
+                            x-on:click="$dispatch('open-modal', 'selectTopicsModal')">
+                            <x-svg-icons.plus class=" w-4 h-auto" />
+                            <p>Add Interest</p>
+                
+                </div>
+            @endif
         </ul>
 
     </section>
@@ -149,7 +164,7 @@
         <h6 class="text-lg font-semibold md:text-xl lg:text-xl">About {{ $user->fname }}</h6>
         <ul class="my-4 text-sm md:text-base lg:text-base">
             <li>Occupation <span class="font-semibold">Software Engineer</span></li>
-            <li>Joined <span class="font-semibold">September 2025</span></li>
+            <li>Joined <span class="font-semibold">{{ $user->created_at->format('F Y') }}</span></li>
             <li>From <span class="font-semibold">{{ $user->location }}</span></li>
         </ul>
         

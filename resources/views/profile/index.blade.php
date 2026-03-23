@@ -49,6 +49,7 @@
      --}}
     <x-image-viewer />
     <x-modals.image-upload-preview-modal />
+    <x-modals.topics-selection-modal :topics="$topics" />
     <x-modals.confirm-action />
 
 @endsection

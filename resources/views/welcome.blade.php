@@ -18,10 +18,10 @@
         {{-- Topics Selecton Modal (visible if user has none selected) --}}
         @if(auth()->user()->topics->count() === 0 )
             <div class="flex flex-col gap-3 px-4 py-2 bg-white mb-6" 
-                x-data="{ select-topics-modal: false }">
+                x-data="{ selectTopicsModal: false }">
 
                 <div class="flex items-center justify-between group">
-                    <div x-on:click="$dispatch('open-modal', 'select-topics-modal')">
+                    <div x-on:click="$dispatch('open-modal', 'selectTopicsModal')">
  
                         <span class="text-xs font-extrabold tracking-wider text-lightMode-primary">
                             Personalization

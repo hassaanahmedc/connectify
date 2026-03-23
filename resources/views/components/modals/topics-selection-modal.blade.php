@@ -1,8 +1,8 @@
 
-<x-modal :show="false" autofocus name="select-topics-modal">
+<x-modal :show="false" autofocus name="selectTopicsModal">
     <div x-data="{
         selectedTopics: [],
-        maxTopics: 30,
+        maxTopics: {{ $topics->count() }},
         status: '',
         toggleTopic(topic) {
             if (this.selectedTopics.includes(topic)) {
@@ -34,10 +34,10 @@
                     <input type="hidden" name="topics[]" :value="id">
                 </template>
                 <div class="h-[1px] w-full bg-gray-200 mt-12"></div>
-                <div class="flex items-center justify-between my-4">
+                <div class="w-full min-w-0 flex items-center justify-between my-4">
                     <div class="text-sm text-gray-500">
                         <span class="font-bold text-blue-600" x-text="selectedTopics.length">0</span>
-                        of <span x-text="maxTopics">30</span> topics selected
+                        of <span x-text="maxTopics"></span> topics selected
                     </div>
 
                     <button type="submit" 
