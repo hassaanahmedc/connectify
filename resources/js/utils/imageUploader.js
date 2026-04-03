@@ -116,9 +116,11 @@ export function disableButton(button, text = 'Saving...') {
 } 
 
 export function createImagePreviews(files) {
-    return files.map(img => URL.createObjectURL(img));
+    if (Array.isArray(files)) return files.map(url => URL.createObjectURL(url));
+    return URL.createObjectURL(files);
 }
 
 export function revokeImagePreviews(files) {
-    files.map(img => URL.revokeObjectURL(img));
+    if (Array.isArray(files)) return files.map(url => URL.revokeObjectURL(url));
+    return URL.revokeObjectURL(files);
 }

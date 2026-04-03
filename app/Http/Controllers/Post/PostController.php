@@ -10,6 +10,7 @@ use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Resources\Post\PostCardResource;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use Illuminate\Support\Facades\Blade;
 use App\Services\PostService;
 use Exception;
 
@@ -41,17 +42,7 @@ class PostController extends Controller
         
         return response()->json([
             'payload' => $post,
-            'postHtml' => view('posts.feed-card', [
-                'post' => $post,
-                'profileUrl' => route('profile.view', $post->user->id),
-                'postId' => $post->id,
-                'userName' => $post->user->fname . ' ' . $post->user->lname,
-                'postTime' => $post->created_at->diffForHumans(),
-                'postContent' => $post->content,
-                'postImages' => $post->postImages ?? collect([]),
-                'comments' => $post->limited_comments ?? collect([]),
-                'profileImageUrl' => $post->user->avatar ?? 'https://placewaifu.com/image/200',
-            ])->render(),
+            'postHtml' => Blade::render('<x-post.card :post="$post" />', ['post' => $post]),
         ], 201);
     }
 
