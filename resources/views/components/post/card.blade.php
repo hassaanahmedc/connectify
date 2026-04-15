@@ -21,7 +21,7 @@
     @click.outside="if(imagesModal) imagesModal = false">
 
     {{-- Header & Caption --}}
-    <x-post.header :post="$post" />
+    <x-post.header :post="$post" :topics="$post->topics" />
     
     {{-- Post Images --}}
     <x-post.images :images="$post->postImages" />

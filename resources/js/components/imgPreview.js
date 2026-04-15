@@ -7,9 +7,9 @@ import {
     revokeImagePreviews
 } from '../utils/imageUploader';
 
-export default (object = null) => ({
-    editPreviewId: object.id,
-    editPreviewUrlL: object.url,
+export default () => ({
+    isEdit: false,
+    postId: null,
     content: '',
     selectedTopics: [],
     topicButtonToggle: false,
@@ -17,6 +17,30 @@ export default (object = null) => ({
     previewImages: [],
     removeImages: [],
     previewErrors: [],
+
+    init() {    
+        window.addEventListener('fill-post-data', (event) => {
+                console.log(event.detail)
+                this.hydrateModal(event.detail);
+        })
+    },
+
+    hydrateModal(data) {
+        this.isEdit = data.isEdit || false;
+        this.content = data.content || '';
+        this.postId = data.id || null;
+
+        if (data.images) {
+            this.previewImages = data.images.map(image => ({
+                id: image.id,
+                url: image.url,
+                file: null,
+            }));
+        }
+        if (data.topics) {
+            this.selectedTopics = data.topics.map(topic => ({id: topic.id}));
+        }
+    },
 
     toggleTopic(topic) {
         const index = this.selectedTopics.findIndex(t => t.id === topic.id);
@@ -55,10 +79,29 @@ export default (object = null) => ({
     removePreview(id) {
         this.previewImages = this.previewImages.filter(image => {
             if (image.id === id) {
+                if (!image.file) {
+                    this.removeImages.push(image.id)
+                    console.log("Ddatabse image marked for deletion: ", image,id)
+                }
                 revokeImagePreviews(image.url)
                 return false;
             }
             return true;
+        });
+    },
+
+    async createPost(formData) {
+        return await fetchData(API_ENDPOINTS.createPost, { 
+            method: 'POST', 
+            body: formData 
+        });
+    },
+
+    async updatePost(formData) {
+        formData.append("_method", "PUT");
+        return await fetchData(API_ENDPOINTS.updatePost(this.postId), {     
+            method: 'POST', 
+            body: formData 
         });
     },
 
@@ -69,26 +112,46 @@ export default (object = null) => ({
         try {
             const formData = new FormData();
             formData.append("content", this.content);
+            
+            this.previewImages.forEach(img => {
+                if (img.file) formData.append('images[]', img.file);
+            })
 
-            if (this.previewImages.length) {
-                this.previewImages.forEach(image => formData.append('images[]', image.file));
+            if (this.removeImages.length > 0) {
+                this.removeImages.forEach(id => formData.append('removedImageIds[]', id));
             }
 
             if (this.selectedTopics.length) {
                 this.selectedTopics.forEach(topic => formData.append('topics[]', topic.id));
             }
 
-            const response = await fetchData(API_ENDPOINTS.createPost, { method: 'POST', body: formData });
+            let response;
+
+            if (this.isEdit) {
+                response = await this.updatePost(formData);
+            } else {
+                response = await this.createPost(formData);
+            }
+
             if (response.postHtml) {
                 const newsfeed = document.querySelector("#newsfeed");
-                if (newsfeed && response.postHtml) {
-                    newsfeed.insertAdjacentHTML('afterbegin', response.postHtml);
+                if (this.isEdit) {
+                    const existingDiv = newsfeed.querySelector(`[data-post-id="${this.postId}"]`);
+                    if (existingDiv) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = response.postHtml.trim();
+                        const newPostElement = tempDiv.firstElementChild;
+                        existingDiv.replaceWith(newPostElement);
+                    }
+                } else {
+                    if (newsfeed && response.postHtml) {
+                        newsfeed.insertAdjacentHTML('afterbegin', response.postHtml);
+                    }
                 }
-
             }
             
         } catch (error) {
-            console.error("something went wrong try again");
+            console.error("Submission Error:", error);
         } finally {
             this.previewImages.forEach(image => revokeImagePreviews(image.url));
             this.content = '';
@@ -98,7 +161,7 @@ export default (object = null) => ({
             this.selectedTopics = [];
             this.topicButtonToggle = false;
             this.loading = false;
-            window.dispatchEvent(new CustomEvent('close-modal', { detail: 'create_post' }));
+            window.dispatchEvent(new CustomEvent('close-modal', { detail: 'post-modal' }));
         }
     }
 })

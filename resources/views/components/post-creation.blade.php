@@ -5,8 +5,8 @@
                 src="{{ Auth::user()->avatar_url }}">
         </div>
 
-        <div class="flex-1" x-data="{ create_post: false }">
-            <div x-on:click="$dispatch('open-modal', 'create_post')"> 
+        <div class="flex-1">
+            <div @click="$dispatch('open-modal', 'post-modal', { isEdit: false })"> 
                 <div class="cursor-pointer rounded-full border px-4 py-2 text-gray-500">
                     Share something...
                 </div>
@@ -19,8 +19,8 @@
     </div>
 </div>
 
-<x-modal :show="false" autofocus name="create_post">
-    <div x-data="imagePreviewer([])">
+<x-modal :show="false" autofocus name="post-modal">
+    <div x-data="imagePreviewer">
         <section class="mx-1 md:mx-4 flex justify-center p-4 overflow-visible" >
             <form method="POST" action="{{ route('topic.attach') }}" multipart/form-data class="w-full">
                 @csrf
@@ -36,7 +36,7 @@
                             <span class="text-xs">Creating Post...</span>
                         </div>
                     </div>
-                    <div @click="$dispatch('close')">
+                    <div @click="$dispatch('close')" class="cursor-pointer">
                         <x-svg-icons.cross-mark class="w-6 h-auto" />
                     </div>
                 </div>
@@ -128,10 +128,13 @@
                     </div>
         
                     <button type="submit"
-                        :disabled="loading"
                         @click.prevent="submitPostModal()"
                         class="px-5 py-2 bg-lightMode-primary rounded-lg text-white text-sm font-bold 
-                        shadow-sm transition-all">
+                        shadow-sm transition-all"
+                        :disabled="loading"
+                        :class="loading
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : 'hover:shadow-lightMode-primary'">
                         Continue
                     </button>
                 </div>

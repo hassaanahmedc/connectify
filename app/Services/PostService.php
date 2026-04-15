@@ -13,7 +13,12 @@ Class PostService {
     public function CreatPostWithImages(array $data, $user, $images=null) 
     {
         return DB::transaction(function () use ($data, $user, $images) {
-            $post = $user->post()->create($data);
+            $post = $user->post()->create(['content' => $data['content']]);
+            
+            if (isset($data['topics'])) {
+                $post->topics()->sync($data['topics'] ?? []);
+            };
+
             if (! empty($images)) {
                 foreach ($images as $image) {
                     if ($image && $image->isValid()) {
@@ -22,7 +27,7 @@ Class PostService {
                     }
                 }
             }
-            return $post->fresh()->load(['user', 'postImages', 'limited_comments']);
+            return $post->fresh()->load(['user', 'postImages', 'limited_comments', 'topics']);
         });
     }
 
@@ -40,6 +45,10 @@ Class PostService {
                 {
                     if (array_key_exists('content', $data)) {
                         $post->content = $data['content'];
+                    }
+
+                    if (array_key_exists('topics', $data)) {
+                        $post->topics()->sync($data['topics'] ?? []);
                     }
 
                     if (!empty($removedImageIds)) {
@@ -64,7 +73,7 @@ Class PostService {
                     }
 
                     $post->save();
-                    return $post->fresh()->load(['user', 'postImages', 'limited_comments'])->loadCount(['likes', 'comment']);
+                    return $post->fresh()->load(['user', 'postImages', 'limited_comments', 'topics'])->loadCount(['likes', 'comment']);
             });
 
             if (!empty($pathsToDeleteAfterCommit)) {

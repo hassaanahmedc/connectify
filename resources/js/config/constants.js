@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
   updateComment: (commentId) => `/post/${commentId}/update`,
   // post
   createPost: `/post/store`,
+  updatePost: (postId) => `/post/${postId}/update`,
   likePost: (postId) => `/post/${postId}/like`,
   followUser : (userId) => `/user/${userId}/follow`,
   // user profile

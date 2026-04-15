@@ -79,23 +79,10 @@ class PostController extends Controller
         try {
             $updated_post = $postService->UpdatePostWithImages($post, $validated, $removedImageIds, $newImages);
 
-            $postHtml = view('posts.feed-card', [
-                    'post' => $updated_post,
-                    'profileUrl' => route('profile.view', $updated_post->user->id),
-                    'postId' => $updated_post->id,
-                    'userName' => $updated_post->user->fname . ' ' . $updated_post->user->lname,
-                    'postTime' => $updated_post->created_at->diffForHumans(),
-                    'postContent' => $updated_post->content,
-                    'postImages' => $updated_post->postImages ?? collect([]),
-                    'comments' => $updated_post->limited_comments ?? collect([]),
-                    'profileImageUrl' => $updated_post->user->avatar ?? 'https://placewaifu.com/image/200',
-                ])->render();
-
-            return response()->json([
-                'success' => true,
-                'payload' => new PostCardResource($updated_post),
-                'postHtml' => $postHtml
-            ]);
+        return response()->json([
+            'payload' => $updated_post,
+            'postHtml' => Blade::render('<x-post.card :post="$post" />', ['post' => $updated_post]),
+        ], 201);
 
         } catch (Exception $e) {
             Log::error('Post update faliled', ['post_id' => $post->id, 'error' => $e]);

@@ -61,20 +61,21 @@
                 @can('update', $post)
                     <li role="menuitem" class="px-2">
                         <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
-                                @click.prevent="edit_post = true;">
+                                @click="
+                                    $dispatch('open-modal', 'post-modal');
+                                    $dispatch('fill-post-data', {
+                                        isEdit: true,
+                                        id: {{ $post->id }},
+                                        content: {{ json_encode($post->content) }},
+                                        topics: {{ $post->topics->toJson() }},
+                                        images: {{ $post->postImages->map(fn($img) => [
+                                            'id' => $img->id,
+                                            'url' => asset('storage/' . $img->path)
+                                        ]) }}
+                                    })
+                                ">
                             Edit Post
                         </button>
-                        {{-- Edit Modal: Loads edit form in a modal, deferred with x-teleport to avoid initialization issues --}}
-                        <template x-if="edit_post">
-                            <div x-show="edit_post" x-cloak>
-                                @include('posts.edit', [
-                                    'showVariable' => 'edit_post',
-                                    'post' => $post,
-                                    'images' => $post->postImages ?? collect([]),
-                                    'mode' => 'edit'
-                                ])
-                            </div>
-                        </template>
                     </li>
                 @endcan
                 <li class="px-6 py-2 hover:bg-gray-200">

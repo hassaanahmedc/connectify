@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Post;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Models\Topic;
 
 class CreatePostRequest extends FormRequest
 {
@@ -23,8 +25,10 @@ class CreatePostRequest extends FormRequest
     {
         return [
             'content' =>  ['required', 'string', 'max:5000'],
+            'topics' => ['nullable', 'array', 'max:5'],
+            'topics.*' => ['integer', Rule::exists('topics', 'id')],
             'images' => ['nullable', 'array', 'max:5'],
-            'images.*' => ['nullable', 'file', 'max:5120'],
+            'images.*' => ['file', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ];
     }
 }

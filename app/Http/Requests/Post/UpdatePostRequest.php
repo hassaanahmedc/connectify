@@ -5,6 +5,7 @@ namespace App\Http\Requests\Post;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use App\Models\Topic;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -27,10 +28,12 @@ class UpdatePostRequest extends FormRequest
 
         return [
             'content' =>  ['nullable', 'string', 'max:2000'],
+            'topics' => ['nullable', 'array', 'max:5'],
+            'topics.*' => ['integer', Rule::exists('topics', 'id')],
             'removedImageIds' => ['nullable', 'array'],
             'removedImageIds.*' => ['integer',  Rule::exists('post_images', 'id')->where('posts_id', $postId),],
             'images' => ['nullable', 'array', 'max:5'],
-            'images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
+            'images.*' => ['file', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
         ];
     }
 
