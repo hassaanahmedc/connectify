@@ -12,23 +12,37 @@ use Exception;
 Class PostService {
     public function CreatPostWithImages(array $data, $user, $images=null) 
     {
-        return DB::transaction(function () use ($data, $user, $images) {
-            $post = $user->post()->create(['content' => $data['content']]);
-            
-            if (isset($data['topics'])) {
-                $post->topics()->sync($data['topics'] ?? []);
-            };
-
-            if (! empty($images)) {
-                foreach ($images as $image) {
-                    if ($image && $image->isValid()) {
-                        $path = $image->store('posts', 'public');
-                        $post->postImages()->create(['path'=> $path]);
+        $newlyStoredPaths = [];
+        try {
+            return DB::transaction(function () use ($data, $user, $images, $newlyStoredPaths) {
+                $post = $user->post()->create(['content' => $data['content']]);
+                
+                if (isset($data['topics'])) {
+                    $post->topics()->sync($data['topics'] ?? []);
+                };
+    
+                if (! empty($images)) {
+                    foreach ($images as $image) {
+                        if ($image && $image->isValid()) {
+                            $path = $image->store('posts', 'public');
+                            $newlyStoredPath[] = $path;
+                            $post->postImages()->create(['path'=> $path]);
+                        }
                     }
                 }
+                return $post->fresh()->load(['user', 'postImages', 'limited_comments', 'topics'])->loadCount(['likes', 'comment']);
+            });
+        } catch (Exception $e) {
+            if(!empty($newlyStoredPaths)) {
+                Storage::disk('public')->delete($newlyStoredPaths);
             }
-            return $post->fresh()->load(['user', 'postImages', 'limited_comments', 'topics']);
-        });
+            Log::error('Post Creation Failed', [
+                'user_id' => $user->id,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     public function updatePostWithImages(Post $post, array $data, array $removedImageIds = [], array $newImages = [])

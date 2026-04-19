@@ -13,7 +13,7 @@
         </div>
 
         <div class="pt-2" x-data="{ create_post: false }">
-            <x-post-creation :topics=$topics />
+            <x-post-creation :topics="$topics" />
         </div>
 
         <div class="flex flex-col" id="newsfeed">

@@ -62,4 +62,3 @@
     {{-- Rendering Modal for topic selection and passing topics object  --}}
     <x-modals.topics-selection-modal :topics="$topics" />
 @endsection
-

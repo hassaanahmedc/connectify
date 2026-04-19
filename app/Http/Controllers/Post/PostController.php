@@ -34,16 +34,26 @@ class PostController extends Controller
      */
     public function store(CreatePostRequest $request, PostService $postService)
     {
-        $data = $request->validated();
+        try {
+            $post = $postService->CreatPostWithImages(
+                $request->validated(),
+                auth()->user(),
+                $request->file('images')
+            );
+            
+            return response()->json([
+                'success' => true,
+                'payload' => $post,
+                'postHtml' => Blade::render('<x-post.card :post="$post" />', ['post' => $post]),
+            ], 201);
 
-        $images = $request->file('images');
-
-        $post = $postService->CreatPostWithImages($data, auth()->user(), $images);
-        
-        return response()->json([
-            'payload' => $post,
-            'postHtml' => Blade::render('<x-post.card :post="$post" />', ['post' => $post]),
-        ], 201);
+        } catch (Exception $e) {
+            Log::error('Post Controller Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while creating the post, please try again.',
+            ], 500);
+        }
     }
 
     /**
@@ -70,24 +80,26 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, PostService $postService, Post $post)
     {
         $this->authorize('update', $post);
-
-        $validated = $request->validated();
-        $newImages = $request->file('images', []);
-
-        $removedImageIds = $request->input('removedImageIds', []);
-        if(is_string($removedImageIds)) $removedImageIds = json_decode($removedImageIds, true) ?: [];
+        
         try {
-            $updated_post = $postService->UpdatePostWithImages($post, $validated, $removedImageIds, $newImages);
-
-        return response()->json([
-            'payload' => $updated_post,
-            'postHtml' => Blade::render('<x-post.card :post="$post" />', ['post' => $updated_post]),
-        ], 201);
+            $updated_post = $postService->UpdatePostWithImages(
+                $post, 
+                $request->validated(), 
+                $request->input('removedImageIds', []), 
+                $request->file('images', [])
+            );
+            return response()->json([
+                'success' => true,
+                'payload' => $updated_post,
+                'postHtml' => Blade::render('<x-post.card :post="$post" />', ['post' => $updated_post]),
+            ], 200);
 
         } catch (Exception $e) {
-            Log::error('Post update faliled', ['post_id' => $post->id, 'error' => $e]);
-
-            return response()->json(['success' => false, 'error' => 'failed to update post'], 500);
+            Log::error('Post Controller Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while updating the post, please try again.',
+            ], 500);
         }
     }
     

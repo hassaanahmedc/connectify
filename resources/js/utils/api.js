@@ -23,19 +23,23 @@ export async function fetchData(url, options = {}) {
         headers,
     });
 
-    if (!response.ok) {
-        console.error('fetchData error:', {
-            status: response.status,
-            statusText: response.statusText,
-            url,
-        });
-        throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
     const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-        return response.json();
+    let data;
+    if(contentType && contentType.includes('application/json')) {
+        data = await response.json();
     } else {
-        return response.text(); // fallback for HTML
+        data = await response.text();
     }
+
+    if (!response.ok) {
+        console.error('fetchData error:', { status: response.status, data });
+
+        return {
+            success: false,
+            status: response.status,
+            errors: data.errors || null,
+            message: data.message || `Error ${response.status}`
+        }
+    }
+    return { success: true, ...data };
 }

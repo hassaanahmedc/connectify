@@ -1,7 +1,7 @@
 import "./bootstrap";
 import { fetchData } from "./utils/api.js";
 import followButton from "./components/follow.js";
-import imagePreviewer from "./components/imgPreview.js";
+import postModal from "./components/postModal.js";
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
@@ -18,7 +18,7 @@ window.fetchData = fetchData;
       }
   };
   Alpine.data('followButton', followButton);
-  Alpine.data('imagePreviewer', imagePreviewer);
+  Alpine.data('postModal', postModal);
 
 Alpine.start();
 
