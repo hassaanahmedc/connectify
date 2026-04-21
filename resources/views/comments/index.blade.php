@@ -15,7 +15,7 @@
                 
                 <!-- Comment content display -->
                 <div class="comment-container">
-                    <span class="text-sm comment-content" x-model="content">{{ $comment->content }}</span>
+                    <span class="text-sm comment-content">{{ $comment->content }}</span>
                     <!-- Inline edit form (hidden by default) -->
                     <div class="edit-form mt-1" style="display: none;">
                         <textarea id="content-{{ $comment->id }}" class="w-full p-1 border rounded-md text-sm">{{ $comment->content }}</textarea>

@@ -29,8 +29,28 @@ export default (postId) => ({
         }
     },
 
-    createComment() {
-        
+    async createComment() {
+        this.loading = true;
+
+        const formData = new FormData();
+        formData.append('content', this.content);
+
+        try {
+            const response = await fetchData(API_ENDPOINTS.createComment(this.postId), {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.success && response.commentHtml) {
+                this.$refs.commentsList.insertAdjacentHTML('afterbegin', response.commentHtml);
+            }
+            
+        } catch (error) {
+            this.errors = ["Failed to add comment."];
+        } finally {
+            this.loading = false;
+            this.content = '';
+        }
     }, 
 
     updateComment() {

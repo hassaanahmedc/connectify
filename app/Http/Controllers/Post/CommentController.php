@@ -16,25 +16,24 @@ class CommentController extends Controller
     public function store(CommentRequest $request, Post $post)
     {
         $validatedData = $request->validated();
-
         $commentor = $request->user();
         $postOwner = $post->user;
 
-        $comment = Comment::create([
-            'posts_id' => $post->id,
+        $comment = $post->comment()->create([
             'user_id' => $commentor->id,
             'content' => $validatedData['content'],
         ]);
+
         $comment->load('user');
-        $commentData = $comment->toArray();
-        $commentData['can_delete'] = auth()->user()->can('delete', $comment);
-        $commentData['can_update'] = auth()->user()->can('update', $comment);
-        
         if ($postOwner->id !== $commentor->id) {
             $postOwner->notify(new CommentNotification($commentor, $post));
         }
 
-        return response()->json(['success' => 'Comment added successfully!', 'comment' => $commentData], 200);
+        return response()->json([
+            'success' => true,
+            'payload' => $comment,
+            'commentHtml' => Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]),
+        ]);
     }
 
     public function loadMore(Request $request, POST $post)
@@ -48,7 +47,6 @@ class CommentController extends Controller
             ->take($limit)
             ->get();
         $hasMoreComments = $post->comment()->count() > $offset + $comments->count();
-        // return response()->json(['success' => $comments, 'hasMoreComments' => $hasMoreComments], 200);
         $html = '';
         foreach ($comments as $comment) {
             $html .= Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]);
