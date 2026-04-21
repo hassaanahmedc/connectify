@@ -15,8 +15,7 @@
                 
                 <!-- Comment content display -->
                 <div class="comment-container">
-                    <span class="text-sm comment-content">{{ $comment->content }}</span>
-                    
+                    <span class="text-sm comment-content" x-model="content">{{ $comment->content }}</span>
                     <!-- Inline edit form (hidden by default) -->
                     <div class="edit-form mt-1" style="display: none;">
                         <textarea id="content-{{ $comment->id }}" class="w-full p-1 border rounded-md text-sm">{{ $comment->content }}</textarea>
@@ -39,10 +38,8 @@
                     <span
                         class="text-xs text-gray-500 mt-2">{{ $comment->created_at->diffForHumans() }}</span>
                     <div class="relative">
-                        <img src="{{ Vite::asset('/public/svg-icons/3dots.svg') }}"
-                            class="cursor-pointer rotate-90 hidden group-hover:block three-dots"
-                            data-comment-id="{{ $comment->id }}"
-                            alt="">
+                    <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer hidden group-hover:block three-dots " 
+                        data-comment-id="{{ $comment->id }}" />
                         <ul class="comment-menu hidden w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rounded-md z-10">
                             @can('delete', $comment)
                                 <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">

@@ -2,6 +2,7 @@ import "./bootstrap";
 import { fetchData } from "./utils/api.js";
 import followButton from "./components/follow.js";
 import postModal from "./components/postModal.js";
+import comments from "./components/comments.js";
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
@@ -19,6 +20,7 @@ window.fetchData = fetchData;
   };
   Alpine.data('followButton', followButton);
   Alpine.data('postModal', postModal);
+  Alpine.data('comments', comments);
 
 Alpine.start();
 

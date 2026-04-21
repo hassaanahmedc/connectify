@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Post\CommentRequest;
@@ -40,23 +41,24 @@ class CommentController extends Controller
     {
         $offset = $request->query('offset', 0);
         $limit = $request->query('limit', 5);
-        $comments = $post->comment()->with('user')->orderBy('created_at', 'desc')->skip($offset)->take($limit)->get()
-            ->map(function ($comment) {
-                    return [
-                        'id' => $comment->id,
-                        'content' => $comment->content,
-                        'user' => [
-                            'fname' => $comment->user->fname,
-                            'lname' => $comment->user->lname,
-                            'id' => $comment->user->id,
-                        ],
-                        'created_at' => $comment->created_at->toISOString(),
-                        'can_delete' => auth()->user()->can('delete', $comment),
-                        'can_update' => auth()->user()->can('update', $comment),
-                    ];
-                });
+        $comments = $post->comment()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
         $hasMoreComments = $post->comment()->count() > $offset + $comments->count();
-        return response()->json(['success' => $comments, 'hasMoreComments' => $hasMoreComments], 200);
+        // return response()->json(['success' => $comments, 'hasMoreComments' => $hasMoreComments], 200);
+        $html = '';
+        foreach ($comments as $comment) {
+            $html .= Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]);
+        };
+        return response()->json([
+                'success' => true,
+                'payload' => $comments,
+                'hasMoreComments' => $hasMoreComments,
+                'commentHtml' => $html,
+            ], 200);
     }
     
     public function destroy(Comment $comment)
