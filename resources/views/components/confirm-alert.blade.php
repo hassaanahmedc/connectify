@@ -13,14 +13,12 @@
                         class="confirm-delete-btn bg-red-500 text-white px-4 py-2 rounded-md">Delete</button>
                 </form>
             @else
-                <button type="button"
-                    data-comment-id="{{ $commentId ?? '' }}"
-                    x-on:click="{{ $showVariable }} = false;  
-                    const event = new CustomEvent('comment-delete-confirmed', { 
-                            detail: { commentId: '{{ $commentId ?? '' }}' } 
-                        });
-                        document.dispatchEvent(event);"
-                    class="confirm-delete-btn bg-red-500 text-white px-4 py-2 rounded-md">Delete</button>
+                <button type="button" 
+                    @click="isLoading = true; deleteComment('{{$comment}}')"
+                    class="bg-red-500 text-white px-4 py-2 rounded-md">
+                    <span x-cloak x-show="!isLoading">Delete</span>
+                    <span x-cloak x-show="isLoading">Deleting...</span>
+                </button>
             @endif
             <button x-on:click="{{ $showVariable }} = false"
                 class="cancel-delete-btn bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>

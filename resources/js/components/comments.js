@@ -1,14 +1,13 @@
 import { API_ENDPOINTS } from '../config/constants';
 import { fetchData } from '../utils/api';
 
-export default (postId) => ({
+export default (postId, initialCount) => ({
     postId: postId,
+    commentCount: initialCount,
     showComments: false,
     hasMoreComments: true,
     loadMore: false,
     content: '',
-    editComment: false,
-    commentId: null,
     loading: false,
     errors: [],
 
@@ -42,9 +41,10 @@ export default (postId) => ({
             });
 
             if (response.success && response.commentHtml) {
+                this.commentCount++;
                 this.$refs.commentsList.insertAdjacentHTML('afterbegin', response.commentHtml);
             }
-            
+
         } catch (error) {
             this.errors = ["Failed to add comment."];
         } finally {
@@ -53,11 +53,51 @@ export default (postId) => ({
         }
     }, 
 
-    updateComment() {
+    async updateComment(id, oldContent, newContent) {
+        if (oldContent.trim() === newContent.trim()) return;
+        else {
+            this.loading = true;
+
+            const formData = new FormData();
+            formData.append('content', newContent.trim());
+            formData.append("_method", "PATCH");
+
+            try {
+                const response  = await fetchData(API_ENDPOINTS.updateComment(id), {
+                    method: 'POST', 
+                    body: formData,
+                })
+
+                if (response.success && response.content) {
+                    const newContent = response.content
+                    window.dispatchEvent(new CustomEvent('comment-updated', { detail: {id, newContent } }));
+
+                } else {
+                this.errors = [];
+                if (response.errors) this.errors = Object.values(response.errors).flat();
+                else this.errors = [response.message || "Could not save post."];
+            }
+            } catch (error) {
+                this.errors = ["A connection error occurred. Please try again."];
+                EventBus.dispatch('show-notification', { message: 'Something went wrong.', type: 'error' });
+
+            } finally {
+                this.loading = false;
+            }
+        }
 
     },
 
-    deleteComment() {
-
+    async deleteComment(id) {
+        try {
+            const response = await fetchData(API_ENDPOINTS.deleteComment(id), { method: 'DELETE' } );
+            if (response.success) {
+                this.commentCount--;
+                window.dispatchEvent(new CustomEvent('comment-deleted', { detail: {id: id } }));
+            }
+        } catch (error) {
+            this.errors = ["A connection error occurred. Please try again."];
+            EventBus.dispatch('show-notification', { message: 'Something went wrong.', type: 'error' });
+        }
     },
 })

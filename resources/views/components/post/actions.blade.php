@@ -1,5 +1,5 @@
 {{-- Likes and Comment Buttons: Trigger like action and comment toggle --}}
-<div x-data="comments({{$post->id}})">
+<div x-data="comments({{$post->id}}, {{$post->comment_count ?? 0}})">
     <div class="flex items-center gap-4 sm:gap-8 p-2 mx-2 px-2">
         {{-- Like Button --}}
         <button data-post-id="{{ $post->id }}"
@@ -12,9 +12,7 @@
         <button @click="showComments = !showComments"
                 class="flex gap-1 p-2 items-center cursor-pointer hover:bg-gray-100 hover:rounded-lg min-h-[44px]">
             <x-svg-icons.comment class="w-6 h-auto" />
-            <span class="comment-count text-xs sm:text-sm"
-                data-post-id="{{ $post->id  }}"
-                data-user-id="{{ auth()->id() }}">{{ $post->comment_count ?? 0 }}</span>
+            <span class="comment-count text-xs sm:text-sm" x-text="commentCount"></span>
         </button>
     </div>
 
@@ -25,9 +23,6 @@
                 @foreach($post->limited_comments as $comment)
                     <x-comments :comment="$comment" />
                 @endforeach
-                {{-- @include('comments.index', [
-                    'comments' => $post->limited_comments,
-                ]) --}}
             @endif
         </div>
         {{-- Load More Comments: Fetches additional comments via AJAX if count exceeds 5 --}}

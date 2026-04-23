@@ -1,6 +1,26 @@
 <div class="py-2" 
-    x-data="{ showDeleteModal: false }">
-    <div class="flex gap-2">
+    x-data="{ 
+        showDeleteModal: false, 
+        commentMenu: false, 
+        isEditing:false,
+        isVisible: true,
+        isLoading: false,
+        originalContent: '{{ addslashes($comment->content) }}',
+        editedContent: '{{ addslashes($comment->content) }}',
+    }"
+    @comment-updated.window="if($event.detail.id == '{{ $comment->id }}') {
+        isLoading = false,
+        showDeleteModal = false,
+        originalContent = $event.detail.newContent;
+        isEditing = false;
+    }"
+    @comment-deleted.window="if($event.detail.id == '{{ $comment->id }}') {
+        showDeleteModal = false,
+        isLoading = false,
+        isVisible = false;
+        setTimeout(() => { if ($el) $el.remove() }, 300);
+    }">
+    <div class="flex gap-2" x-show="isVisible">
         <div class="w-8 h-8 flex-shrink-0">
             <img src="{{ $comment->user->avatar_url}}"
                 class="bg-gray-200 rounded-full object-cover w-full h-full"
@@ -13,21 +33,26 @@
             
             <!-- Comment content display -->
             <div class="comment-container">
-                <span class="text-sm comment-content">{{ $comment->content }}</span>
+                <span x-show="!isEditing" 
+                    x-text="originalContent" 
+                    class="text-sm comment-content">{{ $comment->content }}</span>
                 
                 <!-- Inline edit form (hidden by default) -->
-                <div class="edit-form mt-1" style="display: none;">
-                    <textarea class="w-full p-1 border rounded-md text-sm" x-model="content">{{ $comment->cotent }}</textarea>
+                <div class="edit-form mt-1" x-cloak x-show="isEditing">
+                    <textarea x-model="editedContent" 
+                        class="w-full p-1 border rounded-md text-sm">{{ $comment->content }}</textarea>
                         <div class="flex justify-end mt-1 space-x-2">
-                        <button type="button" 
-                            class="cancel-edit-btn text-xs px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">
-                            Cancel
-                        </button>
-                        <button type="button" 
-                            class="save-comment-btn text-xs px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                            Save
-                        </button>
-                    </div>
+                            <button type="button" @click="isEditing=false"
+                                class="cancel-edit-btn text-xs px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">
+                                Cancel
+                            </button>
+                            <button type="button" 
+                                @click="isLoading = true; updateComment('{{$comment->id}}', originalContent, editedContent)"
+                                class=" text-xs px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                                <span x-cloak x-show="!isLoading">Save</span>
+                                <span x-cloak x-show="isLoading">Saving...</span>
+                            </button>
+                        </div>
                 </div>
             </div>
             
@@ -36,8 +61,10 @@
                     class="text-xs text-gray-500 mt-2">{{ $comment->created_at->diffForHumans() }}</span>
                 <div class="relative">
                     <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer hidden group-hover:block " 
-                        x-on:click="post_menu = true" />
-                    <ul class="comment-menu hidden w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rouded-md z-10">
+                        @click="commentMenu = !commentMenu" @click.outside="commentMenu = false" />
+                        
+                    <ul x-cloak x-show="commentMenu"
+                        class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rouded-md z-10">
                             @can('delete', $comment)
                             <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
                                 <button 
@@ -49,7 +76,7 @@
                         @endcan
                         @can('update', $comment)
                             <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                                <button type="button" class="edit-comment-btn">
+                                <button type="button" @click="isEditing=true">
                                     Edit Comment
                                 </button>
                             </li>
@@ -68,6 +95,6 @@
         <x-confirm-alert 
             :show-variable="'showDeleteModal'" 
             :message="'Are you sure you want to delete this comment?'" 
-            :comment-id="$comment->id" />
+            :comment="$comment->id" />
     @endif
 </div>

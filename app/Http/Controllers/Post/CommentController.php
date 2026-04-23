@@ -15,80 +15,110 @@ class CommentController extends Controller
 {
     public function store(CommentRequest $request, Post $post)
     {
-        $validatedData = $request->validated();
-        $commentor = $request->user();
-        $postOwner = $post->user;
-
-        $comment = $post->comment()->create([
-            'user_id' => $commentor->id,
-            'content' => $validatedData['content'],
-        ]);
-
-        $comment->load('user');
-        if ($postOwner->id !== $commentor->id) {
-            $postOwner->notify(new CommentNotification($commentor, $post));
+        try {
+            $validatedData = $request->validated();
+            $commentor = $request->user();
+            $postOwner = $post->user;
+    
+            $comment = $post->comment()->create([
+                'user_id' => $commentor->id,
+                'content' => $validatedData['content'],
+            ]);
+    
+            $comment->load('user');
+            if ($postOwner->id !== $commentor->id) {
+                $postOwner->notify(new CommentNotification($commentor, $post));
+            }
+    
+            return response()->json([
+                'success' => true,
+                'commentHtml' => Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]),
+            ]);
+        } catch (Exception $e) {
+                        Log::error('Comment Controller Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while loading comments, please try again.',
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'payload' => $comment,
-            'commentHtml' => Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]),
-        ]);
     }
 
     public function loadMore(Request $request, POST $post)
     {
-        $offset = $request->query('offset', 0);
-        $limit = $request->query('limit', 5);
-        $comments = $post->comment()
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->skip($offset)
-            ->take($limit)
-            ->get();
-        $hasMoreComments = $post->comment()->count() > $offset + $comments->count();
-        $html = '';
-        foreach ($comments as $comment) {
-            $html .= Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]);
-        };
-        return response()->json([
-                'success' => true,
-                'payload' => $comments,
-                'hasMoreComments' => $hasMoreComments,
-                'commentHtml' => $html,
-            ], 200);
+        try {
+            $offset = $request->query('offset', 0);
+            $limit = $request->query('limit', 5);
+
+            $comments = $post->comment()
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->skip($offset)
+                ->take($limit)
+                ->get();
+
+            $hasMoreComments = $post->comment()->count() > $offset + $comments->count();
+            $html = '';
+
+            foreach ($comments as $comment) {
+                $html .= Blade::render('<x-comments :comment="$comment" />', ['comment' => $comment]);
+            };
+
+            return response()->json([
+                    'success' => true,
+                    'hasMoreComments' => $hasMoreComments,
+                    'commentHtml' => $html,
+                ], 200);
+
+        } catch (Exception $e) {
+            Log::error('Comment Controller Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while loading comments, please try again.',
+            ], 500);
+        }
     }
     
     public function destroy(Comment $comment)
     {
-        if (Gate::denies('delete', $comment)) {
-            return response()->json(['error' => 'You are not allowed to delete this comment'], 403);
+        try {
+            if (Gate::denies('delete', $comment)) {
+                return response()->json(['error' => 'You are not allowed to delete this comment'], 403);
+            }
+            $comment->delete();
+            return response()->json(['success' => true], 200);
+
+        } catch (Exception $e) {
+            Log::error('Comment Controller Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while deleting the comment, please try again.',
+            ], 500);
         }
-        $comment->delete();
-        return response()->json(['success' => 'Comment deleted successfully'], 200);
     }
 
-    public function update(Request $request, Comment $comment)
+    public function update(CommentRequest $request, Comment $comment)
     {
         $this->authorize('update', $comment);
 
-        $validatedData = $request->validate([
-            'content' => 'required|string|max:255',
-        ]);
+        try {
+            $validatedData = $request->validated();
+    
+            $comment->update(['content' => $validatedData['content']]);
 
-        $comment->update([
-            'content' => $validatedData['content'],
-        ]);
+            $comment->load('user');
+    
+            return response()->json([
+                'success' => true,
+                'content' => $comment->content,
+            ], 201);
 
-        $comment->load('user');
-        $commentData = $comment->toArray();
-        $commentData['can_delete'] = auth()->user()->can('delete', $comment);
-        $commentData['can_update'] = auth()->user()->can('update', $comment);
-
-        return response()->json([
-            'success' => 'Comment updated successfully!',
-            'comment' => $commentData,
-        ], 200);
+        } catch (Exception $e) {
+            Log::error('Comment Controller Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while updating the comment, please try again.',
+            ], 500);
+        };
     }
     
 }
