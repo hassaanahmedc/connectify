@@ -9,7 +9,8 @@
 @extends('layouts.main')
 
 @section('main')
-    <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md md:w-11/12 lg:w-full lg:max-w-lg lg:px-5 xl:px-0 xl:max-w-xl">
+    <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md md:w-11/12 lg:w-full lg:max-w-lg lg:px-5 xl:px-0 xl:max-w-xl" 
+    x-data="postModal">
         {{-- Post creation modal  --}}
         <div class="pt-2" x-data="{ create_post: false }">
             <x-post-creation :topics="$topics" />
@@ -61,4 +62,5 @@
     
     {{-- Rendering Modal for topic selection and passing topics object  --}}
     <x-modals.topics-selection-modal :topics="$topics" />
+    <x-modals.confirm-action />
 @endsection

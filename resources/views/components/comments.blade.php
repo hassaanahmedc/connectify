@@ -9,14 +9,20 @@
         editedContent: '{{ addslashes($comment->content) }}',
     }"
     @comment-updated.window="if($event.detail.id == '{{ $comment->id }}') {
-        isLoading = false,
-        showDeleteModal = false,
+        isLoading = false;
+        showDeleteModal = false;
         originalContent = $event.detail.newContent;
         isEditing = false;
     }"
+    @execute-confirmed-action.window="
+        if($event.detail.actionType === 'delete-comment' && $event.detail.itemId == '{{$comment->id}}') {
+            isLoading = true;
+            deleteComment($event.detail.itemId);
+        }
+    "
     @comment-deleted.window="if($event.detail.id == '{{ $comment->id }}') {
-        showDeleteModal = false,
-        isLoading = false,
+        showDeleteModal = false;
+        isLoading = false;
         isVisible = false;
         setTimeout(() => { if ($el) $el.remove() }, 300);
     }">
@@ -69,7 +75,14 @@
                             <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
                                 <button 
                                     class="delete-comment-btn" 
-                                    @click="showDeleteModal = true">
+                                    x-on:click.prevent="$dispatch('open-modal', {
+                                        name: 'confirm_action',
+                                        title: 'Are you sure?',
+                                        message: 'Your comment on this post will be removed forever.',
+                                        actionType: 'delete-comment',
+                                        itemId: '{{ $comment->id }}',
+                                        confirmButtonText: 'Delete', 
+                                    })">
                                     Delete Comment
                                 </button>
                             </li>
@@ -89,12 +102,4 @@
             </div>
         </div>
     </div>
-    
-    <!-- Using the reusable confirm-alert component instead of inline modal -->
-    @if(Auth::check() && Auth::user()->can('delete', $comment))
-        <x-confirm-alert 
-            :show-variable="'showDeleteModal'" 
-            :message="'Are you sure you want to delete this comment?'" 
-            :comment="$comment->id" />
-    @endif
 </div>

@@ -1,105 +1,117 @@
 {{-- Post Header: Displays user profile, name, post time, and action menu (edit/delete/pin) --}}
-<div class="px-3 sm:px-5 pt-5 pb-2">
-    <div class="flex justify-between items-start gap-3">
-        <div class="flex flex-wrap flex-1 items-center gap-3 min-w-0">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('profile.view', $post->user->id) }}"
-                    class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
-                    aria-label="View profile of {{ $post->user->fname . ' ' . $post->user->lname }}">
-                    <img src="{{ $post->user->avatar_url }}"
-                        class="w-full h-full object-cover flex-shrink-0"
-                        alt="{{ $post->user->fname }}'s profile photo">
-                </a>
-
-                <div class="min-w-0">
-                    <a href="{{ route('profile.view', $post->user->id) }}" 
-                        class="block text-sm font-semibold leading-tight break-words hover:underline truncate">
-                        {{ $post->user->fname . ' ' . $post->user->lname }}
+<div x-data="postModal"
+    @execute-confirmed-action.window="
+        if($event.detail.actionType === 'delete-post' && $event.detail.itemId == '{{$post->id}}') {
+            isLoading = true;
+            deletePost($event.detail.itemId);
+        }
+    ">
+    <div class="px-3 sm:px-5 pt-5 pb-2">
+        <div class="flex justify-between items-start gap-3">
+            <div class="flex flex-wrap flex-1 items-center gap-3 min-w-0">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('profile.view', $post->user->id) }}"
+                        class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
+                        aria-label="View profile of {{ $post->user->fname . ' ' . $post->user->lname }}">
+                        <img src="{{ $post->user->avatar_url }}"
+                            class="w-full h-full object-cover flex-shrink-0"
+                            alt="{{ $post->user->fname }}'s profile photo">
                     </a>
-                    <time datetime="{{ $post->created_at->toIso8601String() }}" 
-                        class="text-xs text-gray-400 block">{{ $post->created_at->diffForHumans() }}</time>
+    
+                    <div class="min-w-0">
+                        <a href="{{ route('profile.view', $post->user->id) }}" 
+                            class="block text-sm font-semibold leading-tight break-words hover:underline truncate">
+                            {{ $post->user->fname . ' ' . $post->user->lname }}
+                        </a>
+                        <time datetime="{{ $post->created_at->toIso8601String() }}" 
+                            class="text-xs text-gray-400 block">{{ $post->created_at->diffForHumans() }}</time>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($post->topics as $topic)
+                        <a href="" class="px-2 py-1 text-gray-700 bg-gray-100 border 
+                            text-xs font-semibold rounded-full border-gray-300
+                            hover:bg-gray-200 transition-colors duration-200
+                             flex-shrink-0">{{ $topic->name }}</a>
+                    @endforeach
                 </div>
             </div>
-            <div class="flex flex-wrap gap-2">
-                @foreach($post->topics as $topic)
-                    <a href="" class="px-2 py-1 text-gray-700 bg-gray-100 border 
-                        text-xs font-semibold rounded-full border-gray-300
-                        hover:bg-gray-200 transition-colors duration-200
-                         flex-shrink-0">{{ $topic->name }}</a>
-                @endforeach
+            {{-- Post Menu: Alpine.js manages dropdown for edit, delete, and pin actions --}}
+            <div  
+                 x-on:close-modal.window="if ($event.detail.modal === 'edit_post') edit_post = false" 
+                 class="relative">
+                <button class="w-11 h-11 rounded-full flex items-center justify-center hover:bg-gray-100 focus:outline-none"
+                        :aria-expanded="post_menu"
+                        aria-haspopup="true"
+                        aria-label="Open post menu">
+                    <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer" x-on:click="post_menu = true" />
+                </button>
+                <ul x-cloak
+                    x-transition
+                    x-show="post_menu"
+                    @click.outside="post_menu = false"
+                    aria-label="Post actions"
+                    class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-md rounded-md z-10">
+                    @can('delete', $post)
+                        <li role="menuitem" class="px-2">
+                            <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
+                                    x-on:click.prevent="$dispatch('open-modal', {
+                                            name: 'confirm_action',
+                                            title: 'Are you sure?',
+                                            message: 'Your post will be removed forever.',
+                                            actionType: 'delete-post',
+                                            itemId: '{{ $post->id }}',
+                                            confirmButtonText: 'Delete', 
+                                        })">
+                                Delete Post
+                            </button>
+                            {{-- Delete Confirmation: Renders a modal to confirm post deletion --}}
+                        </li>
+                    @endcan
+    
+                    @can('update', $post)
+                        <li role="menuitem" class="px-2">
+                            <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
+                                    @click="
+                                        $dispatch('open-modal', 'post-modal');
+                                        $dispatch('fill-post-data', {
+                                            isEdit: true,
+                                            id: {{ $post->id }},
+                                            content: {{ json_encode($post->content) }},
+                                            topics: {{ $post->topics->toJson() }},
+                                            images: {{ $post->postImages->map(fn($img) => [
+                                                'id' => $img->id,
+                                                'url' => asset('storage/' . $img->path)
+                                            ]) }}
+                                        })
+                                    ">
+                                Edit Post
+                            </button>
+                        </li>
+                    @endcan
+                    <li class="px-6 py-2 hover:bg-gray-200">
+                        <a href="#" class="w-full text-left text-xs sm:text-sm">
+                            Pin to your profile
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
-        {{-- Post Menu: Alpine.js manages dropdown for edit, delete, and pin actions --}}
-        <div  
-             x-on:close-modal.window="if ($event.detail.modal === 'edit_post') edit_post = false" 
-             class="relative">
-            <button class="w-11 h-11 rounded-full flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-                    :aria-expanded="post_menu"
-                    aria-haspopup="true"
-                    aria-label="Open post menu">
-                <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer" x-on:click="post_menu = true" />
-            </button>
-            <ul x-cloak
-                x-transition
-                x-show="post_menu"
-                @click.outside="post_menu = false"
-                aria-label="Post actions"
-                class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-md rounded-md z-10">
-                @can('delete', $post)
-                    <li role="menuitem" class="px-2">
-                        <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
-                                @click.prevent="confirm_delete = true;">
-                            Delete Post
-                        </button>
-                        {{-- Delete Confirmation: Renders a modal to confirm post deletion --}}
-                        <x-confirm-alert :show-variable="'confirm_delete'"
-                                         :message="'Are you sure you want to delete this post?'"
-                                         :action="route('post.destroy', ['post' => $post->id])" />
-                    </li>
-                @endcan
-
-                @can('update', $post)
-                    <li role="menuitem" class="px-2">
-                        <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
-                                @click="
-                                    $dispatch('open-modal', 'post-modal');
-                                    $dispatch('fill-post-data', {
-                                        isEdit: true,
-                                        id: {{ $post->id }},
-                                        content: {{ json_encode($post->content) }},
-                                        topics: {{ $post->topics->toJson() }},
-                                        images: {{ $post->postImages->map(fn($img) => [
-                                            'id' => $img->id,
-                                            'url' => asset('storage/' . $img->path)
-                                        ]) }}
-                                    })
-                                ">
-                            Edit Post
-                        </button>
-                    </li>
-                @endcan
-                <li class="px-6 py-2 hover:bg-gray-200">
-                    <a href="#" class="w-full text-left text-xs sm:text-sm">
-                        Pin to your profile
-                    </a>
-                </li>
-            </ul>
+        {{-- Post Content: Displays text content if available --}}
+        <div class="my-2" >
+        
+            @if($post->content)
+                <p class="text-xs sm:text-sm lg:text-base">
+                    <span x-text="expanded ? @js($post->content) : '{{ Str::limit($post->content, 300, '...') }}'"></span>
+                </p>
+        
+                @if(strlen($post->content) > 300)
+                    <button x-on:click="expanded = !expanded" 
+                            class="mt-2 text-sm font-medium hover:underline text-blue-600">
+                            <span x-text="expanded ? '<Show less' : 'Read more'"></span>
+                    </button>
+                @endif
+            @endif
         </div>
     </div>
-    {{-- Post Content: Displays text content if available --}}
-<div class="my-2" >
-
-    @if($post->content)
-        <p class="text-xs sm:text-sm lg:text-base">
-            <span x-text="expanded ? @js($post->content) : '{{ Str::limit($post->content, 300, '...') }}'"></span>
-        </p>
-
-        @if(strlen($post->content) > 300)
-            <button x-on:click="expanded = !expanded" 
-                    class="mt-2 text-sm font-medium hover:underline text-blue-600">
-                    <span x-text="expanded ? '<Show less' : 'Read more'"></span>
-            </button>
-        @endif
-    @endif
-</div>
 </div>

@@ -236,5 +236,37 @@ export default () => ({
 
 
         }
-    }
+    },
+
+    async deletePost(id) {
+        if (this.loading) return;
+        if (!id) return;
+        try {
+            const response = await fetchData(API_ENDPOINTS.deletePost(id), { method: 'DELETE' });
+            if (response.success) {
+                // Firing confirmation event for post card to catch and update UI.
+                window.dispatchEvent(new CustomEvent('post-deleted', { detail: { id: id } }));
+                // Firing this event to close the confirmation modal after deletion.
+                window.dispatchEvent(new CustomEvent('close-modal', { detail: 'confirm-action-modal' }));
+                // This event is being fired to show success toast notification.
+                EventBus.dispatch('show-notification', { message: 'Post deleted successfully.', type: 'success' });
+            } else {
+                // We are erro event in case we get success = false from server.
+            window.dispatchEvent(new CustomEvent('action-failed', { 
+                detail: { 
+                    itemId: id, 
+                    message: response.message || "A server error occurred." 
+                } 
+            }));
+        }
+        } catch (error) {
+            window.dispatchEvent(new CustomEvent('action-failed', { 
+                  detail: { 
+                      itemId: id, 
+                      message: error.data?.message || "A server error occurred." 
+                  } 
+              }));
+              console.error("Delete failed:", error);
+        }
+    },
 })

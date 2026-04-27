@@ -112,11 +112,16 @@ class PostController extends Controller
 
         try {
             $postService->deletePost($post);
-            return redirect()->back()->with(['success' => true, 'message' => 'Post deleted successfully!']);
+            return response()->json([
+                'success' => true,
+            ], 200);
 
         } catch (Exception $e) {
             Log::error('Failed to delete post: ' , ['post_id' => $post->id, 'error' => $e]);
-            return redirect()->back()->with(['success' => false, 'message' => 'Failed to delete post: ' . $e]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while updating the post, please try again.',
+            ], 500);
         }
     }
 }
