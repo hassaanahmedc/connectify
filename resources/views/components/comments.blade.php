@@ -73,16 +73,14 @@
                         class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rouded-md z-10">
                             @can('delete', $comment)
                             <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                                <button 
-                                    class="delete-comment-btn" 
-                                    x-on:click.prevent="$dispatch('open-modal', {
-                                        name: 'confirm_action',
-                                        title: 'Are you sure?',
-                                        message: 'Your comment on this post will be removed forever.',
-                                        actionType: 'delete-comment',
-                                        itemId: '{{ $comment->id }}',
-                                        confirmButtonText: 'Delete', 
-                                    })">
+                                <button x-on:click.prevent="$dispatch('open-modal', {
+                                            name: 'confirm_action',
+                                            title: 'Are you sure?',
+                                            message: 'Your comment on this post will be removed forever.',
+                                            actionType: 'delete-comment',
+                                            itemId: '{{ $comment->id }}',
+                                            confirmButtonText: 'Delete', 
+                                        })">
                                     Delete Comment
                                 </button>
                             </li>

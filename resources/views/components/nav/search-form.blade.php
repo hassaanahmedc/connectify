@@ -6,8 +6,7 @@
             id="search-nav-desktop" name="q" placeholder="search" type="search"
             value="{{ request('q', '') }}">
         <button class="absolute right-0 ml-2 px-2" type="submit">
-            <img alt="" class="h-5 w-5"
-                src="{{ Vite::asset('/public/svg-icons/search.svg') }}"></button>
+            <x-svg-icons.magnifying-glass class="h-5 w-5" /></button>
         <div class="absolute left-0 top-full mt-2 hidden w-full rounded-xl border-zinc-200 bg-white shadow-xl"
             id="search-results-desktop">
             <ul class="divide-grey-200 max-h-60 divide-y overflow-y-auto text-sm">
@@ -17,9 +16,9 @@
     </div>
     {{-- Search Icon (Mobile) --}}
     <div class="ml-auto md:hidden">
-        <figure @click="searchOpen = !searchOpen" class="cursor-pointer">
-            <img alt="" class="h-6 w-6" src="{{ Vite::asset('/public/svg-icons/search.svg') }}">
-        </figure>
+        <div @click="searchOpen = !searchOpen" class="cursor-pointer">
+            <x-svg-icons.magnifying-glass class="h-6 w-6" />
+        </div>
     </div>
     {{-- Search Bar (Mobile) --}}
     <div class="absolute left-0 top-0 z-50 flex w-full items-center bg-white p-2 md:hidden"
@@ -31,11 +30,7 @@
         x-transition:leave="transition ease-in duration-200">
         <figure @click="searchOpen = false"
             class="flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center p-2">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"
-                    stroke-width="2" />
-            </svg>
+            <x-svg-icons.cross-mark class="h-6 w-6" />
         </figure>
         <div class="relative mx-2 flex-1">
             <input :disabled="!searchOpen" @keydown.escape="searchOpen = false"
@@ -43,8 +38,7 @@
                 id="search-nav-mobile" name="q" placeholder="search" type="search"
                 value="{{ request('q', '') }}">
             <button class="absolute right-2 top-1/2 -translate-y-1/2 transform" type="submit">
-                <img alt="" class="h-auto w-8"
-                    src="{{ Vite::asset('/public/svg-icons/search.svg') }}">
+                    <x-svg-icons.magnifying-glass class="h-auto w-5" />
             </button>
             <div class="absolute left-0 top-full z-50 mt-2 hidden w-full rounded-lg border bg-white shadow-lg"
                 id="search-results-mobile">
