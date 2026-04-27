@@ -79,7 +79,7 @@ export function generateCommentHtml(comment) {
 
 export function generateSearchDropdownHtml(data) {
     return `
-            <li>
+            <li class="list-none">
                 <a href="${escapeHtml(data.url ?? "#")}" class="flex gap-4 px-4 py-2 text-gray-500 hover:bg-lightMode-background">
                     <figure>
                         <img src="${data.avatar ?? "https://placewaifu.com/image/200"}" 
@@ -94,11 +94,11 @@ export function generateSearchDropdownHtml(data) {
 }
 
 export function generateLoadingHtml() {
-    return `<li class="p-2 text-gray-500">Loading…</li>`;
+    return `<li class="list-none p-2 text-gray-500">Loading…</li>`;
 }
 
 export function generateLocationDropdownHtml(locationString) {
-    return `        <li>
+    return `        <li class="list-none">
             <div 
                 class="w-full text-left px-4 py-2 hover:bg-lightMode-background text-gray-600 cursor-pointer"
                 data-location="${locationString}">
@@ -108,5 +108,5 @@ export function generateLocationDropdownHtml(locationString) {
 }
 
 export function generateNoResultsHtml() {
-    return `<li class="p-2 text-gray-500">No results found</li>`;
+    return `<li class="list-none p-2 text-gray-500">No results found</li>`;
 }
