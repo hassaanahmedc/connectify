@@ -21,12 +21,13 @@
             <div class="flex justify-between items-center">
                 <h5 class="px-4 pb-2 text-lg font-bold">Notifications</h5>
                 <span class="px-4 pb-2 font-semibold text-lightMode-primary cursor-pointer hover:underline"
+                        x-show="notifications.length > 0"
                         :class="unreadCount === 0 ? 'opacity-40 pointer-events-none' : ''"
                         @click="markAllAsRead()">Mark as read</span>
             </div>
             <div class="divide-y divide-gray-100" id="notification-container-mobile">
                 <template x-if="isLoading">
-                    <div class="p-4 text-center text-gray-500">Loading...</div>
+                    <x-svg-icons.loading class="w-5 h-auto p-5" />
                 </template>
                 <template :key="notification.id" x-for="notification in notifications">
                     <a :href="notification.data.link"
@@ -48,6 +49,15 @@
                 </template>
                 <template x-if="error">
                     <div class="p-4 text-center text-red-500" x-text="error"></div>
+                </template>
+                <template x-if="!isLoading && notifications.length == 0">
+                    <div class="flex flex-col justify-center items-center py-12 px-4 text-center">
+                        <div class="bg-gray-100 p-2 rounded-full mb-4">
+                            <x-svg-icons.bell class="w-8 h-auto" />
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-900 ">No notifications yet.</h3>
+                        <p class="text-xs text-gray-500">When you get notifications, they'll show up here.</p>
+                    </div>
                 </template>
             </div>
         </div>
