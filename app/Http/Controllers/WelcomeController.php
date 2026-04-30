@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Topic;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Auth;
 
 class WelcomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user_id = Auth::id();
         $topics = Topic::select('id', 'slug', 'name')->get();
@@ -31,6 +33,18 @@ class WelcomeController extends Controller
             ->latest()
             ->paginate(15);
 
+        if($request->ajax()) {
+            $html = '';
+            foreach ($posts as $post) {
+                $html .= Blade::render('<x-post.card :post="$post" />', ['post' => $post]);
+            };
+
+            return response()->json([
+                    'success' => true,
+                    'postHtml' => $html,
+                    'nextPageUrl' => $posts->nextPageUrl(),
+            ], 200);
+        }
         return response()->view('welcome', compact('posts', 'topics'));
     }
 }

@@ -16,5 +16,3 @@
         </div>
     </div>
 </div>
-
-<x-modals.post-modal :topics="$topics" />

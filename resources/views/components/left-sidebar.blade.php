@@ -1,4 +1,4 @@
-<aside class="hidden md:block w-64 xl:w-72 bg-white border-r">
+<aside x-data class="hidden md:block w-64 xl:w-72 bg-white border-r">
     <div class="sticky py-4">
         <div class="h-full flex flex-col justify-between">
             <div>
@@ -18,7 +18,9 @@
                 </div>
 
                 {{-- Action Button --}}
-                <div class="px-4 mb-8">
+                <div class="px-4 mb-8" @click="
+                    $dispatch('open-modal', 'post-modal');
+                    $dispatch('fill-post-data', { isEdit: false });">
                     <div class="rounded-xl shadow-md px-4 py-3 bg-lightMode-primary text-white font-bold 
                                 flex items-center justify-center gap-2 cursor-pointer
                                 hover:bg-lightMode-blueHighlight active:scale-95 transition-transform"
