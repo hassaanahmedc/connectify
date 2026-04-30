@@ -12,20 +12,23 @@
             />
 
         {{-- GAP-4 creates the space between the individual cards --}}
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2" x-data="infiniteScroll('{{ $results->nextPageUrl() }}')">
             @if ($results->isNotEmpty())
-                @foreach ($results as $user)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    @include('profile.user-card', [
-                        'user' => $user,
-                        'profileImageUrl' => $user->avatar_url,
-                        'profileUrl' => route('profile.view', $user->id),
-                        'userName' => $user->fname . ' ' . $user->lname,
-                        'userBio' => $user->bio,
-                        'userLocation' => $user->location,
-                    ])
+                @forelse ($results as $user)
+                    <x-user-card :user="$user" />
+                @empty
+                    <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
+                @endforelse
+
+                <div x-ref="sentinal" class=" py-8 w-full flex  justify-center items-center">
+                    <template x-if="isLoading" class="">
+                        <x-svg-icons.loading class="w-7 h-auto animate-spin" />
+                    </template>
+
+                    <template x-if="!hasMore && !isLoading">
+                        <p class="text-gray-400 text-sm">You've caught up for today...</p>
+                    </template>
                 </div>
-                @endforeach
             @endif
         </div>
 

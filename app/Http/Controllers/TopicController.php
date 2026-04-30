@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use App\Models\Topic;
 use App\Models\Likes;
@@ -33,7 +34,20 @@ class TopicController extends Controller
         }])
         ->latest()
         ->paginate(15);
-    
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($topic_posts as $post) {
+                $html .= Blade::render('<x-post.card :post="$post" />', ['post' => $post]);
+            };
+
+            return response()->json([
+                    'success' => true,
+                    'markup' => $html,
+                    'nextPageUrl' => $topic_posts->nextPageUrl(),
+            ], 200);
+        };
+
         $header_data = [
             'context' => 'Trending Topic',
             'title' => '#' . $topic->name,

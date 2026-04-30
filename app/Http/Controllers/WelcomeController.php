@@ -41,7 +41,7 @@ class WelcomeController extends Controller
 
             return response()->json([
                     'success' => true,
-                    'postHtml' => $html,
+                    'markup' => $html,
                     'nextPageUrl' => $posts->nextPageUrl(),
             ], 200);
         }

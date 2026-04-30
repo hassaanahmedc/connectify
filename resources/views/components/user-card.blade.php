@@ -1,6 +1,7 @@
-<div class="bg-white w-full rounded-xl shadow-sm my-2 px-4 py-4 transition duration-200 hover:bg-gray-50 border-x border-b sm:px-6">
-    <div class="flex items-center justify-between gap-4" x-data="
-    followButton({{$user->id}}, {{Auth::user()->isFollowing($user) ? 'true' : 'false'}} )">
+<div class="bg-white w-full rounded-xl shadow-sm my-2 px-4 py-4 transition duration-200 
+    hover:bg-gray-50 border-x border-b sm:px-6">
+    <div class="flex items-center justify-between gap-4" 
+        x-data="followButton({{$user->id}}, {{Auth::user()->isFollowing($user) ? 'true' : 'false'}} )">
         
         {{-- Left Side: Avatar and Info --}}
         <div class="flex min-w-0 gap-4">

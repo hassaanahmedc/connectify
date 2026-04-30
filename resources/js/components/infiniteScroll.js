@@ -41,8 +41,8 @@ export default (initialUrl) => ({
         try {
             const response = await fetchData(this.nextPageUrl);
     
-            if (response.success && response.postHtml) {
-                this.$refs.sentinal.insertAdjacentHTML('beforebegin', response.postHtml);
+            if (response.success && response.markup) {
+                this.$refs.sentinal.insertAdjacentHTML('beforebegin', response.markup);
                 this.nextPageUrl = response.nextPageUrl;
                 this.hasMore = !!this.nextPageUrl;
             }

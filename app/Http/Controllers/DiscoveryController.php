@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\UserDiscoveryService;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use App\Models\User;
 
@@ -22,6 +23,19 @@ class DiscoveryController extends Controller
         $user = $request->user();
 
         $results = $this->service->exploreUsers($user);
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($results as $user) {
+                $html .= Blade::render('<x-user-card :user="$user" />', ['user' => $user]);
+            };
+
+            return response()->json([
+                    'success' => true,
+                    'markup' => $html,
+                    'nextPageUrl' => $results->nextPageUrl(),
+            ], 200);
+        };
 
         $header_data = [
             'context' => 'Discovery',

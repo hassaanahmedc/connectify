@@ -14,12 +14,22 @@
         />
 
         {{-- Post Card --}}
-        <div class="flex flex-col" id="newsfeed">
+        <div class="flex flex-col" x-data="infiniteScroll('{{ $topic_posts->nextPageUrl() }}')">
             @forelse ($topic_posts as $post)
                 <x-post.card :post="$post" />
             @empty
                 <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
             @endforelse
+
+            <div x-ref="sentinal" class=" py-8 w-full flex  justify-center items-center">
+                <template x-if="isLoading" class="">
+                    <x-svg-icons.loading class="w-7 h-auto animate-spin" />
+                </template>
+
+                <template x-if="!hasMore && !isLoading">
+                    <p class="text-gray-400 text-sm">You've caught up for today...</p>
+                </template>
+            </div>
         </div>
 
     </section>

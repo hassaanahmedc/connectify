@@ -18,7 +18,7 @@
 
         <div class="flex flex-col" id="newsfeed">
             @forelse ($followingList as $followingUsers)
-                @include('profile.user-card', [ 'user' => $followingUsers ])
+                <x-user-card :user="$followingUsers" />
             @empty
                 <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No results found.</span>
             @endforelse
