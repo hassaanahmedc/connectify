@@ -82,7 +82,7 @@ export function generateSearchDropdownHtml(data) {
             <li class="list-none">
                 <a href="${escapeHtml(data.url ?? "#")}" class="flex gap-4 px-4 py-2 text-gray-500 hover:bg-lightMode-background">
                     <figure>
-                        <img src="${data.avatar ?? "https://placewaifu.com/image/200"}" 
+                        <img src="${data.avatar_url}" 
                             class="bg-gray-200 w-9 h-auto rounded-full object-cover">
                     </figure>
                     <div>
@@ -94,7 +94,17 @@ export function generateSearchDropdownHtml(data) {
 }
 
 export function generateLoadingHtml() {
-    return `<li class="list-none p-2 text-gray-500">Loading…</li>`;
+    return `
+        <div class="flex items-center justify-center p-4 space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="1.5" stroke="currentColor" class="animate-spin h-5 w-5 text-gray-500">
+                <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 
+                    3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" 
+                />
+            </svg>
+        </div>
+    `;
 }
 
 export function generateLocationDropdownHtml(locationString) {

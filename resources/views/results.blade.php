@@ -13,9 +13,9 @@
                 :label="$header_data['label']" 
                 icon="search"    
             />
-            @include('partials.search.search-results', ['results' => $results])
+            @include('partials.search.search-results', ['results' => $results, 'q' => $q, 'isFullPage' => true])
         </div>
-    </section>
+    </section> 
 @endsection
 
 @section('append-data-to-rightSidebar')

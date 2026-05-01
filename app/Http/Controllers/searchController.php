@@ -35,21 +35,21 @@ class searchController extends Controller
 
             if ($context === 'dropdown') {
                 Log::info('Dropdown search', ['query' => $q, 'filters' => $filters]);
-                $jsonResults = $results->map(function ($result) {
 
-                    if ($result->type === 'user') {
-                        return new UserSearchResource($result);
-                        Log::info('Dropdown search user', ['query' => $q, 'filters' => $filters, 'user' => $result]);
-                    };
-                    return new PostSearchResource($result);
-                    Log::info('Dropdown search post', ['query' => $q, 'filters' => $filters, 'post' => $result]);
-                });
-    
-                return response()->json([ 'query' => $q, 'filters' => $filters, 'results' => $jsonResults ]);
+                $html = '';
+                foreach ($results as $result) {
+                    $html .= view('partials.search.dropdown-result', compact('result'))->render();
+                }
+
+                return response()->json([
+                    'query' => $q, 
+                    'filters' => $filters, 
+                    'html' => $html 
+                ]);
             };
             Log::info('Results search', ['query' => $q, 'filters' => $filters]);
 
-            $html = view('partials.search.search-results', compact('results'))->render();
+            $html = view('partials.search.search-results', compact('results', 'q'))->render();
             return response()->json(['query' => $q, 'filters' => $filters, 'html' => $html]);
         }
         Log::info('Results Page', ['query' => $q, 'filters' => $filters, 'results' => $results]);
@@ -61,6 +61,6 @@ class searchController extends Controller
             'label' => Str::plural('result', $results->count())
         ];
 
-        return view('results', compact('results', 'header_data'));
+        return view('results', compact('results', 'q', 'header_data'));
     }
 }

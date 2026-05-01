@@ -32,7 +32,7 @@ Class SearchService {
         });
         
         if ($filters['near'] && auth()->check() && auth()->user()->location) {
-            $builder->where('city', auth()->user()->location);
+            $builder->where('location', auth()->user()->location);
         }
         
         $users = $builder->limit(10)->get();

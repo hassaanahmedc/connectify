@@ -7,7 +7,7 @@
             value="{{ request('q', '') }}">
         <button class="absolute right-0 ml-2 px-2" type="submit">
             <x-svg-icons.magnifying-glass class="h-5 w-5" /></button>
-        <div class="absolute left-0 top-full mt-2 hidden w-full rounded-xl border-zinc-200 bg-white shadow-xl"
+        <div class="absolute left-0 top-full mt-2 hidden w-full rounded-xl border-zinc-200 bg-white shadow-xl overflow-y-scroll max-h-96"
             id="search-results-desktop">
             <ul class="divide-grey-200 max-h-60 divide-y overflow-y-auto text-sm">
                 {{-- Search results preview here (Desktop) --}}
@@ -40,7 +40,7 @@
             <button class="absolute right-2 top-1/2 -translate-y-1/2 transform" type="submit">
                     <x-svg-icons.magnifying-glass class="h-auto w-5" />
             </button>
-            <div class="absolute left-0 top-full z-50 mt-2 hidden w-full rounded-lg border bg-white shadow-lg"
+            <div class="absolute left-0 top-full z-50 mt-2 hidden w-full rounded-lg border bg-white shadow-lg overflow-y-scroll max-h-96"
                 id="search-results-mobile">
                 <ul class="max-h-60 divide-y divide-gray-200 overflow-y-auto text-sm">
                     {{-- Search results preview here (Mobile) --}}

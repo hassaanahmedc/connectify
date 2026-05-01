@@ -1,5 +1,6 @@
 @php
-    $limit = 3;
+    $isFullPage = isset($isFullPage) && $isFullPage;
+    $limit = $isFullPage ? null : 3;
     $user_results = $results->where('type', 'user');
     $post_results = $results->where('type', 'post');
 @endphp
@@ -11,14 +12,18 @@
             <div class="flex items-center justify-between bg-white mt-6 px-6 py-4 rounded-t-xl text-sm 
                         font-bold uppercase tracking-widest text-gray-500 border-x border-t shadow-md">
                 <h3 id="people-heading" class="">People</h3>
-                @if ($user_results->count() > $limit)
-                    <a href="#" class="text-xs font-bold text-lightMode-primary hover:underline">View All</a>
+                @if ($user_results->count() > 3 && !$isFullPage)
+                    <a href="{{ route('search.results', ['q' => $q, 'users' => '1']) }}" 
+                    class="text-xs font-bold text-lightMode-primary hover:underline">View All</a>
                 @endif
             </div>
 
             <div class="overflow-hidden">
+                @php
+                    $displayedUsers = $limit ? $user_results->take($limit) : $user_results;
+                @endphp
                 @foreach ($user_results->take($limit) as $user)
-                    @include('profile.user-card', [ 'user' => $user ])
+                    <x-user-card :user="$user" />
                 @endforeach
             </div>
         </section>
@@ -31,24 +36,6 @@
                         font-bold uppercase tracking-widest text-gray-500 border-x border-t shadow-md">Posts</h3>
             
             <div id="post-wrapper" class="flex flex-col gap-y-1">
-                {{-- @foreach ($post_results as $post)
-                    <article class="w-full">
-                        @include('posts.feed-card', [
-                            'post' => $post,
-                            'profileImageUrl' => $post->user->avatar_url,
-                            'profileUrl' => $post->url,
-                            'postId' => $post->id,
-                            'userName' => $post->user->fname . ' ' . $post->user->lname,
-                            'postTime' => $post->created_at->diffForHumans(),
-                            'postContent' => $post->content,
-                            'postImages' => $post->postImages,
-                            'comments' => $post->limited_comments,
-                            'showFullContent' => false,
-                            'showComments' => false,
-                            'isLiked' => $post->isLiked ?? false,
-                        ])
-                    </article>
-                @endforeach --}}
                 @forelse ($post_results as $post)
                     <article class="w-full">
                         <x-post.card :post="$post" />

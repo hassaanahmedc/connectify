@@ -51,7 +51,7 @@ export function appendSearchResults(resultsPayload, searchResultsContainer) {
             searchResultsContainer.innerHTML = generateNoResultsHtml();
         } else {
             searchResultsContainer.innerHTML = resultsPayload.html;
-            container.classList.remove("hidden");
+            searchResultsContainer.classList.remove("hidden");
         }
         return;
     }
@@ -95,12 +95,6 @@ async function performSearch({ query, route, filters = [], container, headers = 
 
     container.classList.remove('hidden'); 
     container.innerHTML = generateLoadingHtml()
-
-    // if (container.querySelector('ul')) {
-    //     const listEl = container.querySelector('ul');
-    //     listEl.innerHTML = generateLoadingHtml();
-    //     container.classList.remove('hidden');
-    // }
 
     lastQuery = query;
 
