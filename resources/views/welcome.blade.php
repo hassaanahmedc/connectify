@@ -50,7 +50,7 @@
         
         {{-- Feed Post Cards  --}}
         <div class="flex flex-col" id="newsfeed" 
-            x-data="infiniteScroll('{{ $posts->nextPageUrl() }}')">
+            x-data="infiniteScroll('{{ $posts->nextPageUrl() }}', 'main')">
             @forelse ($posts as $post)
                 <x-post.card :post="$post" />
             @empty

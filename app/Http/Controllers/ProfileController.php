@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Blade;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Topic;
@@ -36,21 +37,39 @@ class ProfileController extends Controller
         ];
     }
 
-    public function view(Request $request, User $user) :View
+    public function view(Request $request, User $user)
     {
         $currentUserId = Auth::id();
         
         $data = $this->getProfileBaseData($user);
         
-        $user->load([
-            'post' => function ($query) use ($currentUserId) {
-            $query->latest()
-                  ->with(['postImages', 'comment', 'topics' => fn($q) => $q->select('id', 'name')])
-                  ->withCount(['likes', 'comment'])
-                  ->withExists(['likes as liked_by_user' => function ($q) use ($currentUserId) {
-                    $q->where('user_id', $currentUserId);
-                  }]);
-        }]);
+        $posts = $user->post()
+            ->latest()
+            ->with([
+                'postImages', 
+                'comment', 
+                'topics' => fn($q) => $q->select('id', 'name')
+            ])
+            ->withCount(['likes', 'comment'])
+            ->withExists(['likes as liked_by_user' => function ($q) use ($currentUserId) {
+                $q->where('user_id', $currentUserId);
+            }])
+            ->paginate(15);
+
+        $user->setRelation('post', $posts);
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($posts as $post) {
+                $html .= Blade::render('<x-post.card :post="$post" />', ['post' => $post]);
+            };
+
+            return response()->json([
+                    'success' => true,
+                    'markup' => $html,
+                    'nextPageUrl' => $user->post->nextPageUrl(),
+            ], 200);
+        };
 
         $data['viewTab'] = 'posts';
 
@@ -208,7 +227,23 @@ class ProfileController extends Controller
     {
         $data = $this->getProfileBaseData($user);
 
-        $data['followingList'] = $user->following()->paginate(15);
+        $followingList = $user->following()->paginate(15);
+
+        $user->setRelation('following', $followingList);
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($user->following as $followedUser) {
+                $html .= Blade::render('<x-user-card :user="$user" />', ['user' => $followedUser]);
+            };
+
+            return response()->json([
+                'success' => true,
+                'markup' => $html,
+                'nextPageUrl' => $user->following->nextPageUrl(),
+            ], 200);
+        };
+        
         $data['viewTab'] = 'following';
 
         return view('profile.index', $data);
@@ -218,7 +253,23 @@ class ProfileController extends Controller
     {
         $data = $this->getProfileBaseData($user);
 
-        $data['followersList'] = $user->followers()->paginate(15);
+        $followersList = $user->followers()->paginate(15);
+
+        $user->setRelation('followers', $followersList);
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($user->followers as $followerUser) {
+                $html .= Blade::render('<x-user-card :user="$user" />', ['user' => $followerUser]);
+            };
+
+            return response()->json([
+                'success' => true,
+                'markup' => $html,
+                'nextPageUrl' => $user->followers->nextPageUrl(),
+            ], 200);
+        };
+
         $data['viewTab'] = 'followers';
 
         return view('profile.index', $data);

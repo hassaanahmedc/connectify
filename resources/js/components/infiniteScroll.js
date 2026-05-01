@@ -1,6 +1,6 @@
 import { fetchData } from "../utils/api";
 
-export default (initialUrl) => ({
+export default (initialUrl, rootSelector=null) => ({
     nextPageUrl: initialUrl,
     hasMore: true,
     isLoading: false,
@@ -11,14 +11,14 @@ export default (initialUrl) => ({
             this.hasMore = false;
             return;
         };
-        const scrollContainer = document.querySelector('main');
+        const scrollContainer = rootSelector ? document.querySelector(rootSelector) : null;
 
         this.observer = new IntersectionObserver((entries) => {
             if(entries[0].isIntersecting && !this.isLoading && this.hasMore) {
                 this.loadMore();
             };
         }, { 
-            rootMargin: '0px 0px 800px 0px', 
+            rootMargin: '0px 0px 400px 0px', 
             root: scrollContainer, 
             threshold: 0 
         });
