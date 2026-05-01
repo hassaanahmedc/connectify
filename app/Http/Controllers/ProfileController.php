@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Blade;
+use App\Traits\RendersAjaxPagination;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Topic;
@@ -20,6 +20,8 @@ use PhpParser\Node\Stmt\Break_;
 
 class ProfileController extends Controller
 {
+    use RendersAjaxPagination;
+
     /**
      * Display the user's profile form.
      */
@@ -59,16 +61,7 @@ class ProfileController extends Controller
         $user->setRelation('post', $posts);
 
         if ($request->ajax()) {
-            $html = '';
-            foreach ($posts as $post) {
-                $html .= Blade::render('<x-post.card :post="$post" />', ['post' => $post]);
-            };
-
-            return response()->json([
-                    'success' => true,
-                    'markup' => $html,
-                    'nextPageUrl' => $user->post->nextPageUrl(),
-            ], 200);
+            return $this->renderAjaxPagination($request, $posts, 'components.post.card', 'post');
         };
 
         $data['viewTab'] = 'posts';
@@ -232,16 +225,7 @@ class ProfileController extends Controller
         $user->setRelation('following', $followingList);
 
         if ($request->ajax()) {
-            $html = '';
-            foreach ($user->following as $followedUser) {
-                $html .= Blade::render('<x-user-card :user="$user" />', ['user' => $followedUser]);
-            };
-
-            return response()->json([
-                'success' => true,
-                'markup' => $html,
-                'nextPageUrl' => $user->following->nextPageUrl(),
-            ], 200);
+            return $this->renderAjaxPagination($request, $followingList, 'components.user-card', 'user');
         };
         
         $data['viewTab'] = 'following';
@@ -258,16 +242,7 @@ class ProfileController extends Controller
         $user->setRelation('followers', $followersList);
 
         if ($request->ajax()) {
-            $html = '';
-            foreach ($user->followers as $followerUser) {
-                $html .= Blade::render('<x-user-card :user="$user" />', ['user' => $followerUser]);
-            };
-
-            return response()->json([
-                'success' => true,
-                'markup' => $html,
-                'nextPageUrl' => $user->followers->nextPageUrl(),
-            ], 200);
+            return $this->renderAjaxPagination($request, $followersList, 'components.user-card', 'user');
         };
 
         $data['viewTab'] = 'followers';

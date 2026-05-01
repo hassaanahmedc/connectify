@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\UserDiscoveryService;
 use Illuminate\Support\Facades\Blade;
+use App\Traits\RendersAjaxPagination;
 use Illuminate\Support\Str;
 use App\Models\User;
 
 class DiscoveryController extends Controller
 {
     protected $service;
+
+    use RendersAjaxPagination;
 
     public function __construct(UserDiscoveryService $service)
     {
@@ -25,16 +28,7 @@ class DiscoveryController extends Controller
         $results = $this->service->exploreUsers($user);
 
         if ($request->ajax()) {
-            $html = '';
-            foreach ($results as $user) {
-                $html .= Blade::render('<x-user-card :user="$user" />', ['user' => $user]);
-            };
-
-            return response()->json([
-                    'success' => true,
-                    'markup' => $html,
-                    'nextPageUrl' => $results->nextPageUrl(),
-            ], 200);
+            return $this->renderAjaxPagination($request, $results, 'components.post.card', 'post');
         };
 
         $header_data = [

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use App\Traits\RendersAjaxPagination;
 use Illuminate\Support\Str;
 use App\Models\Topic;
 use App\Models\Likes;
@@ -12,6 +13,8 @@ use Aapp\Models\Post;
 
 class TopicController extends Controller
 {
+    use RendersAjaxPagination;
+    
     public function getTrending(Request $request, Topic $topic)
     {
         $user_id = Auth::id();
@@ -36,16 +39,7 @@ class TopicController extends Controller
         ->paginate(15);
 
         if ($request->ajax()) {
-            $html = '';
-            foreach ($topic_posts as $post) {
-                $html .= Blade::render('<x-post.card :post="$post" />', ['post' => $post]);
-            };
-
-            return response()->json([
-                    'success' => true,
-                    'markup' => $html,
-                    'nextPageUrl' => $topic_posts->nextPageUrl(),
-            ], 200);
+            return $this->renderAjaxPagination($request, $topic_posts, 'components.post.card', 'post');
         };
 
         $header_data = [

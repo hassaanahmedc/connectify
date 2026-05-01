@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Topic;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\RendersAjaxPagination;
 
 class WelcomeController extends Controller
 {
+    use RendersAjaxPagination;
+
     public function index(Request $request)
     {
         $user_id = Auth::id();
@@ -34,16 +36,7 @@ class WelcomeController extends Controller
             ->paginate(15);
 
         if($request->ajax()) {
-            $html = '';
-            foreach ($posts as $post) {
-                $html .= Blade::render('<x-post.card :post="$post" />', ['post' => $post]);
-            };
-
-            return response()->json([
-                    'success' => true,
-                    'markup' => $html,
-                    'nextPageUrl' => $posts->nextPageUrl(),
-            ], 200);
+            return $this->renderAjaxPagination($request, $posts, 'components.post.card', 'post');
         }
         return response()->view('welcome', compact('posts', 'topics'));
     }
