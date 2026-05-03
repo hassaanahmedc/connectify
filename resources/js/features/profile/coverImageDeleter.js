@@ -25,6 +25,7 @@ function setupCoverPhotoDeleter() {
             if (response.status === 'success') {
                 // Updates the cover image element on the page to render default cover path.
                 document.querySelectorAll('.profile-cover-display').forEach(img => img.src = response.path);
+                window.dispatchEvent(new CustomEvent('close-modal', { detail: 'confirm-action-modal' }));
                 EventBus.dispatch('show-notification', { message: 'Cover photo removed successfully', type: 'success' });
             } else {    
                 console.error('Failed to delete cover photo')

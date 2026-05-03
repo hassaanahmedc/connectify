@@ -25,6 +25,7 @@ function setupProfilePictureDeletor() {
             if (result.status === 'success') {
                 // Updates the profile image element on the page to render default avatar path.
                 document.querySelectorAll('.profile-picture-display').forEach(img => img.src = result.path)
+                window.dispatchEvent(new CustomEvent('close-modal', { detail: 'confirm-action-modal' }));
                 EventBus.dispatch('show-notification', { message: 'Profile Picture removed successfully', type: 'success' });
             } else {
                 console.error('Failed to delete profile picture')

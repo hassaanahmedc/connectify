@@ -1,7 +1,7 @@
 <div class="mb-2 rounded-xl bg-white px-4 py-2 shadow-sm">
     <div class="flex gap-4 md:gap-6">
         <div class="flex-shrink-0">
-            <img alt="" class="h-auto w-9 rounded-full bg-gray-200 object-cover"
+            <img alt="" class="h-9 w-9 rounded-full bg-gray-200 object-cover"
                 src="{{ Auth::user()->avatar_url }}">
         </div>
 
