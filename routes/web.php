@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\searchController;
 use App\Http\Controllers\Post\LikeController;
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/view/{user}', [ProfileController::class, 'view'])->name('profile.view');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/{id}', [ProfileController::class, 'update'])->name('profile.update');     
+    Route::patch('/password/update', [PasswordController::class, 'update'])->name('password.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
 });

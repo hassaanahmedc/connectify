@@ -86,7 +86,7 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request, \App\Models\User $id): RedirectResponse
     {
         $id->update($request->validated());
-        return redirect()->back();
+        return redirect()->back()->with('status', 'profile-updated');
         
     }
 

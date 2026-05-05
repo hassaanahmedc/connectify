@@ -17,6 +17,9 @@
                 @case('explore')
                     <x-svg-icons.search class="w-5 text-lightMode-blueHighlight" />
                     @break
+                @case('gear-icon')
+                    <x-svg-icons.gear-icon class="w-5 text-lightMode-blueHighlight" />
+                    @break
                 @default
                 <x-svg-icons.trending class="w-5 text-lightMode-blueHighlight" />
             @endswitch
@@ -31,12 +34,16 @@
             <h1 class=" text-2xl font-bold tracking-tight truncate text-gray-900">
                 {{ $title }}
             </h1>
+            @if($title === 'Account Settings')
+            <p class="text-sm text-gray-500 mt-1">Manage your profile information, security, and account preferences.</p>
+            @endif
         </div>
-        
+        @if($context !== 'Management')
         <div class="flex items-center gap-2 pb-1">
             <span class="text-xs font-bold text-gray-900">{{ $count }}</span>
             <span class="text-xs font-medium text-gray-500  tracking-tighter">{{ $label }}</span>
         </div>
+        @endif
     </div>
     
     <div class="relative h-[2px] w-full bg-gray-100">
