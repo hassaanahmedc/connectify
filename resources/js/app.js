@@ -4,6 +4,7 @@ import followButton from "./components/follow.js";
 import postModal from "./components/postModal.js";
 import comments from "./components/comments.js";
 import infiniteScroll from "./components/infiniteScroll.js";
+import shareUrl from "./components/share.js";
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
@@ -23,6 +24,7 @@ window.fetchData = fetchData;
   Alpine.data('postModal', postModal);
   Alpine.data('comments', comments);
   Alpine.data('infiniteScroll', infiniteScroll);
+  Alpine.data('shareUrl', shareUrl);
   
 Alpine.start();
 
