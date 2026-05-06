@@ -1,21 +1,28 @@
-<div class="p-2">
+<div class="my-2">
     <div class="flex items-center">
         <div>
-            <img src="{{ Vite::asset('/public/svg-icons/smiley.svg') }}"
-                class="ml-2 px-2"
+            <img src="{{ Auth::user()->avatar_url }}"
+                class="w-8 h-8 rounded-full"
                 alt="">
         </div>
-        <div class="w-full">
+        <div class="w-full px-2">
             <textarea
-                class="comment-textarea w-full text-sm h-8 max-h-36 min-h-8 border-none focus:border-none focus:ring-0 resize-none overflow-y-auto"
+                class="w-full text-sm min-h-8 max-h-36 p-2 border border-gray-300 rounded-lg resize-none overflow-y-auto px-2"
                 name="comment"
                 id="comment"
                 x-model="content"
-                placeholder="Add a Comment"></textarea>
+                placeholder="Add a Comment"
+                x-init="$el.style.height = '32px';"
+                @input="$el.style.height = 'auto'; $el.style.height = ($el.scrollHeight) + 'px';"
+                style="height: 32px;"></textarea>
         </div>
         <div>
-            <button @click="createComment"
-                class=" text-gray-400 hover:text-lightMode-primary cursor-pointer font-semibold">
+            <button @click="createComment" class="text-lightMode-primary text-sm font-bold 
+                         shadow-sm transition-all" 
+                        :disabled="loading || (content.trim().length === 0)"
+                        :class="loading || (content.trim().length === 0) 
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : ''">
                 Post</button>
         </div>
     </div>

@@ -33,7 +33,7 @@
                 loading="lazy"  
                 alt="">
         </div>
-        <div class="group relative bg-gray-100 flex-1 rounded-lg px-3 py-2">
+        <div class="group relative bg-gray-100 flex-1 min-w-0 rounded-lg px-3 py-2">
             <span class="text-sm font-bold">{{ $comment->user->fname }}
                 {{ $comment->user->lname }}</span>
             
@@ -41,7 +41,7 @@
             <div class="comment-container">
                 <span x-show="!isEditing" 
                     x-text="originalContent" 
-                    class="text-sm comment-content">{{ $comment->content }}</span>
+                    class="text-sm break-all leading-tight block">{{ $comment->content }}</span>
                 
                 <!-- Inline edit form (hidden by default) -->
                 <div class="edit-form mt-1" x-cloak x-show="isEditing">
