@@ -9,10 +9,16 @@
                         class="w-12 h-12 object-cover rounded-full shadow-sm shrink-0" alt="">
                     <div class="flex flex-col justify-center overflow-hidden">
                         <span class="font-bold text-sm text-gray-900 truncate leading-tight">
-                            {{ Auth::user()->fname . ' ' . Auth::user()->lname }}</span>
+                            {{ $sidebarUser->fname . ' ' . $sidebarUser->lname }}</span>
                         <div class="flex flex-col text-xs text-gray-500 font-medium leading-normal mt-0.5">
-                            <span>105 Followers</span>
-                            <span>241 Following</span>
+                            <div>
+                                <span class="font-semibold">{{ $sidebarUser->following_count ?? 0 }}</span>
+                                <span class="text-xs text-gray-500">Following</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">{{ $sidebarUser->followers_count ?? 0 }}</span>
+                                <span class="text-xs text-gray-500">Followers</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -40,21 +46,21 @@
                         <x-svg-icons.newsfeed class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>News Feed</span>
                     </a>
-                    <a href="{{ route('profile.view', auth()->user()->id) }}"
+                    <a href="{{ route('profile.view', $sidebarUser->id) }}"
                         class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">
                         <x-svg-icons.user-icon class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>My Profile</span>
                     </a>
-                    <a href="{{ route('profile.following', auth()->user()->id) }}" 
+                    <a href="{{ route('profile.following', $sidebarUser->id) }}" 
                         class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">
                         <x-svg-icons.user-plus class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
                         <span>Following</span>
                     </a>
-                    <a href="{{ route('profile.followers', auth()->user()->id) }}" 
+                    <a href="{{ route('profile.followers', $sidebarUser->id) }}" 
                         class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
                             hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
                             rounded-xl transition-all duration-200 group">

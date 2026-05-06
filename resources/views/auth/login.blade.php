@@ -93,11 +93,14 @@
                         {{ __('Log in') }}
                     </x-primary-button>
 
-                    {{-- Login and social buttons divider --}}
+                {{-- 
+                    TODO: Integrate Google and Facebook OAuth for V2
+                    
+                    Login and social buttons divider 
                     <span class="text-gray-400">OR</span>
-                    {{-- Social Acoounts --}}
-                    <div class="w-full">
-                        {{-- Facebook Login --}}
+                
+                     <div class="w-full">
+                      
                         <div
                             class="flex bg-[#316FF6] hover:bg-[#316FF6] rounded-full mb-2 shadow-md">
                             <div
@@ -112,7 +115,7 @@
                             </div>
                         </div>
                         
-                        {{-- Google Login --}}
+                
                         <div
                             class="flex bg-[#DB4437] hover:bg-[#DB4437] rounded-full shadow-md">
                             <div
@@ -126,7 +129,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     
                 </div>
             </form>

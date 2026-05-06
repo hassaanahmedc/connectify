@@ -25,6 +25,7 @@
                 @endif
             </x-slot>
         </x-right-sidebar>
+        <x-modals.post-modal />
     </div>
 </div>
 @endsection

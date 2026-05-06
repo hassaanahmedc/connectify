@@ -12,7 +12,7 @@
     <section class="mx-auto my-0 w-11/12 min-w-80 max-w-md md:w-11/12 lg:w-full lg:max-w-lg lg:px-5 xl:px-0 xl:max-w-xl" >
         {{-- Post creation modal  --}}
         <div class="pt-2" x-data="{ create_post: false }">
-            <x-post-creation :topics="$topics" />
+            <x-post-creation />
         </div>
 
         {{-- Topics Selecton Modal (visible if user has none selected) --}}
@@ -71,7 +71,6 @@
     </section>
     
     {{-- Rendering Modal for topic selection and passing topics object  --}}
-    <x-modals.topics-selection-modal :topics="$topics" />
-    <x-modals.post-modal :topics="$topics" />
+    <x-modals.topics-selection-modal />
     <x-modals.confirm-action />
 @endsection

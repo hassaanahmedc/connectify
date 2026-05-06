@@ -7,7 +7,7 @@
                 {{-- Header Area --}}
                 <div class="my-2 flex justify-between">
                     <div class="flex items-center gap-4">
-                        <img alt="" class="h-auto w-10 rounded-full bg-gray-200 object-cover"
+                        <img alt="" class="h-12 w-12 rounded-full bg-gray-200 object-cover"
                             src="{{ Auth::user()->avatar_url }}">
                         <div>
                             <h4 class="text-sm font-semibold text-gray-700 leading-tight truncate">

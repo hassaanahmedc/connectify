@@ -15,7 +15,6 @@ class WelcomeController extends Controller
     public function index(Request $request)
     {
         $user_id = Auth::id();
-        $topics = Topic::select('id', 'slug', 'name')->get();
 
         $posts = Post::query()
             ->with(['user:id,fname,lname,avatar',
@@ -38,6 +37,6 @@ class WelcomeController extends Controller
         if($request->ajax()) {
             return $this->renderAjaxPagination($request, $posts, 'components.post.card', 'post');
         }
-        return response()->view('welcome', compact('posts', 'topics'));
+        return response()->view('welcome', compact('posts'));
     }
 }
