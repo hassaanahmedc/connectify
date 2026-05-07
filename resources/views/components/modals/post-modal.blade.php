@@ -56,14 +56,16 @@
                                 </div>
                             </div>
                         </template>
-                        <div x-cloak x-show="previewErrors.length > 0" x-transition>
-                            <ul class="list-disc list-inside text-sm font-semibold text-red-600 mb-2 px-4 italic">
-                                <template x-for="errors in previewErrors">
-                                    <li x-text="errors" ></li>
-                                </template> 
-                            </ul>
-                        </div>
                     </div>
+                </div>
+
+                {{-- Errors Display (if any) --}}
+                <div x-cloak x-show="previewErrors.length > 0" x-transition>
+                    <ul class="list-disc list-inside text-sm font-semibold text-red-600 mb-2 px-4 italic">
+                        <template x-for="errors in previewErrors">
+                            <li x-text="errors" ></li>
+                        </template> 
+                    </ul>
                 </div>
 
                 {{-- Modal Footer --}}

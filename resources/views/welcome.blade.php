@@ -72,5 +72,6 @@
     
     {{-- Rendering Modal for topic selection and passing topics object  --}}
     <x-modals.topics-selection-modal />
+    <x-image-viewer />
     <x-modals.confirm-action />
 @endsection
