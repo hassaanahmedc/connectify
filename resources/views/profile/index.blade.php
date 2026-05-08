@@ -18,7 +18,7 @@
         <x-nav.index />
     </header>
 
-    <div class="mx-auto mt-16 max-w-[1600px]">
+    <div class="mx-auto mt-10 max-w-[1600px]">
 
         <div class="h-[calc(100vh-4rem)] xl:mx-auto xl:my-0 xl:w-4/5">
             {{-- The Profile header, containing cover photo and user actions --}}

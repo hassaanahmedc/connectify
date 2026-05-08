@@ -10,9 +10,11 @@
         <span class="text-lg font-semibold md:text-xl lg:text-xl">Posts</span>
     </div>
 
-    <div class="pt-2" x-data="{ create_post: false }">
-        <x-post-creation :topics="$topics" />
-    </div>
+    @if($user->id === auth()->user()->id)
+        <div class="pt-2" x-data="{ create_post: false }">
+            <x-post-creation :topics="$topics" />
+        </div>
+    @endif
 
     <div class="flex flex-col" x-data="infiniteScroll('{{ $user->post->nextPageUrl() }}', null)">
         @forelse ($user->post as $post)

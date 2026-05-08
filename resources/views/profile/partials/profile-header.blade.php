@@ -51,7 +51,7 @@
         - It closes if the user clicks outside of it,
      --}}
     <ul @click.outside="editCoverPicture = false"
-        class="absolute right-4 mt-1 rounded-lg border bg-white shadow-md" 
+        class="absolute right-4 mt-1 w-48 flex flex-col bg-white shadow-xl border border-gray-100 rounded-xl z-10 p-1.5" 
         x-cloak 
         x-show="editCoverPicture">
 
