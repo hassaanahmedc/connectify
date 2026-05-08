@@ -94,6 +94,7 @@ export default (postId, initialCount) => ({
             if (response.success) {
                 this.commentCount--;
                 window.dispatchEvent(new CustomEvent('comment-deleted', { detail: {id: id } }));
+                window.dispatchEvent(new CustomEvent('close-modal', { detail: 'confirm-action-modal' }));
             }
         } catch (error) {
             this.errors = ["A connection error occurred. Please try again."];

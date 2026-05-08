@@ -5,19 +5,30 @@
 
                 {{-- Profile Section --}}
                 <div class="flex items-center px-6 mb-6 gap-3">
-                    <img src="{{ Auth::user()->avatar_url }}" 
-                        class="w-12 h-12 object-cover rounded-full shadow-sm shrink-0" alt="">
+                    <img x-on:click.stop="window.location.href='{{ route('profile.view', $sidebarUser->id) }}'"
+                        src="{{ Auth::user()->avatar_url }}" 
+                        class="w-14 h-14 object-cover rounded-full shadow-sm shrink-0 cursor-pointer 
+                            transition-all duration-300 border-2 border-transparent 
+                            hover:shadow-md hover:border-gray-800 hover:brightness-105" 
+                        alt="{{ Auth::user()->fname . " 's profile Picture" }}">
+
                     <div class="flex flex-col justify-center overflow-hidden">
-                        <span class="font-bold text-sm text-gray-900 truncate leading-tight">
+                        <span class="font-bold text-sm text-gray-900 truncate leading-tight cursor-pointer hover:underline"
+                            x-on:click.stop="window.location.href='{{ route('profile.view', $sidebarUser->id) }}'">
                             {{ $sidebarUser->fname . ' ' . $sidebarUser->lname }}</span>
+
                         <div class="flex flex-col text-xs text-gray-500 font-medium leading-normal mt-0.5">
-                            <div>
-                                <span class="font-semibold">{{ $sidebarUser->following_count ?? 0 }}</span>
-                                <span class="text-xs text-gray-500">Following</span>
+                            <div class="hover:underline"
+                                x-on:click.stop="
+                                window.location.href='{{ route('profile.following', $sidebarUser->id) }}'">
+                                <span class="font-semibold cursor-pointer">{{ $sidebarUser->following_count ?? 0 }}</span>
+                                <span class="text-xs text-gray-500 cursor-pointer">Following</span>
                             </div>
-                            <div>
-                                <span class="font-semibold">{{ $sidebarUser->followers_count ?? 0 }}</span>
-                                <span class="text-xs text-gray-500">Followers</span>
+                            <div class="hover:underline" 
+                                x-on:click.stop="
+                                    window.location.href='{{ route('profile.followers', $sidebarUser->id) }}'">
+                                <span class="font-semibold cursor-pointer">{{ $sidebarUser->followers_count ?? 0 }}</span>
+                                <span class="text-xs text-gray-500 cursor-pointer">Followers</span>
                             </div>
                         </div>
                     </div>

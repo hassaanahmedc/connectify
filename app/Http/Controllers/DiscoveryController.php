@@ -28,7 +28,7 @@ class DiscoveryController extends Controller
         $results = $this->service->exploreUsers($user);
 
         if ($request->ajax()) {
-            return $this->renderAjaxPagination($request, $results, 'components.post.card', 'post');
+            return $this->renderAjaxPagination($request, $results, 'components.user-card', 'user');
         };
 
         $header_data = [

@@ -37,65 +37,64 @@
                 </div>
             </div>
             {{-- Post Menu: Alpine.js manages dropdown for edit, delete, and pin actions --}}
-            <div  
-                 x-on:close-modal.window="if ($event.detail.modal === 'edit_post') edit_post = false" 
-                 class="relative">
-                <button class="w-11 h-11 rounded-full flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-                        :aria-expanded="post_menu"
-                        aria-haspopup="true"
-                        aria-label="Open post menu">
-                    <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer" x-on:click="post_menu = true" />
-                </button>
-                <ul x-cloak
-                    x-transition
-                    x-show="post_menu"
-                    @click.outside="post_menu = false"
-                    aria-label="Post actions"
-                    class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-md rounded-md z-10">
-                    @can('delete', $post)
-                        <li role="menuitem" class="px-2">
-                            <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
-                                    x-on:click.prevent="$dispatch('open-modal', {
-                                            name: 'confirm_action',
-                                            title: 'Are you sure?',
-                                            message: 'Your post will be removed forever.',
-                                            actionType: 'delete-post',
-                                            itemId: '{{ $post->id }}',
-                                            confirmButtonText: 'Delete', 
-                                        })">
-                                Delete Post
-                            </button>
-                            {{-- Delete Confirmation: Renders a modal to confirm post deletion --}}
-                        </li>
-                    @endcan
-    
-                    @can('update', $post)
-                        <li role="menuitem" class="px-2">
-                            <button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" 
-                                    @click="
-                                        $dispatch('open-modal', 'post-modal');
-                                        $dispatch('fill-post-data', {
-                                            isEdit: true,
-                                            id: {{ $post->id }},
-                                            content: {{ json_encode($post->content) }},
-                                            topics: {{ $post->topics->toJson() }},
-                                            images: {{ $post->postImages->map(fn($img) => [
-                                                'id' => $img->id,
-                                                'url' => asset('storage/' . $img->path)
-                                            ]) }}
-                                        })
-                                    ">
-                                Edit Post
-                            </button>
-                        </li>
-                    @endcan
-                    <li class="px-6 py-2 hover:bg-gray-200">
-                        <a href="#" class="w-full text-left text-xs sm:text-sm">
-                            Pin to your profile
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            @if($post->user->id === auth()->user()->id)
+                <div  
+                     x-on:close-modal.window="if ($event.detail.modal === 'edit_post') edit_post = false" 
+                     class="relative">
+                    <button class="w-11 h-11 rounded-full flex items-center justify-center hover:bg-gray-100 focus:outline-none"
+                            :aria-expanded="post_menu"
+                            aria-haspopup="true"
+                            aria-label="Open post menu">
+                        <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer" x-on:click="post_menu = true" />
+                    </button>
+                    <ul x-cloak
+                        x-transition
+                        x-show="post_menu"
+                        @click.outside="post_menu = false"
+                        aria-label="Post actions"
+                        class="w-48 flex flex-col absolute right-0 top-12 bg-white shadow-xl border border-gray-100 rounded-xl z-10 p-1.5">
+                        @can('delete', $post)
+                            <li role="menuitem">
+                                <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium 
+                                    text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                                        x-on:click.prevent="$dispatch('open-modal', {
+                                                name: 'confirm_action',
+                                                title: 'Are you sure?',
+                                                message: 'Your post will be removed forever.',
+                                                actionType: 'delete-post',
+                                                itemId: '{{ $post->id }}',
+                                                confirmButtonText: 'Delete', 
+                                            })">
+                                    <x-svg-icons.trash class="w-5 h-5 text-red-500" />
+                                    Delete Post
+                                </button>
+
+                            </li>
+                        @endcan
+
+                        @can('update', $post)
+                            <li role="menuitem">
+                                <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 rounded-lg transition-colors" 
+                                        @click="
+                                            $dispatch('open-modal', 'post-modal');
+                                            $dispatch('fill-post-data', {
+                                                isEdit: true,
+                                                id: {{ $post->id }},
+                                                content: {{ json_encode($post->content) }},
+                                                topics: {{ $post->topics->toJson() }},
+                                                images: {{ $post->postImages->map(fn($img) => [
+                                                    'id' => $img->id,
+                                                    'url' => asset('storage/' . $img->path)
+                                                ]) }}
+                                            })">
+                                    <x-svg-icons.pencil-square class="w-5 h-5 text-gray-500" />
+                                    Edit Post
+                                </button>
+                            </li>
+                        @endcan
+                    </ul>
+                </div>
+            @endif
         </div>
         {{-- Post Content: Displays text content if available --}}
         <div class="my-2" >

@@ -65,38 +65,42 @@
             <div class="flex items-center justify-between">
                 <span
                     class="text-xs text-gray-500 mt-2">{{ $comment->created_at->diffForHumans() }}</span>
-                <div class="relative">
-                    <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer hidden group-hover:block " 
-                        @click="commentMenu = !commentMenu" @click.outside="commentMenu = false" />
-                        
-                    <ul x-cloak x-show="commentMenu"
-                        class="w-max flex flex-col absolute right-0 top-0 bg-white shadow-2xl rouded-md z-10">
-                            @can('delete', $comment)
-                            <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                                <button x-on:click.prevent="$dispatch('open-modal', {
-                                            name: 'confirm_action',
-                                            title: 'Are you sure?',
-                                            message: 'Your comment on this post will be removed forever.',
-                                            actionType: 'delete-comment',
-                                            itemId: '{{ $comment->id }}',
-                                            confirmButtonText: 'Delete', 
-                                        })">
-                                    Delete Comment
-                                </button>
-                            </li>
-                        @endcan
-                        @can('update', $comment)
-                            <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                                <button type="button" @click="isEditing=true">
-                                    Edit Comment
-                                </button>
-                            </li>
-                        @endcan
-                        <li class="py-2 px-6 hover:bg-gray-100 hover:rounded-md">
-                            <a href="#" class="pin-comment-btn">Pin this comment</a>
-                        </li>
-                    </ul>
-                </div>
+                @if($comment->user->id === auth()->user()->id)
+                    <div class="relative">
+                        <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer hidden group-hover:block " 
+                            @click="commentMenu = !commentMenu" @click.outside="commentMenu = false" />
+                            
+                        <ul x-cloak x-show="commentMenu"
+                            class="w-48 flex flex-col absolute right-0 top-0 bg-white shadow-xl border border-gray-100 rounded-xl z-10 p-1.5">
+                                @can('delete', $comment)
+                                <li role="menuitem">
+                                    <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium 
+                                    text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                                        x-on:click.prevent="$dispatch('open-modal', {
+                                                name: 'confirm_action',
+                                                title: 'Are you sure?',
+                                                message: 'Your comment on this post will be removed forever.',
+                                                actionType: 'delete-comment',
+                                                itemId: '{{ $comment->id }}',
+                                                confirmButtonText: 'Delete', 
+                                            })">
+                                        <x-svg-icons.trash class="w-5 h-5 text-red-500" />
+                                        Delete Comment
+                                    </button>
+                                </li>
+                            @endcan
+                            @can('update', $comment)
+                                <li role="menuitem">
+                                    <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 rounded-lg transition-colors" 
+                                        type="button" @click="isEditing=true">
+                                        <x-svg-icons.pencil-square class="w-5 h-5 text-gray-500" />
+                                        Edit Comment
+                                    </button>
+                                </li>
+                            @endcan
+                        </ul>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

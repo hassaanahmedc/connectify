@@ -17,7 +17,7 @@
                 @forelse ($results as $user)
                     <x-user-card :user="$user" />
                 @empty
-                    <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No Posts</span>
+                    <span class="mx-auto my-10 text-lg font-semibold text-gray-500">No More Users.</span>
                 @endforelse
 
                 <div x-ref="sentinal" class=" py-8 w-full flex  justify-center items-center">
