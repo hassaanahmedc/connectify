@@ -24,39 +24,46 @@
             </button>
         </div>
         <div id="mobile-links">
-            <div class="flex gap-3 text-sm sm:text-base font-semibold mb-4 min-h-[44px] items-center">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/feed.svg') }}" class="w-5 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>News Feed</span></a>
-            </div>
-            <div class="flex gap-3 text-sm sm:text-base font-semibold mb-4 min-h-[44px] items-center">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/friends.svg') }}" class="w-5 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Friends</span></a>
-            </div>
-            <div class="flex gap-3 text-sm sm:text-base font-semibold mb-4 min-h-[44px] items-center">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/calender.svg') }}" class="w-5 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Events</span></a>
-            </div>
-            <div class="flex gap-3 text-sm sm:text-base font-semibold mb-4 min-h-[44px] items-center">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/marketplace.svg') }}" class="w-5 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Marketplace</span></a>
-            </div>
-            <div class="flex gap-3 text-sm sm:text-base font-semibold mb-4 min-h-[44px] items-center">
-                <a href="" class="min-w-[44px] min-h-[44px] flex items-center">
-                    <img src="{{ Vite::asset('/public/svg-icons/orders.svg') }}" class="w-5 h-auto" alt="">
-                </a>
-                <a href="" class="min-h-[44px] flex items-center"><span>Orders and Payment</span></a>
-            </div>
+            <a href="{{ route('home') }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium cursor-pointer rounded-xl 
+                            transition-all duration-200 group {{ request()->routeIs('home') 
+                                ? 'text-lightMode-blueHighlight bg-blue-50' 
+                                : 'text-gray-600 hover:bg-blue-50 hover:text-lightMode-blueHighlight' }}">
+                        <x-svg-icons.newsfeed class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>News Feed</span>
+                    </a>
+                    <a href="{{ route('profile.view', Auth::user()->id) }}"
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.user-icon class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>My Profile</span>
+                    </a>
+                    <a href="{{ route('profile.following', Auth::user()->id) }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.user-plus class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>Following</span>
+                    </a>
+                    <a href="{{ route('profile.followers', Auth::user()->id) }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium text-gray-600 
+                            hover:bg-blue-50 hover:text-lightMode-blueHighlight cursor-pointer 
+                            rounded-xl transition-all duration-200 group">
+                        <x-svg-icons.user-group class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>Followers</span>
+                    </a>
+                    <a href="{{ route('users.explore') }}" 
+                        class="flex items-center px-4 py-3 gap-4 text-sm font-medium cursor-pointer rounded-xl 
+                            transition-all duration-200 group {{ request()->routeIs('users.explore') 
+                                ? 'text-lightMode-blueHighlight bg-blue-50' 
+                                : 'text-gray-600 hover:bg-blue-50 hover:text-lightMode-blueHighlight' }}">
+                        <x-svg-icons.magnifying-glass class="group-hover:text-lightMode-blueHighlight w-6 h-auto" />
+                        <span>Explore Users</span>
+                    </a>
         </div>
-        <div class="mt-8">
-            <span class="text-sm font-bold text-zinc-400">PAGES YOU LIKE</span>
-        </div>
+            <div class="mt-auto pt-10 pb-4 text-[11px] text-gray-400 px-3 text-center">
+                <p>Privacy · Terms · Connectify © 2026</p>
+            </div>
     </aside>
 </div>
