@@ -7,6 +7,9 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/components/likePost.js',
+                'resources/js/components/notifications.js',
+                'resources/js/components/locations.js',
             ],
             refresh: true,
         }),

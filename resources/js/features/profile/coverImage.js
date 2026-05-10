@@ -135,9 +135,16 @@ import {
     }
 
     // Ataches initial event listeners to the SOM elements.
+    if (!elements.uploadCoverPicture) return;
     elements.uploadCoverPicture.addEventListener('click', () => elements.selectCoverPicture.click());
-    elements.selectCoverPicture.addEventListener('change', handleCoverImage);
-    elements.saveCoverPicture.addEventListener('click', handleUplaod);
+
+    if (elements.selectCoverPicture) {
+        elements.selectCoverPicture.addEventListener('change', handleCoverImage);
+    };
+    
+    if (elements.saveCoverPicture) {
+        elements.saveCoverPicture.addEventListener('click', handleUplaod);
+    };
  };
 
  setupCoverimageUplaoder();

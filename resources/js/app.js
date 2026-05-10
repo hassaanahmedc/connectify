@@ -1,4 +1,13 @@
 import "./bootstrap";
+import "./components/likePost.js";
+import "./components/notifications.js";
+import "./components/locations.js";
+import "./features/profile/coverImage.js";
+import "./features/profile/coverImageDeleter.js";
+import "./features/profile/profileImageDeleter.js";
+import "./features/profile/profileImages.js";
+import "./features/search/index.js";
+import "./components/notifications.js";
 import { fetchData } from "./utils/api.js";
 import followButton from "./components/follow.js";
 import postModal from "./components/postModal.js";

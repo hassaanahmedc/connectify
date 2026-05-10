@@ -1,9 +1,3 @@
-@once
-    @push('scripts')
-        @vite('resources/js/components/likePost.js')
-    @endpush
-@endonce
-
 {{-- Post Component: Renders a social media post with user info, content, images, likes, and comments, using Tailwind for responsive design and Alpine.js for interactivity --}}
 <div class="flex flex-col bg-white rounded-xl mt-2 border shadow-md" 
     data-post-id="{{ $post->id }}"

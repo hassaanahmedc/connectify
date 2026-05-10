@@ -18,9 +18,5 @@
 <body class="bg-lightMode-background light">
     @yield('content')
     @stack('scripts')
-
-    <script>
-        window.threeDotsSvg = "{{ Vite::asset('public/svg-icons/3dots.svg') }}";
-    </script>
 </body>
 </html>

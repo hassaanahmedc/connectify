@@ -1,5 +1,3 @@
-@vite('resources/js/features/search/index.js', 'resources/js/components/notifications.js');
-
 <div x-data="{ 
     searchOpen: false,                                         
     leftSidebarOpen: false,                                    

@@ -123,9 +123,16 @@ function setupProfileImageUploader() {
     }
 
     // Ataches initial event listeners to the SOM elements.
+    if (!elements.uploadProfilePicture) return;
     elements.uploadProfilePicture.addEventListener('click', () => elements.selectProfilePicture.click())
-    elements.selectProfilePicture.addEventListener('change', handleProfileImage)
-    elements.saveProfilePicture.addEventListener('click', handleUplaod)
-}
+
+    if (elements.selectProfilePicture) {
+        elements.selectProfilePicture.addEventListener('change', handleProfileImage);
+    };
+    
+    if (elements.saveProfilePicture) {
+        elements.saveProfilePicture.addEventListener('click', handleUplaod);
+    };
+};
 
 setupProfileImageUploader();

@@ -2,17 +2,22 @@ import { debounce } from '../utils/performance';
 import { appendSearchResults } from '../utils/search';
 import { QUERY_MIN_LENGTH } from '../config/constants';
 
-const locationsDropdown = document.getElementById('location-dropdown')
-const locationsInput = document.getElementById('location-input')
-
+let locationsDropdown = document.getElementById('location-dropdown')
+let locationsInput = document.getElementById('location-input')
 let locations = [];
 
-await fetch('/data/locations.json')
-    .then(response => response.json())
-    .then(data => locations = data)
-    .catch(error => console.error('Error fetching locations:', error));
+if (!locationsDropdown || !locationsInput) {
 
-
+} else {
+    const loadLocations = async () => {
+        try {
+            const response = await fetch('/data/locations.json');
+            locations = await response.json();
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+    };
+    loadLocations();
 
     function filterlocations(query) {
         if (!query.trim()) return [];
@@ -25,7 +30,7 @@ await fetch('/data/locations.json')
             );
             return matchedCities.map(city => `${city}, ${location.name}`);
         }).slice(0, 10);
-    }
+    };
 
     const onInput = debounce(function (e) {
         const NoResults = ['No Cities Found'];
@@ -35,21 +40,17 @@ await fetch('/data/locations.json')
             if (results.length === 0) appendSearchResults(NoResults, locationsDropdown);
             appendSearchResults(results, locationsDropdown)
         }
-    }, 500)
+    }, 500);
     
     locationsInput.addEventListener('input', onInput);
-
-const updateLocationImput = () => {
-    locationsDropdown.addEventListener('click', (e) => {
-        let currrentIndex = e.target.dataset.location;
-        locationsInput.value = currrentIndex;
-        locationsDropdown.classList.add('hidden');
-    })
+    
+    const updateLocationImput = () => {
+        locationsDropdown.addEventListener('click', (e) => {
+            let currrentIndex = e.target.dataset.location;
+            locationsInput.value = currrentIndex;
+            locationsDropdown.classList.add('hidden');
+        });
+    };
+    
+    updateLocationImput();
 }
-
-updateLocationImput()
-
-
-
-
-
