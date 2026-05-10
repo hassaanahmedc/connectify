@@ -94,30 +94,26 @@ class User extends Authenticatable
     public function avatarUrl(): Attribute 
     {
         return Attribute::make(
-            get: function () {
-                if (!$this->avatar) {
-                    return 'https://api.dicebear.com/7.x/adventurer/svg?seed=default';
-                }
-
-                return str_starts_with($this->avatar, 'http') 
-                    ? $this->avatar 
-                    : asset('storage/' . $this->avatar);
-                },
+            get: function (mixed $value, array $attributes) {
+                $path = $attributes['avatar'] ?? null;
+                if ($path) {
+                    return $path;
+                };
+                return 'https://api.dicebear.com/7.x/adventurer/svg?seed=default';
+            },
         );
     }
 
     public function coverUrl(): Attribute 
     {
         return Attribute::make(
-            get: function () {
-                if (!$this->cover) {
-                    return 'https://picsum.photos/1200/300';
-                }
-    
-                return str_starts_with($this->cover, 'http') 
-                    ? $this->cover 
-                    : asset('storage/' . $this->cover);
-                },
+            get: function (mixed $value, array $attributes) {
+                $path = $attributes['cover'] ?? null;
+                if ($path) {
+                    return $path;
+                };
+                return 'https://picsum.photos/1200/300';
+            },
         );
     }
 

@@ -24,8 +24,8 @@ Class PostService {
                 if (! empty($images)) {
                     foreach ($images as $image) {
                         if ($image && $image->isValid()) {
-                            $path = $image->store('posts', 'public');
-                            $newlyStoredPath[] = $path;
+                            $result = $image->storeOnCloudinary('posts');
+                            $path = $result->getSecurePath();
                             $post->postImages()->create(['path'=> $path]);
                         }
                     }
@@ -33,9 +33,6 @@ Class PostService {
                 return $post->fresh()->load(['user', 'postImages', 'limited_comments', 'topics'])->loadCount(['likes', 'comment']);
             });
         } catch (Exception $e) {
-            if(!empty($newlyStoredPaths)) {
-                Storage::disk('public')->delete($newlyStoredPaths);
-            }
             Log::error('Post Creation Failed', [
                 'user_id' => $user->id,
                 'message' => $e->getMessage(),
@@ -47,15 +44,10 @@ Class PostService {
 
     public function updatePostWithImages(Post $post, array $data, array $removedImageIds = [], array $newImages = [])
     {
-        $removedImageIds = $removedImageIds ?: [];
-        $newImages = $newImages ?: [];
-
-        $pathsToDeleteAfterCommit = [];
-        $newlyStoredPaths = [];
 
         try {
-            $updatedPost = DB::transaction(function () use (
-                $post, $data, $removedImageIds, $newImages, &$pathsToDeleteAfterCommit, &$newlyStoredPaths)
+            return DB::transaction(function () use (
+                $post, $data, $removedImageIds, $newImages)
                 {
                     if (array_key_exists('content', $data)) {
                         $post->content = $data['content'];
@@ -66,21 +58,15 @@ Class PostService {
                     }
 
                     if (!empty($removedImageIds)) {
-                        $images = $post->postImages()->whereIn('id', $removedImageIds)->get();
-                        foreach($images as $img) {
-                            if ($img->path) {
-                                Log::info(['Saving img to path to delete: ' => $images]);
-                                $pathsToDeleteAfterCommit[] = $img->path;
-                            }
-                            $img->delete();
-                        }
+                        $images = $post->postImages()->whereIn('id', $removedImageIds)->delete();
                     }
                     
                     if (!empty($newImages)) {
                         foreach($newImages as $file) {
                             if ($file instanceof UploadedFile && $file->isValid()) {
-                                $path = $file->store('posts', 'public');
-                                $newlyStoredPaths[] = $path;
+                                $result = $file->storeOnCloudinary('posts');
+                                $path = $result->getSecurePath();
+
                                 $post->postImages()->create(['path' => $path]);
                             }
                         }
@@ -90,46 +76,25 @@ Class PostService {
                     return $post->fresh()->load(['user', 'postImages', 'limited_comments', 'topics'])->loadCount(['likes', 'comment']);
             });
 
-            if (!empty($pathsToDeleteAfterCommit)) {
-                try {
-                    Storage::disk('public')->delete($pathsToDeleteAfterCommit);
-                } catch (Exception $e) {
-                    Log::error('Failed to delete old image files after post update', [
-                        'path' => $pathsToDeleteAfterCommit,
-                        'error' => $e
-                    ]);
-                }
-            }
-
-            return $updatedPost;
         } catch (Exception $e) {
-            if (!empty($newlyStoredPaths)) {
-                try{
-                    Storage::disk('public')->delete($newlyStoredPaths);
-                } catch (Exception $e) {
-                    Log::error('Failed to cleanup newly added images after update failure', [
-                        'path' => $newlyStoredPaths,
-                        'error' => $e
-                    ]);
-                }
-            }
+            Log::error('Failed to cleanup newly added images after update failure', [
+                'path' => $newlyStoredPaths,
+                'error' => $e
+            ]);
             throw $e;
         }
     }
 
     public function deletePost(Post $post)
     {
-        $path = $post->postImages()->pluck('path')->filter()->toArray();
-
-        DB::transaction(function () use ($post) {
-            $post->postImages()->delete();
-            $post->delete();
-        });
         try {
-            Storage::disk('public')->delete($path);
+            DB::transaction(function () use ($post) {
+                $post->postImages()->delete();
+                $post->delete();
+            });
         } catch (Exception $e) {
             Log::error('Failed to delete files on post delete', [
-                'path' => $path,
+                'post_id' => $post->id,
                 'error' => $e
             ]);
         }

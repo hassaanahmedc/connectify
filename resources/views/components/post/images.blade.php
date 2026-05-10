@@ -16,12 +16,6 @@
             {{ $count === 1 ? 'grid-cols-1' : ($count === 5 ? 'grid-cols-6' : 'grid-cols-2') }}">
             
             @foreach ($images as $index => $image)
-                {{-- We are resolving image path in a variable for reusablility --}}
-                @php
-                    $resolved_path = str_starts_with($image->path, 'http') 
-                            ? $image->path 
-                            : asset('storage/' . $image->path)
-                @endphp
 
                 {{-- 
                     IMAGE SPANNING LOGIC:
@@ -36,13 +30,13 @@
                              row-span-2
                          @endif">
 
-                    <img src="{{ $resolved_path }}"
+                    <img src="{{ $image->path }}"
                         class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         alt="Post Image {{ $loop->index + 1 }}"
                         loading="lazy"
                         x-on:click.stop="
                             $dispatch('open-image-viewer', { 
-                                currentImageUrl: '{{ $resolved_path }}' });
+                                currentImageUrl: '{{ $image->path }}' });
                                 $nextTick(() => editCoverPicture = false);">
                 </figure>
             @endforeach

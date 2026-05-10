@@ -11,12 +11,9 @@ class CoverPhotoService
 {
     public function update(User $user, UploadedFile $file)
     {
-        $path = $file->store('cover_images', 'public');
+        $result = $file->storeOnCloudinary('covers');
+        $path = $result->getSecurePath();
         
-        if ($user->cover) {
-            Storage::disk('public')->delete($user->cover);
-        }
-
         $user->update(['cover' => $path]);
         
         return $path;
@@ -24,10 +21,6 @@ class CoverPhotoService
 
     public function delete(User $user) 
     {
-        if ($user->cover) {
-            Storage::disk('public')->delete($user->cover);
-        }
-
         $user->update(['cover' => null]);
     }
 }

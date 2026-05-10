@@ -11,11 +11,8 @@ class AvatarService
 {
     public function update(User $user, UploadedFile $file) 
     {
-        $path = $file->store('profile_pictures', 'public');
-
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
+        $result = $file->storeOnCloudinary('avatars');
+        $path = $result->getSecurePath();
 
         $user->update(['avatar' => $path]);
         return $path;
@@ -23,10 +20,6 @@ class AvatarService
 
     public function delete(User $user)
     {   
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
         $user->update(['avatar' => null]);
     }
 }
