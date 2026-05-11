@@ -27,7 +27,7 @@
         setTimeout(() => { if ($el) $el.remove() }, 300);
     }">
     <div class="flex gap-2" x-show="isVisible">
-        <div class="w-8 h-8 flex-shrink-0">
+        <div class="w-8 h-8 flex-shrink-0 md:w-10 md:h-10">
             <img src="{{ $comment->user->avatar_url}}"
                 class="bg-gray-200 rounded-full object-cover w-full h-full"
                 loading="lazy"  
@@ -44,7 +44,8 @@
                     class="text-sm break-all leading-tight block">{{ $comment->content }}</span>
                 
                 <!-- Inline edit form (hidden by default) -->
-                <div class="edit-form mt-1" x-cloak x-show="isEditing">
+                <div class="edit-form mt-1" x-cloak x-show="isEditing"
+                    @keydown.escape="isEditing = false">
                     <textarea x-model="editedContent" 
                         class="w-full p-1 border rounded-md text-sm">{{ $comment->content }}</textarea>
                         <div class="flex justify-end mt-1 space-x-2">
@@ -67,7 +68,8 @@
                     class="text-xs text-gray-500 mt-2">{{ $comment->created_at->diffForHumans() }}</span>
                 @if($comment->user->id === auth()->user()->id)
                     <div class="relative">
-                        <x-svg-icons.ellipsis-vertical class="w-6 h-6 cursor-pointer hidden group-hover:block " 
+                        <x-svg-icons.ellipsis-vertical 
+                            class="w-6 h-6 cursor-pointer md:hidden md:group-hover:block" 
                             @click="commentMenu = !commentMenu" @click.outside="commentMenu = false" />
                             
                         <ul x-cloak x-show="commentMenu"

@@ -20,7 +20,7 @@
         </section>
 
         {{-- Login Form Section --}}
-        <section class="w-full md:w-3/5 lg:w-1/2 p-8">
+        <section class="w-full md:w-3/5 lg:w-1/2 py-8 px-7">
             <!-- Session Status -->
             <x-auth-session-status class="mb-4"
                 :status="session('status')" />
@@ -130,9 +130,13 @@
                             </div>
                         </div>
                     </div> --}}
-                    
                 </div>
             </form>
+            <div class="mt-2 flex flex-col items-center text-center md:hidden">
+                <span class="text-sm text-gray-600">Don't have an account?</span>
+                <a href="{{ route('register') }}" 
+                    class="text-sm font-semibold text-blue-600">Sign Up</a>
+            </div>
         </section>
     </main>
 </x-guest-layout>

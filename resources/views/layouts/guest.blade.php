@@ -15,9 +15,9 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen px-8 flex flex-col sm:justify-center items-center bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen px-8 flex  sm:justify-center items-center bg-gray-100 dark:bg-gray-900">
 
-            <div class="w-full sm:max-w-[900px] mt-6 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full sm:max-w-[900px] mt-6 bg-white dark:bg-gray-800 shadow-md overflow-hidden rounded-lg">
                 {{ $slot }}
             </div>
         </div>

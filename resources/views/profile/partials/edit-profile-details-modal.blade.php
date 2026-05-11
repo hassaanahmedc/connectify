@@ -1,14 +1,14 @@
 <x-modal :show="false" focusable name="edit-profile-details-modal">
     <section class="mx-4 flex justify-center p-4 overflow-visible">
         <div class="w-full" x-data="{ isLoading: false }">
-            <h2 class="mb-8 text-center text-3xl font-bold">Edit Details</h2>
+            <h2 class="mb-8 text-center text-xl font-bold">Edit Details</h2>
             <form action="{{ route('profile.update', $user->id) }}" method="POST"
                 @submit="isLoading = true">
                 @csrf
                 @method('PATCH')
 
                 <div class="my-4">
-                    <x-input-label :value="__('Bio')" class="text-start text-xl font-semibold" for="bio" />
+                    <x-input-label :value="__('Bio')" class="text-start text-lg font-semibold" for="bio" />
                     <textarea
                         class="mt-1 block w-full resize-none overflow-y-auto rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         id="bio" name="bio" placeholder="Type your Bio..." rows="3" value="">{{ old('bio', $user->bio) }}</textarea>
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="my-4 relative">
-                    <x-input-label :value="__('Location')" class="text-start text-xl font-semibold" for="location" />
+                    <x-input-label :value="__('Location')" class="text-start text-lg font-semibold" for="location" />
                     <x-text-input :value="old('location', $user->location)" autocomplete="location" autofocus class="mt-1 block w-full"
                         id="location-input" name="location" required type="text" />
                     <x-input-error :messages="$errors->get('location')" class="mt-2" />
@@ -28,7 +28,8 @@
                     <button x-on:click="$dispatch('close')"
                         class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
                         type="button">Cancel</button>
-                    <button class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white"
+                    <button class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white
+                        transition-all duration-200"
                         type="submit" :disabled="isLoading"
                         :class="isLoading
                             ? 'opacity-50 cursor-not-allowed' 

@@ -100,13 +100,13 @@
         <div class="my-2" >
         
             @if($post->content)
-                <p class="text-xs sm:text-sm lg:text-base">
+                <p class="text-sm lg:text-base">
                     <span x-text="expanded ? @js($post->content) : '{{ Str::limit($post->content, 300, '...') }}'"></span>
                 </p>
         
                 @if(strlen($post->content) > 300)
                     <button x-on:click="expanded = !expanded" 
-                            class="mt-2 text-sm font-medium hover:underline text-blue-600">
+                            class="mt-2 text-xs font-medium hover:underline text-blue-600">
                             <span x-text="expanded ? '<Show less' : 'Read more'"></span>
                     </button>
                 @endif

@@ -26,14 +26,14 @@
                 :status="session('status')" />
 
             <h1
-                class="mb-4 font-montserrat text-2xl text-lightMode-primary font-bold">
+                class="mb-6 font-montserrat text-2xl text-lightMode-primary font-bold">
                 Register to Connectify </h1>
             <form method="POST"
                 action="{{ route('register') }}">
                 @csrf
                 <!-- Email Address -->
-                <div class="flex gap-2">
-                    <div>
+                <div class="flex flex-col sm:flex-row gap-2 w-full">
+                    <div class="flex-1">
                         <x-input-label for="fname"
                             :value="__('First Name')" />
                         <x-text-input id="fname"
@@ -48,7 +48,7 @@
                             class="mt-2" />
                     </div>
 
-                    <div>
+                    <div class="flex-1">
                         <x-input-label for="lname"
                             :value="__('Last Name')" />
                         <x-text-input id="lname"
@@ -168,6 +168,11 @@
                     </div>
                 </div> --}}
             </form>
+            <div class="mt-2 flex flex-col items-center text-center md:hidden">
+                <span class="text-sm text-gray-600">Already have an account?</span>
+                <a href="{{ route('login') }}" 
+                    class="text-sm font-semibold text-blue-600">Login</a>
+            </div>
         </section>
     </main>
 </x-guest-layout>
