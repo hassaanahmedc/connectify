@@ -102,7 +102,7 @@
             @auth
                 @if ($isOwnProfile)
                     <a class="w-full rounded-xl shadow-sm bg-lightMode-primary py-2.5 font-bold text-white">
-                        420 Followers
+                        {{ $user->followers_count . ' Followers' }}
                     </a>
                     <button class="w-full rounded-xl shadow-sm bg-gray-200 px-4 py-2 font-semibold text-black"
                         x-on:click="$dispatch('open-modal', 'edit-profile-details-modal')">

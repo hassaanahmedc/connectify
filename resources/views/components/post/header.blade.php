@@ -84,7 +84,7 @@
                                                 topics: {{ $post->topics->toJson() }},
                                                 images: {{ $post->postImages->map(fn($img) => [
                                                     'id' => $img->id,
-                                                    'url' => asset('storage/' . $img->path)
+                                                    'url' => $img->path
                                                 ]) }}
                                             })">
                                     <x-svg-icons.pencil-square class="w-5 h-5 text-gray-500" />

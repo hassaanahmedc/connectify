@@ -1,8 +1,9 @@
 <x-modal :show="false" focusable name="edit-profile-details-modal">
     <section class="mx-4 flex justify-center p-4 overflow-visible">
-        <div class="w-full">
+        <div class="w-full" x-data="{ isLoading: false }">
             <h2 class="mb-8 text-center text-3xl font-bold">Edit Details</h2>
-            <form action="{{ route('profile.update', $user->id) }}" method="POST">
+            <form action="{{ route('profile.update', $user->id) }}" method="POST"
+                @submit="isLoading = true">
                 @csrf
                 @method('PATCH')
 
@@ -28,7 +29,13 @@
                         class="w-full rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black"
                         type="button">Cancel</button>
                     <button class="w-full rounded-lg bg-lightMode-primary px-4 py-2 font-semibold text-white"
-                        type="submit">Save</button>
+                        type="submit" :disabled="isLoading"
+                        :class="isLoading
+                            ? 'opacity-50 cursor-not-allowed' 
+                            : 'hover:shadow-lightMode-primary'">
+                        <span x-show="!isLoading">Save</span>
+                        <span x-show="isLoading">Saving...</span>
+                    </button>
                 </div>
             </form>
         </div>
