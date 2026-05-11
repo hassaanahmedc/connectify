@@ -53,12 +53,3 @@
     <x-modals.confirm-action />
 
 @endsection
-
-@push('scripts')
-    @vite('resources/js/components/follow.js')
-    @vite('resources/js/features/profile/profileImages.js')
-    @vite('resources/js/components/locations.js')
-    @vite('resources/js/features/profile/profileImageDeleter.js')
-    @vite('resources/js/features/profile/coverImage.js')
-    @vite('resources/js/features/profile/coverImageDeleter.js')
-@endpush
