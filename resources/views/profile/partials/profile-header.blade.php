@@ -56,30 +56,47 @@
         x-show="editCoverPicture">
 
         {{-- This list item serves as a proxy to trigger the hidden file input. --}}
-        <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="upload-cover-picture">
-            Upload new photo</li>
-        <input hidden id="select-cover-picture" type="file">
+        <li role="menuitem">
+            <button id="upload-cover-picture" 
+                class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 
+                    hover:bg-blue-50 rounded-lg transition-colors" >
+                <x-svg-icons.pencil-square class="w-5 h-5 text-gray-500" />
+                Upload new photo
+            </button>
+            <input hidden id="select-cover-picture" type="file">
+        </li>
+
+        {{-- This dispatches an event to open the global image viewer. --}}
+        <li role="menuitem">
+            <button id="view-cover-picture"
+                class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 
+                    hover:bg-blue-50 rounded-lg transition-colors" 
+                x-on:click.stop="
+                    $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->cover_url }}' });
+                    $nextTick(() => editCoverPicture = false);">
+                <x-svg-icons.camera class="w-5 h-5 text-gray-500" />
+                View photo
+            </button>
+        </li>
 
         @if ($user->cover)
-
         {{-- This dispatches detailed event to open generic confirmation modal. --}}
-            <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="remove-cover-picture"
-                x-on:click.prevent="$dispatch('open-modal', {
-                    name: 'confirm_action',
-                    title: 'Are you sure?',
-                    message: 'Your cover photo will be replaced by default picture.',
-                    actionType: 'cover_photo',
-                    itemId: null,
-                    confirmButtonText: 'Delete', 
-                })">
-                Remove photo</li>
+            <li role="menuitem">
+                <button id="remove-cover-picture" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium 
+                        text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                    x-on:click.prevent="$dispatch('open-modal', {
+                        name: 'confirm_action',
+                        title: 'Are you sure?',
+                        message: 'Your cover photo will be replaced by default picture.',
+                        actionType: 'cover_photo',
+                        itemId: null,
+                        confirmButtonText: 'Delete', 
+                    })">
+                    <x-svg-icons.trash class="w-5 h-5 text-red-500" />
+                    Remove photo
+                </button>
+            </li>
         @endif
-        
-        {{-- This dispatches an event to open the global image viewer. --}}
-        <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="view-cover-picture"
-            x-on:click.stop="
-                            $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->cover_url }}' });
-                            $nextTick(() => editCoverPicture = false);">
-            View photo</li>
     </ul>
 </header>

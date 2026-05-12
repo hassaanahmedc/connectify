@@ -52,33 +52,50 @@
                 x-cloak x-show="editProfilePicture">
 
                  {{-- This list item serves as a proxy to trigger the hidden file input. --}}
-                <li class="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 rounded-lg transition-colors" id="upload-profile-picture">
-                    Upload new photo</li>
-                <input hidden id="select-profile-picture" type="file">
+                <li role="menuitem">
+                    <button id="upload-profile-picture" 
+                        class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 
+                            hover:bg-blue-50 rounded-lg transition-colors" >
+                        <x-svg-icons.pencil-square class="w-5 h-5 text-gray-500" />
+                            Upload new photo
+                        </button>
+                    <input hidden id="select-profile-picture" type="file">
+                </li>
+
+                {{-- This dispatches an event to open the global image viewer. --}}
+                <li role="menuitem">
+                    <button id="view-profile-picture" 
+                        class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 
+                            hover:bg-blue-50 rounded-lg transition-colors" 
+                        x-on:click.stop="
+                            $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->avatar_url }}' });
+                            $nextTick(() => editProfilePicture = false);">
+                        <x-svg-icons.camera class="w-5 h-5 text-gray-500" />
+                        View photo
+                    </button>
+                </li>
 
                 @if ($user->avatar)
 
                     {{-- This dispatches detailed event to open generic confirmation modal. --}}
-                    <li class="m-2 cursor-pointer px-3 py-2 font-medium text-gray-700 hover:bg-blue-50 rounded-lg transition-colors" id="remove-profile-picture"
-                        x-on:click.prevent="$dispatch('open-modal', {
+                    <li role="menuitem">
+                        <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium 
+                                    text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                            id="remove-profile-picture"
+                            x-on:click.prevent="$dispatch('open-modal', {
                             name: 'confirm_action',
                             title: 'Are you sure?',
                             message: 'Your profile picture will be replaced by the default avatar',
                             actionType: 'profile_picture',
                             itemId: null,
                             confirmButtonText: 'Delete', 
-                        })">
-                        Remove photo</li>
+                                            })">
+                        <x-svg-icons.trash class="w-5 h-5 text-red-500" />
+                        Remove photo
+                        </button>
+                    </li>
                 @endif
-
-                {{-- This dispatches an event to open the global image viewer. --}}
-                <li class="m-2 cursor-pointer px-4 py-1 hover:bg-gray-100" id="view-profile-picture"
-                    x-on:click.stop="
-                        $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->avatar_url }}' });
-                        $nextTick(() => editProfilePicture = false);">
-                    View photo</li>
             </ul>
-
         </div>
 
         <div class="text-center w-full px-2">
@@ -161,7 +178,7 @@
             @endforeach
 
             {{-- Add interest button (visible if user user hasnt reached topics limit) --}}
-            @if($user->topics->count() < $topics->count())
+            @if($user->topics->count() < $topics->count() && $user->id === Auth::user()->id)
                 <div class="px-2 py-1 text-lightMode-blueHighlight bg-blue-50/30 border 
                             border-lightMode-blueHighlight shadow-sm text-xs font-semibold rounded-full 
                             hover:bg-opacity-10 transition-colors duration-200
@@ -176,7 +193,7 @@
 
     </section>
 
-    <section class="bg-white px-5 py-4 rounded-2xl shadow-md border border-gray-50">
+    <section class="bg-white px-5 py-4 mb-4 rounded-2xl shadow-md border border-gray-50">
 
         <h6 class="text-lg font-semibold md:text-xl lg:text-xl">About {{ $user->fname }}</h6>
         <ul class="my-4 text-sm md:text-base lg:text-base space-y-1">
