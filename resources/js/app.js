@@ -9,16 +9,19 @@ import "./features/profile/profileImages.js";
 import "./features/search/index.js";
 import "./components/notifications.js";
 import { fetchData } from "./utils/api.js";
+import { timeAgo } from "./utils/formatters.js";
 import followButton from "./components/follow.js";
 import postModal from "./components/postModal.js";
 import comments from "./components/comments.js";
 import infiniteScroll from "./components/infiniteScroll.js";
 import shareUrl from "./components/share.js";
+import notifications from "./components/notifications.js";
 import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
 
 window.fetchData = fetchData;
+window.timeAgo = timeAgo;
 
   window.asset = function (path) {
     return path;
@@ -34,6 +37,7 @@ window.fetchData = fetchData;
   Alpine.data('comments', comments);
   Alpine.data('infiniteScroll', infiniteScroll);
   Alpine.data('shareUrl', shareUrl);
+  Alpine.data('notifications', notifications);
   
 Alpine.start();
 

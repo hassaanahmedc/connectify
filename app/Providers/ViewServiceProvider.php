@@ -28,7 +28,10 @@ class ViewServiceProvider extends ServiceProvider
         View::composer('components.nav.index', NavbarComposer::class);
         View::composer('components.right-sidebar-friends', RightSideBarComposer::class);
         View::composer('components.left-sidebar', LeftSideBarComposer::class);
-        View::composer('components.right-sidebar', TrendingComposer::class);
+        View::composer([
+            'components.right-sidebar',
+            'components.nav.mobile-sidebar'
+            ], TrendingComposer::class);
         view::composer([
             'components.modals.post-modal', 
             'components.modals.topics-selection-modal'

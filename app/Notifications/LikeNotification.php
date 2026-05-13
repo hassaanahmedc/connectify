@@ -46,9 +46,9 @@ class LikeNotification extends Notification implements ShouldQueue
             'user_id' => $this->liker->id,
             'user_name' => $this->liker->fname . ' ' . $this->liker->lname,
             'message' => 'liked your post.',
-            'user_avatar' => $this->liker->avatar,
+            'user_avatar' => $this->liker->avatar_url,
             'post_id' => $this->post->id,
-            'link' => route('post.view', $this->post->id)
+            'link' => route('post.view', $this->post->id),
         ];
     }
 }

@@ -43,7 +43,7 @@ class FollowNotification extends Notification
             'user_id' => $this->follower->id,
             'user_name' => $this->follower->fname . ' ' . $this->follower->lname,
             'message' => 'started following you.',
-            'user_avatar' => $this->follower->avatar,
+            'user_avatar' => $this->follower->avatar_url,
             'link' => route('profile.view', $this->follower->id),
         ];
     }

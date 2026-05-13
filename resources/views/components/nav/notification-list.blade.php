@@ -10,8 +10,9 @@
 <x-notification-dropdown>
     <x-slot name="trigger">
         <div @click="open = !open; fetchNotifications()">
-            <x-svg-icons.bell class="notification-icon relative h-auto w-8" />
-            <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500" 
+            <x-svg-icons.bell class="notification-icon relative h-7 w-7" />
+            <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500"
+                x-cloak
                 x-show="unreadCount > 0"
                 x-transition.opacity.scale.75 ></span>
         </div>
@@ -32,17 +33,18 @@
                 <template :key="notification.id" x-for="notification in notifications">
                     <a :href="notification.data.link"
                         :class="notification.read_at ? 'opacity-70' : 'bg-blue-50'"
-                        class="block p-3 transition duration-150 ease-in-out hover:bg-gray-50">
+                        class="block p-3 my-2 rounded-lg transition duration-150 ease-in-out hover:bg-blue-50">
                         <div class="flex items-start gap-3 text-sm">
-                            <img :src="storageBaseUrl + notification.data.user_avatar" alt=""
+                            <img :src="notification.data.user_avatar" alt=""
                                 class="h-12 w-12 shrink-0 rounded-full object-cover shadow-sm">
                             <div class="flex-1 pt-0.5">
                                 <p class="leading-snug text-gray-800">
-                                    <strong class="font-bold text-black" x-text="notification.data.user_name"></strong>
+                                    <strong class="font-bold text-black" 
+                                        x-text="notification.data.user_name"></strong>
                                     <span x-text="notification.data.message"></span>
                                 </p>
-                                <span class="mt-1 block text-xs font-medium text-blue-600">2m
-                                    ago</span>
+                                <span class="mt-1 block text-xs font-medium text-blue-600" 
+                                    x-text="timeAgo(notification.created_at)"></span>
                             </div>
                         </div>
                     </a>

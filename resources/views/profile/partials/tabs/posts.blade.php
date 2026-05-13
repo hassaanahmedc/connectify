@@ -16,7 +16,8 @@
         </div>
     @endif
 
-    <div class="flex flex-col" x-data="infiniteScroll('{{ $user->post->nextPageUrl() }}', null)">
+    <div class="flex flex-col" id="newsfeed"  
+        x-data="infiniteScroll('{{ $user->post->nextPageUrl() }}', null)">
         @forelse ($user->post as $post)
             <x-post.card :post="$post" />
         @empty

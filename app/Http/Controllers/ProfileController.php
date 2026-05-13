@@ -122,7 +122,7 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Profile picture updated successfully',
-                'path' => asset("storage/{$path}")
+                'path' => $path,
             ]);
         } catch (Exception $e) {
             Log::error("Avatar Update Error: " . $e->getMessage());
@@ -176,7 +176,7 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Cover Image updated successfully',
-                'path' => asset("storage/{$path}")
+                'path' => $path
             ]);
 
         } catch (Exception $e) {

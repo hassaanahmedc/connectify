@@ -48,8 +48,8 @@ class CommentNotification extends Notification
             'user_id' => $this->commentor->id,
             'user_name' => $this->commentor->fname . ' ' . $this->commentor->lname,
             'message' => 'commented on your post.',
-            'user_avatar' => $this->commentor->avatar,
-            'link' => route('post.view', $this->post->id)
+            'user_avatar' => $this->commentor->avatar_url,
+            'link' => route('post.view', $this->post->id),
         ];
     }
 }
