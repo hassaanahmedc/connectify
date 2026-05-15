@@ -32,7 +32,7 @@ function setupProfileImageUploader() {
     const elements = {
         uploadProfilePicture: document.getElementById('upload-profile-picture'),
         selectProfilePicture: document.getElementById('select-profile-picture'),
-        profilePicture: document.getElementById("profile-picture"),
+        profilePictures: document.querySelectorAll(".profile-picture-display"),
         saveProfilePicture: document.getElementById('save-upload-button'),
         profileErrors: document.getElementById('profile-error'),
         previewContainer: document.getElementById('image-upload-preview-container'),
@@ -93,7 +93,8 @@ function setupProfileImageUploader() {
             const result = await uploadImages(state.filesToUpload, API_ENDPOINTS.uploadProfilePictureReq, 'profile_picture');
 
             if (result.ok) {
-                elements.profilePicture.src = result.data;
+                elements.profilePictures.forEach(p => p.src = result.data);
+                
 
                 window.dispatchEvent(new CustomEvent('close-modal', { detail: 'image-upload-preview' }));
                 window.dispatchEvent(new CustomEvent('show-notification', {

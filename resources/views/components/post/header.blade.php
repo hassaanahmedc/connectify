@@ -14,7 +14,7 @@
                         class="w-11 h-11 flex-shrink-0 rounded-full overflow-hidden" 
                         aria-label="View profile of {{ $post->user->fname . ' ' . $post->user->lname }}">
                         <img src="{{ $post->user->avatar_url }}"
-                            class="w-full h-full object-cover flex-shrink-0"
+                            class="profile-picture-display w-full h-full object-cover flex-shrink-0"
                             alt="{{ $post->user->fname }}'s profile photo">
                     </a>
     
@@ -29,10 +29,11 @@
                 </div>
                 <div class="flex flex-wrap gap-2">
                     @foreach($post->topics as $topic)
-                        <a href="" class="px-2 py-1 text-gray-700 bg-gray-100 border 
-                            text-xs font-semibold rounded-full border-gray-300
-                            hover:bg-gray-200 transition-colors duration-200
-                             flex-shrink-0">{{ $topic->name }}</a>
+                        <a href="{{ route('topic.trending', $topic->slug) }}" 
+                            class="px-2 py-1 text-gray-700 bg-gray-100 border 
+                                text-xs font-semibold rounded-full border-gray-300
+                                hover:bg-gray-200 transition-colors duration-200
+                                 flex-shrink-0">{{ $topic->name }}</a>
                     @endforeach
                 </div>
             </div>

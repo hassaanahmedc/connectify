@@ -19,7 +19,7 @@ class WelcomeController extends Controller
         $posts = Post::query()
             ->with(['user:id,fname,lname,avatar',
                     'postImages:id,posts_id,path',
-                    'topics:id,name',
+                    'topics:id,name,slug',
                     'comment' => function($q) {
                         $q->select('id', 'posts_id', 'user_id', 'content', 'created_at')
                             ->with('user:id,fname,lname,avatar')
