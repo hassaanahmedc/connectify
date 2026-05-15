@@ -41,9 +41,14 @@
     </div>
 
     {{-- The button to trigger the 'Edit Cover' Dropdown --}}
-    <button @click="editCoverPicture = true"
-        class="absolute bottom-4 right-4 hidden rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black shadow-md md:block"
-        id="uplaod-cover-picture" type="button">Edit Cover</button>
+
+    @if ($user->id === Auth::id())
+        <button type="button" id="uplaod-cover-picture"
+            @click="editCoverPicture = true"
+            class="absolute bottom-4 right-4 hidden rounded-lg bg-gray-200 px-4 py-2 font-semibold text-black 
+                shadow-md md:block">Edit Cover
+        </button>    
+    @endif
         
     {{-- 
         The Dropdown Menu for cover image.
