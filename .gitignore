@@ -20,3 +20,4 @@ yarn-error.log
 GEMINI.md
 Dockerfile
 .dockerignore
+backup.sql
