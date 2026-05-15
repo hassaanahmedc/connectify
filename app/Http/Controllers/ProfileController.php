@@ -44,17 +44,17 @@ class ProfileController extends Controller
         $currentUserId = Auth::id();
         
         $data = $this->getProfileBaseData($user);
-        
+    
         $posts = $user->post()
             ->latest()
             ->with([
+                'topics:id,name,slug',
                 'postImages:id,posts_id,path', 
                 'comment' => function($q) {
                     $q->select('id', 'posts_id', 'user_id', 'content', 'created_at')
                     ->latest()
                     ->limit(5);
                 }, 
-                'topics' => fn($q) => $q->select('id', 'name')
             ])
             ->withCount(['likes', 'comment'])
             ->withExists(['likes as liked_by_user' => function ($q) use ($currentUserId) {
