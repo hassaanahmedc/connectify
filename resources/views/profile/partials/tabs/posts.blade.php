@@ -29,9 +29,12 @@
                 <x-svg-icons.loading class="w-7 h-auto animate-spin" />
             </template>
 
-            <template x-if="!hasMore && !isLoading">
-                <p class="text-gray-400 text-sm">You've caught up for today...</p>
-            </template>
+            @if($user->post->count() >= 15)
+                <template x-if="!hasMore && !isLoading">
+                    <p class="text-gray-400 text-sm">You've caught up for today...</p>
+                </template>
+            @endif
+
         </div>
         
     </div>

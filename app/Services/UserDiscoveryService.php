@@ -18,6 +18,7 @@ class UserDiscoveryService
                     ->orderByRaw('location = ? DESC', [$user->location])
                     ->paginate(15);
 
+        $results->loadCount(['followers', 'following']);
         return $results;
     }
 

@@ -22,9 +22,9 @@
          --}}
             <img alt=""
                 class="profile-cover-display h-80 w-full cursor-pointer object-cover transition-opacity ease-in-out hover:opacity-70 hover:shadow-lg xl:rounded-b-lg"
-                id="cover-picture" src="{{ $user->cover_url }}"
+                id="cover-picture" x-ref="coverPic" src="{{ $user->cover_url }}"
                 x-on:click.stop="
-                    $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->cover_url }}' });
+                    $dispatch('open-image-viewer', { currentImageUrl: $refs.coverPic.src });
                     $nextTick(() => editCoverPicture = false);">
         @else
 
@@ -77,7 +77,7 @@
                 class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 
                     hover:bg-blue-50 rounded-lg transition-colors" 
                 x-on:click.stop="
-                    $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->cover_url }}' });
+                    $dispatch('open-image-viewer', { currentImageUrl: $refs.coverPic.src });
                     $nextTick(() => editCoverPicture = false);">
                 <x-svg-icons.camera class="w-5 h-5 text-gray-500" />
                 View photo

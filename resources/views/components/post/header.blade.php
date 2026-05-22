@@ -101,9 +101,7 @@
         <div class="my-2" >
         
             @if($post->content)
-                <p class="text-sm lg:text-base">
-                    <span x-text="expanded ? @js($post->content) : '{{ Str::limit($post->content, 300, '...') }}'"></span>
-                </p>
+                <p class="text-sm lg:text-base whitespace-pre-line"><span x-text="expanded ? @js($post->content) : @js(Str::limit($post->content, 300, '...'))"></span></p>
         
                 @if(strlen($post->content) > 300)
                     <button x-on:click="expanded = !expanded" 

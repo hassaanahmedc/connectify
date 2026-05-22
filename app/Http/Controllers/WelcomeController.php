@@ -15,8 +15,9 @@ class WelcomeController extends Controller
     public function index(Request $request)
     {
         $user_id = Auth::id();
-
-        $posts = Post::query()
+        $userTopicIds = Auth::user()->topics()->pluck('topics.id')->toArray();
+        
+        $query = Post::query()
             ->with(['user:id,fname,lname,avatar',
                     'postImages:id,posts_id,path',
                     'topics:id,name,slug',
@@ -30,9 +31,18 @@ class WelcomeController extends Controller
             ->withCount(['likes', 'comment'])
             ->withExists(['likes as liked_by_user' => function ($query) use ($user_id) {
                 $query->where('user_id', $user_id);
-            }])
-            ->latest()
-            ->paginate(15);
+            }]);
+
+        if (!empty($userTopicIds)) {
+            $query->orderByDesc(function ($q) use ($userTopicIds) {
+                $q->selectRaw('count(*)')
+                  ->from('post_topic')
+                  ->whereColumn('post_topic.post_id', 'posts.id')
+                  ->whereIn('post_topic.topic_id', $userTopicIds);
+            });
+        }
+
+        $posts = $query->latest()->paginate(15);
 
         if($request->ajax()) {
             return $this->renderAjaxPagination($request, $posts, 'components.post.card', 'post');

@@ -33,7 +33,7 @@
                     --}}
                         <img @click="editProfilePicture = true" alt=""
                             class="profile-picture-display h-full w-full cursor-pointer rounded-full object-cover transition-opacity ease-in-out hover:opacity-70"
-                            id="profile-picture" src="{{ $user->avatar_url }}">
+                            id="profile-picture" x-ref="profilePic" src="{{ $user->avatar_url }}">
                     @else
 
                     {{-- For other users, the profile image is not interactive.. --}}
@@ -68,7 +68,7 @@
                         class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 
                             hover:bg-blue-50 rounded-lg transition-colors" 
                         x-on:click.stop="
-                            $dispatch('open-image-viewer', { currentImageUrl: '{{ $user->avatar_url }}' });
+                            $dispatch('open-image-viewer', { currentImageUrl: $refs.profilePic.src });
                             $nextTick(() => editProfilePicture = false);">
                         <x-svg-icons.camera class="w-5 h-5 text-gray-500" />
                         View photo

@@ -36,13 +36,11 @@ export async function getSearchResults(url, { signal, headers } = {}) {
 export function appendSearchResults(resultsPayload, searchResultsContainer) {
 
     if (!resultsPayload) {
-        console.error('appendSearchResults: resultsPayload is undefined or null', resultsPayload);
         if (searchResultsContainer) searchResultsContainer.classList.add('hidden');
         return;
     }
 
     if (!searchResultsContainer) {
-        console.warn("appendSearchResults: container not found");
         return;
     }
 
@@ -73,8 +71,6 @@ export function appendSearchResults(resultsPayload, searchResultsContainer) {
         }
         return;
     }
-    
-    console.error("appendSearchResults: unexpected payload format", resultsPayload);
 }
 
 /** setupSearch sets up search funcitonality for both input and output 
@@ -87,7 +83,6 @@ let lastQuery = '';
 let controller = null;
 
 async function performSearch({ query, route, filters = [], container, headers = {} } = {}) {
-    console.log('performSearch called with', query, filters);
     if (query.length < QUERY_MIN_LENGTH) {
         container.classList.add('hidden'); 
         return;
@@ -113,22 +108,17 @@ async function performSearch({ query, route, filters = [], container, headers = 
 
     // calling functions to get search data from API and insert it in the DOM
     try {
-        console.log('performSearch: fetching', url);
         const results = await getSearchResults(url, { signal, headers });
         
         if (query !== lastQuery) {
-          console.log('performSearch: result stale, ignoring', query)
           return
         }
-        console.log(results)
         try {
             appendSearchResults(results, container);
         } catch (renderError) {
-            console.error('performSearch -> appendSearchResults error', renderError);
         }
     } catch (error) {
         if (error.name === 'AbortError') return;
-        console.error('performSearch: unexpected fetch error', error);
     }
 }
 export function setupSearchDropdown({ searchInput, searchRoute, dropdownContainer } = {}) {
@@ -153,7 +143,6 @@ export function setupSearchPage({ searchInput, searchRoute, resultsContainer, fi
             container.addEventListener('change', (e) => {
                 const query = searchInput.value.trim();
                 const filterArray = typeof filterGetter === 'function' ? filterGetter() : [];
-                console.log('Filters changed:', filterArray);
                 performSearch({ 
                     query: query, 
                     route: searchRoute, 

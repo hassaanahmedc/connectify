@@ -11,7 +11,7 @@
                         duration-200 hover:cursor-pointer hover:bg-blue-50 hover:text-lightMode-blueHighlight"
                     x-data="followButton({{ $user->id }}, {{ Auth::user()->isFollowing($user) ? 'true' : 'false' }})">
 
-                    <img alt="" class="h-auto w-9 rounded-full object-cover" src="{{ $user->avatar_url }}">
+                    <img alt="" class="h-9 w-9 aspect-square rounded-full object-cover" src="{{ $user->avatar_url }}">
                     <div class="flex w-full min-w-0 items-center justify-between">
 
                         <div class="flex min-w-0 flex-col">

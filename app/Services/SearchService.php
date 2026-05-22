@@ -37,6 +37,7 @@ Class SearchService {
         
         $users = $builder->limit(10)->get();
         $users->each(fn ($u) => $u->type = 'user');
+        $users->loadCount(['followers', 'following']);
         return $users;
     }
 

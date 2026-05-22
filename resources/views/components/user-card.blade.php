@@ -25,7 +25,7 @@
                 @endif
 
                 <div class="mt-1 flex items-center gap-2 text-[12px] text-gray-500 font-medium">
-                    <span>482 Followers</span>
+                    <span>{{ $user->followers_count . ' Followers' }}</span>
                     @if($user->location)
                         <span class="text-gray-300">•</span>
                         <span class="truncate">{{ $user->location }}</span>
@@ -36,21 +36,28 @@
 
         {{-- Right Side: Action Button --}} 
         <div class="flex-shrink-0">
-            <button 
-                @click="toggleFollow()"
-                :disabled="loading"
-                @mouseenter="isHovering = true"
-                @mouseleave="isHovering = false"
-                :class="loading ? 'opacity-50 cursor-not-allowed' :
-                    (isFollowing 
-                        ? (isHovering ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700' )
-                        : 'bg-lightMode-primary text-white')"
-                x-text="loading ? 'working...' :
-                    (isFollowing 
-                        ? (isHovering ? 'Unfollow' : 'Following')
-                        : 'Follow')"
-                class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95">
-            </button>
+            @if ($user->id !== Auth::user()->id)
+                <button 
+                    @click="toggleFollow()"
+                    :disabled="loading"
+                    @mouseenter="isHovering = true"
+                    @mouseleave="isHovering = false"
+                    :class="loading ? 'opacity-50 cursor-not-allowed' :
+                        (isFollowing 
+                            ? (isHovering ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-700' )
+                            : 'bg-lightMode-primary text-white')"
+                    x-text="loading ? 'working...' :
+                        (isFollowing 
+                            ? (isHovering ? 'Unfollow' : 'Following')
+                            : 'Follow')"
+                    class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95">
+                </button>
+            @else
+                <button @click="window.location.href = '{{ route('profile.view', Auth::user()->id) }}'"
+                    class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 active:scale-95 
+                        bg-gray-100 text-gray-700">View Profile
+                </button>
+            @endif
         </div>
     </div>
 </div> 
