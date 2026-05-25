@@ -36,7 +36,9 @@ ___
 
 * **Dynamic Discovery Engine:** Employs a custom proximity query based on location columns to rank and recommend connections to the authenticated user.
 * **Social Connection Matrix:** Built on a robust **many-to-many relationship schema** in MySQL to handle fluid follow/unfollow states asynchronously.
-* **Granular Security Policies:** Enforces strict server-side validation via **Laravel Policies**, dynamically rendering critical UI elements (like edit/delete actions) exclusively for authorized content owners.
+* **Trending Topics Engine:** Utilizes a **many-to-many relationship schema** in MySQL to track, filter, and render trending topics dynamically based on real-time post activity.
+* **Tailored User Onboarding & NewsFeed:** Implements an intentional onboarding where new users select their areas of interest upon first login. The main newsfeed query evaluates these preferences, dynamically filtering and sorting posts in descending order to deliver a personalized, interest-first feed experience.
+* **Security Policies:** Enforces strict server-side validation via **Laravel Policies**, dynamically rendering critical UI elements (like edit/delete actions) exclusively for authorized content owners.
 * **Optimized Performance:** Implemented batched lazy-loading for comments (fetching 5 at a time via targeted API payloads) to keep server memory footprints lightweight.
 
 ___
